@@ -14,7 +14,7 @@ jobs:
         with:
           python-version: '3.10'
       - run: pip3 install pandas requests
-      - run: python3 annual_data_refresh.py
+      - run: python annual_data_refresh.py
       - name: Commit and push if changed
         run: |-
           git config user.name "Automated"
