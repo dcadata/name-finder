@@ -1,5 +1,6 @@
+import os
+import re
 import zipfile
-from datetime import datetime
 from time import sleep
 
 import pandas as pd
@@ -7,10 +8,12 @@ import requests
 
 
 def _run(session):
-    # read table on page to see if year has been added
+    # check latest year currently downloaded
+    file_year = re.search('^yob([0-9]{4}).txt$', os.listdir('data/names/')[-1]).group(1)
+    # compare to website
     response = session.get('https://www.ssa.gov/oact/babynames/limits.html')
-    df = pd.read_html(response.text)[0]
-    if df.iloc[0, 0] != datetime.today().year - 1:
+    table = pd.read_html(response.text)[0]
+    if int(file_year) >= int(table.iloc[0, 0]):
         return
 
     sleep(3)

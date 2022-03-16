@@ -1,4 +1,4 @@
-name: annual_data_refresh
+name: source_data_refresh
 
 on:
   workflow_dispatch:
@@ -14,7 +14,7 @@ jobs:
         with:
           python-version: '3.10'
       - run: pip3 install pandas requests lxml
-      - run: python annual_data_refresh.py
+      - run: python source_data_refresh.py
       - name: Commit and push if changed
         run: |-
           git config user.name "Automated"
