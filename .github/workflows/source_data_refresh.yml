@@ -2,8 +2,8 @@ name: source_data_refresh
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '10 6 * 1,2,3,4,5 *'
+#  schedule:
+#    - cron: '10 6 * 1,2,3,4,5 *'
 
 jobs:
   scheduled:
