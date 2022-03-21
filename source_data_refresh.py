@@ -1,19 +1,17 @@
-import os
-import re
 import zipfile
 from time import sleep
 
 import pandas as pd
 import requests
 
+from finder import _MAX_YEAR
+
 
 def _run(session):
-    # check latest year currently downloaded
-    file_year = re.search('^yob([0-9]{4}).txt$', os.listdir('data/names/')[-1]).group(1)
     # compare to website
     response = session.get('https://www.ssa.gov/oact/babynames/limits.html')
     table = pd.read_html(response.text)[0]
-    if int(file_year) >= int(table.iloc[0, 0]):
+    if _MAX_YEAR >= int(table.iloc[0, 0]):
         return
 
     sleep(3)
