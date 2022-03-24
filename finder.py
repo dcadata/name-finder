@@ -122,6 +122,8 @@ class Displayer(Calculator):
             'peak_pct': peak_by_pct.pct_year,
             'latest_year': latest.year,
             'latest_number': latest.number,
+            'first_appearance': self._first_appearance.loc[self._first_appearance.name.apply(
+                lambda x: x.lower()) == name.lower(), 'year'].values[0],
         })
         return name_record
 
