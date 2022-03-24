@@ -17,6 +17,7 @@ class Calculator:
         self._read_data()
         self._organize_data()
         self._add_ratios()
+        del self._raw_dataframes
 
     def _read_data(self):
         data_to_read = {
