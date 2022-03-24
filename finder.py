@@ -115,10 +115,10 @@ class Displayer(Calculator):
         _add_leans(name_record)
         name_record = name_record.to_dict('records')[0]
         name_record.update({
-            'peak_number': peak_by_num.number,
             'peak_number_year': peak_by_num.year,
-            'peak_pct': peak_by_pct.pct_year,
+            'peak_number': peak_by_num.number,
             'peak_pct_year': peak_by_pct.year,
+            'peak_pct': peak_by_pct.pct_year,
             'latest_year': latest.year,
             'latest_number': latest.number,
         })
