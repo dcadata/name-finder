@@ -42,6 +42,12 @@ class Calculator:
         self._name_by_year['pct_year'] = self._name_by_year.number / self._name_by_year.number_total
         self._name_by_year = self._name_by_year.drop(columns=['number_total'])
 
+        # name by sex by year
+        self._name_by_sex_by_year = self._raw.merge(number_per_year, on=['year'], suffixes=('', '_total'))
+        self._name_by_sex_by_year['pct_year'] = (
+                self._name_by_sex_by_year.number / self._name_by_sex_by_year.number_total)
+        self._name_by_sex_by_year = self._name_by_sex_by_year.drop(columns=['number_total'])
+
         # first appearance
         self._first_appearance = self._raw.groupby('name', as_index=False).year.min()
 
