@@ -113,7 +113,6 @@ class Displayer(Calculator):
             name_record[f'ratio_{s}'] = name_record[f'number_{s}'] / name_record.number
 
         # do final computations
-        _add_leans(name_record)
         name_record = name_record.to_dict('records')[0]
         name_record.update({
             'peak_number_year': peak_by_num.year,
@@ -241,20 +240,6 @@ class Displayer(Calculator):
         else:
             years_to_select = self._years_to_select
         return years_to_select
-
-
-def _add_leans(df: pd.DataFrame):
-    # add f leans
-    mask = df.ratio_f > df.ratio_m
-    df.loc[mask, 'lean_letter'] = 'f'
-    df.loc[mask, 'lean_ratio'] = df.loc[mask, 'ratio_f']
-    # add m leans
-    mask = df.ratio_m > df.ratio_f
-    df.loc[mask, 'lean_letter'] = 'm'
-    df.loc[mask, 'lean_ratio'] = df.loc[mask, 'ratio_m']
-    # add exactly neutral/no lean
-    df.lean_letter = df.lean_letter.fillna('f/m')
-    df.lean_ratio = df.lean_ratio.fillna(0.5)
 
 
 def _calculate_number_delta(df: pd.DataFrame, **delta):
