@@ -31,19 +31,19 @@ class Calculator:
                 self._raw_dataframes.append(self._read_one_file(filename, is_territory))
 
     def _organize_data(self):
-        # base data
-        df = pd.concat(self._raw_dataframes)
-        self._raw = df.groupby(['name', 'sex', 'year'], as_index=False).number.sum()  # combine territories w/ national
-        number_per_year = df.groupby('year', as_index=False).number.sum()
+        concatenated = pd.concat(self._raw_dataframes)
+        # combine territories w/ national
+        self._raw = concatenated.groupby(['name', 'sex', 'year'], as_index=False).number.sum()
+        self._number_per_year = concatenated.groupby('year', as_index=False).number.sum()
 
         # name by year
-        self._name_by_year = df.groupby(['name', 'year'], as_index=False).number.sum().merge(
-            number_per_year, on=['year'], suffixes=('', '_total'))
+        self._name_by_year = concatenated.groupby(['name', 'year'], as_index=False).number.sum().merge(
+            self._number_per_year, on=['year'], suffixes=('', '_total'))
         self._name_by_year['pct_year'] = self._name_by_year.number / self._name_by_year.number_total
         self._name_by_year = self._name_by_year.drop(columns=['number_total'])
 
         # name by sex by year
-        self._name_by_sex_by_year = self._raw.merge(number_per_year, on=['year'], suffixes=('', '_total'))
+        self._name_by_sex_by_year = self._raw.merge(self._number_per_year, on=['year'], suffixes=('', '_total'))
         self._name_by_sex_by_year['pct_year'] = (
                 self._name_by_sex_by_year.number / self._name_by_sex_by_year.number_total)
         self._name_by_sex_by_year = self._name_by_sex_by_year.drop(columns=['number_total'])
