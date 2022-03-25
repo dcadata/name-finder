@@ -107,7 +107,7 @@ class Displayer(Calculator):
 
         df = df.sort_values('year')
 
-        # aggregate using weighted average
+        # aggregate
         name_record = df.groupby('name', as_index=False).agg({'number': sum, 'number_f': sum, 'number_m': sum})
         for s in ('f', 'm'):
             name_record[f'ratio_{s}'] = name_record[f'number_{s}'] / name_record.number
@@ -162,7 +162,7 @@ class Displayer(Calculator):
         # filter on years
         df = df[df.year.isin(self.years_to_select)].copy()
 
-        # aggregate using weighted average
+        # aggregate
         df = df.groupby('name', as_index=False).agg({'number': sum, 'number_f': sum, 'number_m': sum})
         for s in ('f', 'm'):
             df[f'ratio_{s}'] = df[f'number_{s}'] / df.number
