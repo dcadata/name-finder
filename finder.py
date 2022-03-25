@@ -83,7 +83,6 @@ class Displayer(Calculator):
         super().__init__(**kwargs)
         self._after = kwargs.get('after')  # after this year (inclusive)
         self._before = kwargs.get('before')  # before this year (inclusive)
-        self._years_to_select = kwargs.get('years_to_select')  # iterable of years to use for below analysis
         self._top = kwargs.get('top', 25)  # if searching, number of results to display
 
     def add_name(self, name: str):
@@ -226,20 +225,15 @@ class Displayer(Calculator):
 
     @property
     def years_to_select(self):
-        # set years to select based on passed
         if self._after and self._before:
-            years_to_select = tuple(range(self._after, self._before + 1))
+            years_range = (self._after, self._before + 1)
         elif self._after:
-            years_to_select = tuple(range(self._after, _MAX_YEAR + 1))
+            years_range = (self._after, _MAX_YEAR + 1)
         elif self._before:
-            years_to_select = tuple(range(_MIN_YEAR, self._before + 1))
-        elif not self._years_to_select:
-            years_to_select = tuple(range(_MIN_YEAR, _MAX_YEAR + 1))
-        elif len(self._years_to_select) == 2:
-            years_to_select = tuple(range(self._years_to_select[0], self._years_to_select[1] + 1))
+            years_range = (_MIN_YEAR, self._before + 1)
         else:
-            years_to_select = self._years_to_select
-        return years_to_select
+            years_range = (_MIN_YEAR, _MAX_YEAR + 1)
+        return tuple(range(*years_range))
 
 
 def _calculate_number_delta(df: pd.DataFrame, **delta):
