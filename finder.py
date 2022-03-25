@@ -145,8 +145,12 @@ class Displayer(Calculator):
             delta_pct: float = None,
             delta_fem_ratio: float = None,
             delta_masc_ratio: float = None,
+            after: int = None,
+            before: int = None,
     ):
         # set up
+        self._after = after
+        self._before = before
         df = self.calcd.copy()
 
         # calculate number/gender delta
