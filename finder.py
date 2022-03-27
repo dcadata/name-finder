@@ -114,22 +114,43 @@ class Displayer(Calculator):
         df = df.sort_values('year')
 
         # aggregate
-        name_record = df.groupby('name', as_index=False).agg({'number': sum, 'number_f': sum, 'number_m': sum})
+        grouped = df.groupby('name', as_index=False).agg({'number': sum, 'number_f': sum, 'number_m': sum})
         for s in ('f', 'm'):
-            name_record[f'ratio_{s}'] = name_record[f'number_{s}'] / name_record.number
+            grouped[f'ratio_{s}'] = grouped[f'number_{s}'] / grouped.number
 
         # do final computations
-        name_record = name_record.to_dict('records')[0]
-        name_record.update({
-            'peak_number_year': peak_by_num.year,
-            'peak_number': peak_by_num.number,
-            'peak_pct_year': peak_by_pct.year,
-            'peak_pct': peak_by_pct.pct_year,
-            'latest_year': latest.year,
-            'latest_number': latest.number,
-            'first_appearance': self._first_appearance.loc[self._first_appearance.name.apply(
-                lambda x: x.lower()) == name.lower(), 'year'].values[0],
-        })
+        grouped = grouped.to_dict('records')[0]
+        name_record = {
+            'name': grouped['name'],
+            'numbers': {
+                'total': grouped['number'],
+                'f': grouped['number_f'],
+                'm': grouped['number_m'],
+            },
+            'ratios': {
+                'f': grouped['ratio_f'],
+                'm': grouped['ratio_m'],
+            },
+            'peak': {
+                'by_number': {
+                    'year': peak_by_num.year,
+                    'number': peak_by_num.number,
+                },
+                'by_pct': {
+                    'year': peak_by_pct.year,
+                    'pct': peak_by_pct.pct_year,
+                },
+            },
+            'latest': {
+                'year': latest.year,
+                'number': latest.number,
+            },
+            'first_appearance': {
+                'year': self._first_appearance.loc[self._first_appearance.name.apply(
+                    lambda x: x.lower()) == name.lower(), 'year'].values[0],
+            },
+            'history': list(df.to_dict('records')),
+        }
         return name_record
 
     def add_search_condition(
