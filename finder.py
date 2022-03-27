@@ -107,7 +107,7 @@ class Displayer(Calculator):
         latest = df.loc[df.year.idxmax()].copy()
 
         # filter on years
-        df = df[df.year.isin(self.years_to_select)]
+        df = df[df.year.isin(self._years_to_select)]
         if not len(df):
             return ''
 
@@ -170,7 +170,7 @@ class Displayer(Calculator):
                 df = _calculate_gender_delta(df, after=delta_after, fem_ratio=delta_fem_ratio)
 
         # filter on years
-        df = df[df.year.isin(self.years_to_select)].copy()
+        df = df[df.year.isin(self._years_to_select)].copy()
 
         # aggregate
         df = df.groupby('name', as_index=False).agg({'number': sum, 'number_f': sum, 'number_m': sum})
@@ -235,7 +235,7 @@ class Displayer(Calculator):
         return df
 
     @property
-    def years_to_select(self):
+    def _years_to_select(self):
         if self._after and self._before:
             years_range = (self._after, self._before + 1)
         elif self._after:
