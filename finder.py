@@ -85,8 +85,15 @@ class Displayer(Calculator):
         self._before = kwargs.get('before')  # before this year (inclusive)
         self._top = kwargs.get('top', 25)  # if searching, number of results to display
 
-    def add_name(self, name: str):
+    def add_name(
+            self,
+            name: str,
+            after: int = None,
+            before: int = None,
+    ):
         # set up
+        self._after = after
+        self._before = before
         df = self.calcd.copy()
 
         # filter on name
