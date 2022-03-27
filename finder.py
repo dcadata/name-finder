@@ -83,7 +83,7 @@ class Displayer(Calculator):
         super().__init__(**kwargs)
         self._after = kwargs.get('after')  # after this year (inclusive)
         self._before = kwargs.get('before')  # before this year (inclusive)
-        self._top = kwargs.get('top', 25)  # if searching, number of results to display
+        self._top = kwargs.get('top')  # if searching, number of results to display
 
     def add_name(
             self,
@@ -175,10 +175,12 @@ class Displayer(Calculator):
             delta_masc_ratio: float = None,
             after: int = None,
             before: int = None,
+            top: int = 25,
     ):
         # set up
         self._after = after
         self._before = before
+        self.top = top
         df = self.calcd.copy()
 
         # calculate number/gender delta
@@ -197,7 +199,6 @@ class Displayer(Calculator):
         df = df.groupby('name', as_index=False).agg({'number': sum, 'number_f': sum, 'number_m': sum})
         for s in ('f', 'm'):
             df[f'ratio_{s}'] = df[f'number_{s}'] / df.number
-        df = df[['name', 'number', 'ratio_f', 'ratio_m']]
 
         # add lowercase name for filtering
         df['name_lower'] = df.name.apply(lambda x: x.lower())
@@ -251,8 +252,7 @@ class Displayer(Calculator):
 
         if not len(df):
             return
-        df = df.sort_values('number', ascending=False).reset_index(drop=True)
-        df = df.iloc[:self._top].copy()
+        df = df.sort_values('number', ascending=False).reset_index(drop=True).iloc[:self._top].copy()
         return df
 
     @property
