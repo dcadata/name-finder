@@ -83,7 +83,6 @@ class Displayer(Calculator):
         super().__init__(**kwargs)
         self._after = kwargs.get('after')  # after this year (inclusive)
         self._before = kwargs.get('before')  # before this year (inclusive)
-        self._top = kwargs.get('top')  # if searching, number of results to display
 
     def add_name(
             self,
@@ -180,7 +179,6 @@ class Displayer(Calculator):
         # set up
         self._after = after
         self._before = before
-        self._top = top
         df = self.calcd.copy()
 
         # calculate number/gender delta
@@ -252,7 +250,7 @@ class Displayer(Calculator):
 
         if not len(df):
             return
-        df = df.sort_values('number', ascending=False).reset_index(drop=True).iloc[:self._top].copy()
+        df = df.sort_values('number', ascending=False).reset_index(drop=True).iloc[:top].copy()
         return df
 
     @property
