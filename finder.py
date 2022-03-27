@@ -180,7 +180,7 @@ class Displayer(Calculator):
         # set up
         self._after = after
         self._before = before
-        self.top = top
+        self._top = top
         df = self.calcd.copy()
 
         # calculate number/gender delta
