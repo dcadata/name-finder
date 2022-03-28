@@ -259,27 +259,16 @@ class Displayer(Calculator):
     def guess_gender(
             self,
             name: str,
-            year: int,
-            high_school: bool = False,  # provided year is high school graduation year
-            college: bool = False,
-            graduate: bool = False,
+            year: int = None,
     ):
         df = self.calcd.copy()
-
-        # estimate year of birth (yob) based on graduation year
-        if high_school:
-            adj = 18
-        elif college:
-            adj = 22
-        elif graduate:
-            adj = 26
-        else:  # provided year is assumed to be yob
-            adj = 0
+        years = []
 
         # filter dataframe
-        yob = year - adj
-        years = list(range(yob - 2, yob + 3))
-        df = df[(df['name'].str.lower() == name.lower()) & df.year.isin(years)]
+        df = df[df['name'].str.lower() == name.lower()].copy()
+        if year:
+            years = list(range(year - 2, year + 3))
+            df = df[df.year.isin(years)]
         if not len(df):
             return []
 
@@ -290,12 +279,13 @@ class Displayer(Calculator):
 
         # output record
         record = grouped.to_dict('records')[0]
-        output = [{
+        output = {
             'name': record['name'],
             'guess': 'F' if record['number_f'] > record['number_m'] else 'M',
             'confidence': round(max(record['ratio_f'], record['ratio_m']), 2),
-            'yob_range': years,
-        }]
+        }
+        if year:
+            output['yob_range'] = years
         return output
 
     @property
