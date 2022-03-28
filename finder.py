@@ -278,6 +278,8 @@ class Displayer(Calculator):
         yob = year - adj
         years = list(range(yob - 2, yob + 3))
         df = df[(df['name'].str.lower() == name.lower()) & df.year.isin(years)]
+        if not len(df):
+            return []
 
         # aggregate
         grouped = df.groupby('name', as_index=False).agg({'number': sum, 'number_f': sum, 'number_m': sum})
@@ -286,11 +288,12 @@ class Displayer(Calculator):
 
         # output record
         record = grouped.to_dict('records')[0]
-        output = {
+        output = [{
+            'name': record['name'],
             'guess': 'F' if record['number_f'] > record['number_m'] else 'M',
             'confidence': round(max(record['ratio_f'], record['ratio_m']), 2),
             'yob_range': years,
-        }
+        }]
         return output
 
     @property
