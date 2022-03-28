@@ -90,6 +90,7 @@ class Displayer(Calculator):
             name: str,
             after: int = None,
             before: int = None,
+            include_history: bool = None,
     ):
         # set up
         self._after = after
@@ -149,7 +150,7 @@ class Displayer(Calculator):
                 'year': self._first_appearance.loc[self._first_appearance.name.apply(
                     lambda x: x.lower()) == name.lower(), 'year'].values[0] if self._first_appearance else None,
             },
-            'history': list(df.to_dict('records')),
+            'history': list(df.to_dict('records')) if include_history else df,
         }
         return name_record
 
