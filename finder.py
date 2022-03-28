@@ -254,6 +254,44 @@ class Displayer(Calculator):
         full = self.calcd[self.calcd.name.isin(summary.name)]
         return full
 
+    def guess_gender(
+            self,
+            name: str,
+            year: int,
+            high_school: bool = False,  # provided year is high school graduation year
+            college: bool = False,
+            graduate: bool = False,
+    ):
+        df = self.calcd.copy()
+
+        # estimate year of birth (yob) based on graduation year
+        if high_school:
+            adj = 18
+        elif college:
+            adj = 22
+        elif graduate:
+            adj = 26
+        else:  # provided year is assumed to be yob
+            adj = 0
+
+        # filter dataframe
+        yob = year - adj
+        years = tuple(range(yob - 3, yob + 4))
+        df = df[(df['name'].str.lower() == name.lower()) & df.year.isin(years)]
+
+        # aggregate
+        grouped = df.groupby('name', as_index=False).agg({'number': sum, 'number_f': sum, 'number_m': sum})
+        for s in ('f', 'm'):
+            grouped[f'ratio_{s}'] = grouped[f'number_{s}'] / grouped.number
+
+        # output record
+        record = grouped.to_dict('records')[0]
+        record['probability'] = round(max(record['ratio_f'], record['ratio_m']) * 100)
+        record['gender'] = 'F' if record['ratio_f'] > record['ratio_m'] else 'M'
+        record['conclusion'] = 'A {name} born around {yob} is {probability}% likely to be {gender}.'.format(
+            **record, yob=yob)
+        return record
+
     @property
     def _years_to_select(self):
         if self._after and self._before:
