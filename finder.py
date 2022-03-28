@@ -253,8 +253,8 @@ class Displayer(Calculator):
         if not len(df):
             return
         summary = df.sort_values('number', ascending=False).head(top)
-        full = self.calcd[self.calcd.name.isin(summary.name)]
-        return full
+        # history = list(self.calcd[self.calcd.name.isin(summary.name)].to_dict('records'))
+        return summary
 
     def guess_gender(
             self,
