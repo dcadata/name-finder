@@ -250,8 +250,9 @@ class Displayer(Calculator):
 
         if not len(df):
             return
-        df = df.sort_values('number', ascending=False).reset_index(drop=True).iloc[:top].copy()
-        return df
+        summary = df.sort_values('number', ascending=False).head(top)
+        full = self.calcd[self.calcd.name.isin(summary.name)]
+        return full
 
     @property
     def _years_to_select(self):
