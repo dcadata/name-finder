@@ -12,6 +12,7 @@ class Calculator:
     def __init__(self, **kwargs):
         self._national_data_directory = 'data/names/'
         self._territories_data_directory = 'data/namesbyterritory/'
+        self._first_appearance = None
 
     def calculate(self):
         self._read_data()
@@ -146,7 +147,7 @@ class Displayer(Calculator):
             },
             'first_appearance': {
                 'year': self._first_appearance.loc[self._first_appearance.name.apply(
-                    lambda x: x.lower()) == name.lower(), 'year'].values[0],
+                    lambda x: x.lower()) == name.lower(), 'year'].values[0] if self._first_appearance else None,
             },
             'history': list(df.to_dict('records')),
         }
