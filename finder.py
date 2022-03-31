@@ -85,7 +85,6 @@ class Displayer(Calculator):
             name: str,
             after: int = None,
             before: int = None,
-            include_history: bool = None,
     ):
         # set up
         self._after = after
@@ -142,8 +141,9 @@ class Displayer(Calculator):
                 'number': latest.number,
             },
             'first_appearance': {
-                'year': self._first_appearance.loc[self._first_appearance.name.apply(
-                    lambda x: x.lower()) == name.lower(), 'year'].values[0] if self._first_appearance else None,
+                'year': self._first_appearance.loc[
+                    self._first_appearance.name.apply(lambda x: x.lower()) == name.lower(), 'year'
+                ].values[0] if self._first_appearance is not None else None,
             },
             'history': list(df.to_dict('records')) if _OUTPUT_RECORDS else df,
         }
@@ -171,7 +171,6 @@ class Displayer(Calculator):
             delta_masc_ratio: float = None,
             after: int = None,
             before: int = None,
-            top: int = 25,
     ):
         # set up
         self._after = after
@@ -247,8 +246,11 @@ class Displayer(Calculator):
 
         if not len(df):
             return
-        summary = df.sort_values('number', ascending=False).head(top)
-        # history = list(self.calcd[self.calcd.name.isin(summary.name)].to_dict('records'))
+        summary = df.sort_values('number', ascending=False)
+        # history = self.calcd[self.calcd.name.isin(summary.name)].sort_values('year')
+        if _OUTPUT_RECORDS:
+            summary = summary.to_dict('records')
+            # history = history.to_dict('records')
         return summary
 
     def guess_gender(
