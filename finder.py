@@ -85,7 +85,7 @@ class Displayer(Calculator):
         self._after = kwargs.get('after')  # after this year (inclusive)
         self._before = kwargs.get('before')  # before this year (inclusive)
 
-    def add_name(
+    def get_name(
             self,
             name: str,
             after: int = None,
@@ -154,7 +154,7 @@ class Displayer(Calculator):
         }
         return name_record
 
-    def add_search_condition(
+    def search_names(
             self,
             number: tuple = None,
             length: tuple = None,
