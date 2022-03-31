@@ -6,6 +6,7 @@ import pandas as pd
 # years as currently available in dataset
 _MIN_YEAR = 1880
 _MAX_YEAR = int(re.search('^yob([0-9]{4}).txt$', os.listdir('data/names/')[-1]).group(1))
+_OUTPUT_RECORDS = False
 
 
 class Calculator:
@@ -144,7 +145,7 @@ class Displayer(Calculator):
                 'year': self._first_appearance.loc[self._first_appearance.name.apply(
                     lambda x: x.lower()) == name.lower(), 'year'].values[0] if self._first_appearance else None,
             },
-            'history': list(df.to_dict('records')) if include_history else df,
+            'history': list(df.to_dict('records')) if _OUTPUT_RECORDS else df,
         }
         return name_record
 
