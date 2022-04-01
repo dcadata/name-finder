@@ -339,6 +339,7 @@ class Displayer(Calculator):
         output = {
             'name': name.title(),
             'living_only': bool(living_only),
+            'sex': sex.upper(),
             'prediction': prediction,
         }
         return output
