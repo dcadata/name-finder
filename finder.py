@@ -297,7 +297,7 @@ class Displayer(Calculator):
             'confidence': round(max(ratio_f, ratio_m), 2),
         }
         if year:
-            output['yob_range'] = years
+            output['birth_years'] = years
         return output
 
     def predict_age(
