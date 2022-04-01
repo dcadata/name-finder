@@ -281,21 +281,14 @@ class Displayer(Calculator):
         if not len(df):
             return []
 
-        # calculate
-        _get_number_by_sex = lambda sex: df.loc[df.sex == sex.upper(), 'number'].values[0] if len(
-            df.loc[df.sex == sex.upper(), 'number']) else 0
-        number_f = _get_number_by_sex('f')
-        number_m = _get_number_by_sex('m')
-        number = number_f + number_m
-        ratio_f = number_f / number
-        ratio_m = number_m / number
-
         # create output
+        number = df.number.sum()
+        numbers = df.groupby('sex').number.sum()
         output = {
             'name': name.title(),
             'living_only': bool(living_only),
-            'prediction': 'F' if number_f > number_m else 'M',
-            'confidence': round(max(ratio_f, ratio_m), 2),
+            'prediction': 'F' if numbers['F'] > numbers['M'] else 'M',
+            'confidence': round(max(numbers['F'] / number, numbers['M'] / number), 2),
         }
         if year:
             output['birth_years'] = years
