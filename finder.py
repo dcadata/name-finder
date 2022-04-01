@@ -19,7 +19,6 @@ class Calculator:
         self._read_data()
         self._organize_data()
         self._add_ratios()
-        del self._raw_dataframes
 
     def _read_data(self):
         data_to_read = {
@@ -35,6 +34,8 @@ class Calculator:
 
     def _organize_data(self):
         concatenated = pd.concat(self._raw_dataframes)
+        del self._raw_dataframes
+
         # combine territories w/ national
         self._raw = concatenated.groupby(['name', 'sex', 'year'], as_index=False).number.sum()
         self._number_per_year = concatenated.groupby('year', as_index=False).number.sum()
