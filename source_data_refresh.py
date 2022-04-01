@@ -30,10 +30,13 @@ def _refresh_babynames(session):
 
 
 def _refresh_actuarial(session):
-    response = session.get('https://www.ssa.gov/oact/HistEst/Death/2021/DeathProbsE_M_Hist_TR2021.txt')
-    lines = [line.split() for line in response.text.splitlines()[1:]]
-    columns = lines[0]
-    table = pd.DataFrame(lines[1:], columns=columns)
+    response = session.get('https://www.ssa.gov/oact/HistEst/CohLifeTables/2021/CohLifeTables_M_Alt2_TR2021.txt')
+    lines = [line.split() for line in response.text.splitlines()]
+    table = pd.DataFrame(lines[6:], columns=lines[5])
+    columns = {'Year': 'year', 'x': 'age', 'l(x)': 'survivors'}
+    table = table[list(columns.keys())].rename(columns=columns)
+    for col in table.columns:
+        table[col] = table[col].apply(int)
     table.to_csv('data/actuarial.csv', index=False)
 
 
