@@ -29,7 +29,7 @@ def _refresh_babynames(session):
     return True
 
 
-def _refresh_actuarial_tables(session):
+def _refresh_actuarial(session):
     response = session.get('https://www.ssa.gov/oact/HistEst/Death/2021/DeathProbsE_M_Hist_TR2021.txt')
     lines = [line.split() for line in response.text.splitlines()[1:]]
     columns = lines[0]
@@ -40,7 +40,7 @@ def _refresh_actuarial_tables(session):
 def main():
     session = requests.Session()
     if _refresh_babynames(session):
-        _refresh_actuarial_tables(session)
+        _refresh_actuarial(session)
     session.close()
 
 
