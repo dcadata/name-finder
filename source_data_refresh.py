@@ -42,8 +42,7 @@ def _refresh_actuarial(session):
 
 def main():
     session = requests.Session()
-    if _refresh_babynames(session):
-        _refresh_actuarial(session)
+    _refresh_babynames(session)
     session.close()
 
 
