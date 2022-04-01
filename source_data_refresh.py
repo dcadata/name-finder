@@ -41,7 +41,7 @@ def _refresh_actuarial(session):
         table = table[list(columns.keys())].rename(columns=columns)
         for col in table.columns:
             table[col] = table[col].apply(int)
-        table.to_csv(f'data/actuarial_{s.lower()}.csv', index=False)
+        table.to_csv(f'data/actuarial/{s.lower()}.csv', index=False)
 
 
 def main():
