@@ -30,8 +30,10 @@ def _refresh_babynames(session):
 
 
 def _refresh_actuarial(session):
+    max_year = _MAX_YEAR + 2
     for s in ('F', 'M'):
-        response = session.get(f'https://www.ssa.gov/oact/HistEst/CohLifeTables/2021/CohLifeTables_{s}_Alt2_TR2021.txt')
+        url = f'https://www.ssa.gov/oact/HistEst/CohLifeTables/{max_year}/CohLifeTables_{s}_Alt2_TR{max_year}.txt'
+        response = session.get(url)
         sleep(3)
         lines = [line.split() for line in response.text.splitlines()]
         table = pd.DataFrame(lines[6:], columns=lines[5])
@@ -44,7 +46,8 @@ def _refresh_actuarial(session):
 
 def main():
     session = requests.Session()
-    _refresh_babynames(session)
+    if _refresh_babynames(session):
+        _refresh_actuarial(session)
     session.close()
 
 
