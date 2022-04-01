@@ -1,6 +1,7 @@
 import os
 import re
 
+import numpy as np
 import pandas as pd
 
 # years as currently available in dataset
@@ -315,25 +316,30 @@ class Displayer(Calculator):
         if sex:
             df = df[df.sex == sex.upper()].copy()
 
-        # calculate
-        df['decade'] = df.age.apply(lambda x: int(x / 10))
-        df['age_min'] = df.age.copy()
-        df['age_max'] = df.age.copy()
-        df = df.groupby('decade', as_index=False).agg({'number': sum, 'age_min': min, 'age_max': max})
-        df['age_range'] = df.age_min.apply(str) + '-' + df.age_max.apply(str)
+        # calculate cumulative probabilities
         total = df.number.sum()
-        df['pct'] = df.number.apply(lambda x: x / total)
-        df.pct = df.pct.apply(lambda x: round(x, 2))
-        df.number = df.number.apply(round).apply(int)
+        prob = df.groupby('age', as_index=False).number.sum()
+        prob['pct'] = prob.number.apply(lambda x: x / total)
+        prob = prob.sort_values('pct', ascending=False)
+        prob['cumulative'] = prob.pct.cumsum()
+        prediction = {
+            'mean': int(round(df.groupby(df.name).apply(lambda x: np.average(x.age, weights=x.number)).values[0])),
+            'percentiles': {},
+        }
+        for i in (0.25, 0.33, 0.5, 0.68, 0.95, 0.997):
+            ages = prob[prob.cumulative <= i].age
+            if not len(ages):
+                continue
+            prediction['percentiles'][i] = {
+                'min': ages.min(),
+                'max': ages.max(),
+            }
 
         # create output
-        df = df[['decade', 'age_min', 'age_max', 'age_range', 'number', 'pct']]
-        if _OUTPUT_RECORDS:
-            df = df.to_dict('records')
         output = {
             'name': name.title(),
             'living_only': bool(living_only),
-            'prediction': df,
+            'prediction': prediction,
         }
         return output
 
