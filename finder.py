@@ -265,7 +265,7 @@ class Displayer(Calculator):
             self,
             name: str,
             year: int = None,
-            living_only: bool = True,
+            living_only: bool = False,
     ):
         df = self._raw_with_actuarial.copy()
         if living_only:
@@ -304,7 +304,7 @@ class Displayer(Calculator):
             self,
             name: str,
             sex: str = None,
-            living_only: bool = True,
+            living_only: bool = False,
     ):
         df = self._raw_with_actuarial.copy()
         if living_only:
