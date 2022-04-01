@@ -265,7 +265,7 @@ class Displayer(Calculator):
     def predict_gender(
             self,
             name: str,
-            year: int = None,
+            birth_year: int = None,
             living_only: bool = False,
     ):
         df = self._raw_with_actuarial.copy()
@@ -274,24 +274,25 @@ class Displayer(Calculator):
 
         # filter dataframe
         df = df[df['name'].str.lower() == name.lower()].copy()
-        years = []
-        if year:
-            years = list(range(year - 2, year + 3))
-            df = df[df.year.isin(years)]
+        if birth_year:
+            birth_years = list(range(birth_year - 2, birth_year + 3))
+            df = df[df.year.isin(birth_years)]
+        else:
+            birth_years = []
+
         if not len(df):
-            return []
+            return {}
 
         # create output
         number = df.number.sum()
         numbers = df.groupby('sex').number.sum()
         output = {
             'name': name.title(),
+            'birth_year_range': birth_years,
             'living_only': bool(living_only),
             'prediction': 'F' if numbers['F'] > numbers['M'] else 'M',
             'confidence': round(max(numbers['F'] / number, numbers['M'] / number), 2),
         }
-        if year:
-            output['birth_years'] = years
         return output
 
     def predict_age(
@@ -308,6 +309,9 @@ class Displayer(Calculator):
         df = df[df['name'].str.lower() == name.lower()].copy()
         if sex:
             df = df[df.sex == sex.upper()].copy()
+
+        if not len(df):
+            return {}
 
         # calculate cumulative probabilities
         total = df.number.sum()
@@ -331,11 +335,10 @@ class Displayer(Calculator):
         # create output
         output = {
             'name': name.title(),
+            'sex': sex.upper() if sex else None,
             'living_only': bool(living_only),
             'prediction': prediction,
         }
-        if sex:
-            output['sex'] = sex.upper()
         return output
 
     @property
