@@ -253,7 +253,7 @@ class Displayer(Calculator):
             # history = history.to_dict('records')
         return summary
 
-    def guess_gender(
+    def predict_gender(
             self,
             name: str,
             year: int = None,
@@ -278,7 +278,7 @@ class Displayer(Calculator):
         record = grouped.to_dict('records')[0]
         output = {
             'name': record['name'],
-            'guess': 'F' if record['number_f'] > record['number_m'] else 'M',
+            'prediction': 'F' if record['number_f'] > record['number_m'] else 'M',
             'confidence': round(max(record['ratio_f'], record['ratio_m']), 2),
         }
         if year:
