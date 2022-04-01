@@ -19,6 +19,7 @@ class Calculator:
         self._read_data()
         self._organize_data()
         self._add_ratios()
+        self._add_actuarial()
 
     def _read_data(self):
         data_to_read = {
@@ -57,6 +58,12 @@ class Calculator:
         for s in ('f', 'm'):
             self.calcd[f'number_{s}'] = self.calcd[f'number_{s}'].fillna(0).apply(int)
             self.calcd[f'ratio_{s}'] = self.calcd[f'number_{s}'] / self.calcd['number']
+
+    def _add_actuarial(self):
+        self._raw_with_actuarial = pd.concat(self._raw[self._raw.sex == s.upper()].merge(_load_actuarial(s), on=[
+            'year']) for s in ('f', 'm'))  # loses years before 1900
+        self._raw_with_actuarial['number_living'] = (
+                self._raw_with_actuarial.number * self._raw_with_actuarial.survival_prob)
 
     def _read_one_file(self, filename, is_territory=None):
         df = self._read_one_file_territory(filename) if is_territory else self._read_one_file_national(filename)
@@ -297,6 +304,15 @@ class Displayer(Calculator):
         else:
             years_range = (_MIN_YEAR, _MAX_YEAR + 1)
         return tuple(range(*years_range))
+
+
+def _load_actuarial(sex: str):
+    actuarial = pd.read_csv(f'data/actuarial_{sex}.csv', dtype=int)
+    actuarial = actuarial[actuarial.year == _MAX_YEAR].copy()
+    actuarial['birth_year'] = actuarial.year - actuarial.age
+    actuarial['survival_prob'] = actuarial.survivors.apply(lambda x: x / 100000)
+    actuarial = actuarial.drop(columns=['year', 'survivors']).rename(columns={'birth_year': 'year'})
+    return actuarial
 
 
 def _calculate_number_delta(df: pd.DataFrame, **delta):
