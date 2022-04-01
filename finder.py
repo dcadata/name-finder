@@ -265,32 +265,76 @@ class Displayer(Calculator):
             self,
             name: str,
             year: int = None,
+            living_only: bool = True,
     ):
-        df = self.calcd.copy()
-        years = []
+        df = self._raw_with_actuarial.copy()
+        if living_only:
+            df = df.drop(columns=['number']).rename(columns={'number_living': 'number'})
 
         # filter dataframe
         df = df[df['name'].str.lower() == name.lower()].copy()
+        years = []
         if year:
             years = list(range(year - 2, year + 3))
             df = df[df.year.isin(years)]
         if not len(df):
             return []
 
-        # aggregate
-        grouped = df.groupby('name', as_index=False).agg({'number': sum, 'number_f': sum, 'number_m': sum})
-        for s in ('f', 'm'):
-            grouped[f'ratio_{s}'] = grouped[f'number_{s}'] / grouped.number
+        # calculate
+        _get_number_by_sex = lambda sex: df.loc[df.sex == sex.upper(), 'number'].values[0] if len(
+            df.loc[df.sex == sex.upper(), 'number']) else 0
+        number_f = _get_number_by_sex('f')
+        number_m = _get_number_by_sex('m')
+        number = number_f + number_m
+        ratio_f = number_f / number
+        ratio_m = number_m / number
 
-        # output record
-        record = grouped.to_dict('records')[0]
+        # create output
         output = {
-            'name': record['name'],
-            'prediction': 'F' if record['number_f'] > record['number_m'] else 'M',
-            'confidence': round(max(record['ratio_f'], record['ratio_m']), 2),
+            'name': name.title(),
+            'living_only': bool(living_only),
+            'prediction': 'F' if number_f > number_m else 'M',
+            'confidence': round(max(ratio_f, ratio_m), 2),
         }
         if year:
             output['yob_range'] = years
+        return output
+
+    def predict_age(
+            self,
+            name: str,
+            sex: str = None,
+            living_only: bool = True,
+    ):
+        df = self._raw_with_actuarial.copy()
+        if living_only:
+            df = df.drop(columns=['number']).rename(columns={'number_living': 'number'})
+
+        # filter dataframe
+        df = df[df['name'].str.lower() == name.lower()].copy()
+        if sex:
+            df = df[df.sex == sex.upper()].copy()
+
+        # calculate
+        df['decade'] = df.age.apply(lambda x: int(x / 10))
+        df['age_min'] = df.age.copy()
+        df['age_max'] = df.age.copy()
+        df = df.groupby('decade', as_index=False).agg({'number': sum, 'age_min': min, 'age_max': max})
+        df['age_range'] = df.age_min.apply(str) + '-' + df.age_max.apply(str)
+        total = df.number.sum()
+        df['pct'] = df.number.apply(lambda x: x / total)
+        df.pct = df.pct.apply(lambda x: round(x, 2))
+        df.number = df.number.apply(round).apply(int)
+
+        # create output
+        df = df[['decade', 'age_min', 'age_max', 'age_range', 'number', 'pct']]
+        if _OUTPUT_RECORDS:
+            df = df.to_dict('records')
+        output = {
+            'name': name.title(),
+            'living_only': bool(living_only),
+            'prediction': df,
+        }
         return output
 
     @property
