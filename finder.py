@@ -165,8 +165,6 @@ class Displayer(Loader):
 
     def search(
             self,
-            number: tuple = None,
-            length: tuple = None,
             start: tuple = None,
             end: tuple = None,
             contains: tuple = None,
@@ -176,6 +174,7 @@ class Displayer(Loader):
             not_contains: tuple = None,
             order: tuple = None,
             pattern: str = None,
+            length: tuple = None,
             fem: (bool, tuple) = None,
             masc: (bool, tuple) = None,
             neu: (bool, tuple) = None,
@@ -183,6 +182,7 @@ class Displayer(Loader):
             delta_pct: float = None,
             delta_fem_ratio: float = None,
             delta_masc_ratio: float = None,
+            number: tuple = None,
             after: int = None,
             before: int = None,
     ):
