@@ -34,6 +34,8 @@ def _refresh_actuarial(session):
     for s in ('F', 'M'):
         url = f'https://www.ssa.gov/oact/HistEst/CohLifeTables/{max_year}/CohLifeTables_{s}_Alt2_TR{max_year}.txt'
         response = session.get(url)
+        if not response.ok:
+            return
         sleep(3)
         lines = [line.split() for line in response.text.splitlines()]
         table = pd.DataFrame(lines[6:], columns=lines[5])
