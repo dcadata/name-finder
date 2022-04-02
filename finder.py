@@ -274,6 +274,7 @@ class Displayer(Loader):
             name: str,
             sex: str = None,
             exclude_deceased: bool = False,
+            percentiles:bool=None,
     ):
         df = self._raw_with_actuarial.copy()
         if exclude_deceased:
