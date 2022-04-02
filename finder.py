@@ -271,10 +271,10 @@ class Displayer(Loader):
             self,
             name: str,
             sex: str = None,
-            living_only: bool = False,
+            exclude_deceased: bool = False,
     ):
         df = self._raw_with_actuarial.copy()
-        if living_only:
+        if exclude_deceased:
             df = df.drop(columns=['number']).rename(columns={'number_living': 'number'})
 
         # filter dataframe
@@ -308,7 +308,7 @@ class Displayer(Loader):
         output = {
             'name': name.title(),
             'sex': sex.upper() if sex else None,
-            'living_only': bool(living_only),
+            'exclude_deceased': bool(exclude_deceased),
             'prediction': prediction,
         }
         return output
@@ -317,10 +317,10 @@ class Displayer(Loader):
             self,
             name: str,
             birth_year: int = None,
-            living_only: bool = False,
+            exclude_deceased: bool = False,
     ):
         df = self._raw_with_actuarial.copy()
-        if living_only:
+        if exclude_deceased:
             df = df.drop(columns=['number']).rename(columns={'number_living': 'number'})
 
         # filter dataframe
@@ -340,7 +340,7 @@ class Displayer(Loader):
         output = {
             'name': name.title(),
             'birth_year_range': birth_years,
-            'living_only': bool(living_only),
+            'exclude_deceased': bool(exclude_deceased),
             'prediction': 'F' if numbers['F'] > numbers['M'] else 'M',
             'confidence': round(max(numbers['F'] / number, numbers['M'] / number), 2),
         }
