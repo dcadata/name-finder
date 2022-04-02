@@ -163,7 +163,7 @@ class Displayer(Loader):
         }
         return name_record
 
-    def search_names(
+    def search(
             self,
             number: tuple = None,
             length: tuple = None,
