@@ -23,12 +23,12 @@ class Calculator:
         self._add_actuarial()
 
     def _read_data(self):
-        data_to_read = {
+        directories = {
             self._national_data_directory: False,
             self._territories_data_directory: True,
         }
         self._raw_dataframes = []
-        for data_directory, is_territory in data_to_read.items():
+        for data_directory, is_territory in directories.items():
             for filename in os.listdir(data_directory):
                 if not filename.lower().endswith('.txt'):
                     continue
