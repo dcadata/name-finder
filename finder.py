@@ -25,23 +25,21 @@ class Loader:
             self._national_data_directory: False,
             self._territories_data_directory: True,
         }
-        self._raw_dataframes = []
+        data = []
         for data_directory, is_territory in directories.items():
             for filename in os.listdir(data_directory):
                 if not filename.lower().endswith('.txt'):
                     continue
-                self._raw_dataframes.append(self._read_one_file(filename, is_territory))
+                data.append(self._read_one_file(filename, is_territory))
+        self._concatenated = pd.concat(data)
 
     def _calculate(self):
-        concatenated = pd.concat(self._raw_dataframes)
-        del self._raw_dataframes
-
         # combine territories w/ national
-        self._raw = concatenated.groupby(['name', 'sex', 'year'], as_index=False).number.sum()
-        self._number_per_year = concatenated.groupby('year', as_index=False).number.sum()
+        self._raw = self._concatenated.groupby(['name', 'sex', 'year'], as_index=False).number.sum()
+        self._number_per_year = self._concatenated.groupby('year', as_index=False).number.sum()
 
         # name by year
-        self._name_by_year = concatenated.groupby(['name', 'year'], as_index=False).number.sum().merge(
+        self._name_by_year = self._concatenated.groupby(['name', 'year'], as_index=False).number.sum().merge(
             self._number_per_year, on=['year'], suffixes=('', '_total'))
         self._name_by_year['pct_year'] = self._name_by_year.number / self._name_by_year.number_total
         self._name_by_year = self._name_by_year.drop(columns=['number_total'])
