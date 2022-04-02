@@ -314,6 +314,7 @@ class Displayer(Loader):
             'name': name.title(),
             'sex': sex.upper() if sex else None,
             'exclude_deceased': bool(exclude_deceased),
+            'buckets': buckets,
             'prediction': prediction,
         }
         return output
