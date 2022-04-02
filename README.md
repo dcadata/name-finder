@@ -1,6 +1,10 @@
 # Neuname Name API
 
-Age distribution and gender of first names
+Age distribution (based on name and optionally sex)
+
+and gender (based on name and optionally age)
+
+of first names
 
 search for first names based on their characteristics
 
