@@ -282,7 +282,7 @@ class Displayer(Loader):
             name: str,
             sex: str = None,
             exclude_deceased: bool = False,
-            percentiles:bool=None,
+            percentiles: str = '',
     ):
         df = self._raw_with_actuarial.copy()
         if exclude_deceased:
@@ -306,7 +306,7 @@ class Displayer(Loader):
             'mean': int(round(df.groupby(df.name).apply(lambda x: np.average(x.age, weights=x.number)).values[0])),
             'percentiles': {},
         }
-        for i in (0.25, 0.33, 0.5, 0.68, 0.95, 0.997):
+        for i in _get_percentiles(percentiles):
             ages = prob[prob.cumulative <= i].age
             if not len(ages):
                 continue
@@ -399,6 +399,18 @@ def _calculate_gender_delta(df: pd.DataFrame, **delta):
         chg['delta'] = (chg.ratio_f_y1 - chg.ratio_f_y2).apply(abs).apply(lambda x: x <= 0.01)
     df = df[df.name.isin(chg[chg.delta].name)].copy()
     return df
+
+
+def _get_percentiles(percentiles: str = ''):
+    if percentiles.startswith('tenth'):
+        perc = tuple(i / 10 for i in range(1, 11))
+    elif percentiles.startswith('quint'):
+        perc = (0.2, 0.4, 0.6, 0.8, 1)
+    elif percentiles.startswith('quart'):
+        perc = (0.25, 0.5, 0.75, 1)
+    else:
+        perc = (0.68, 0.95, 0.997)
+    return perc
 
 
 def quickplot(calcd: pd.DataFrame, name: str, kind: str = None):
