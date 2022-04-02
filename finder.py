@@ -3,6 +3,7 @@ import re
 
 import numpy as np
 import pandas as pd
+import seaborn as sns
 
 # years as currently available in dataset
 _MIN_YEAR = 1880
@@ -390,3 +391,13 @@ def _calculate_gender_delta(df: pd.DataFrame, **delta):
         chg['delta'] = (chg.ratio_f_y1 - chg.ratio_f_y2).apply(abs).apply(lambda x: x <= 0.01)
     df = df[df.name.isin(chg[chg.delta].name)].copy()
     return df
+
+
+def quickplot(calcd: pd.DataFrame, name: str, kind: str = None):
+    df = calcd[calcd['name'].str.lower() == name.lower()] if name else calcd
+    plt = sns.lineplot(x=df.year, y=df[f'{kind}_f'], color='red')
+    sns.lineplot(x=df.year, y=df[f'{kind}_m'], color='blue')
+    if kind == 'number':
+        sns.lineplot(x=df.year, y=df.number, color='gray')
+    plt.set_title(name.title())
+    return plt
