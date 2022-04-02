@@ -100,7 +100,7 @@ class Displayer(Loader):
             name: str,
             after: int = None,
             before: int = None,
-    ):
+    ) -> dict:
         # set up
         self._after = after
         self._before = before
@@ -109,7 +109,7 @@ class Displayer(Loader):
         # filter on name
         df = df[df['name'].str.lower() == name.lower()]
         if not len(df):
-            return ''
+            return {}
 
         # create metadata dfs
         peak_by_num = df.loc[df.number.idxmax()].copy()
@@ -119,7 +119,7 @@ class Displayer(Loader):
         # filter on years
         df = df[df.year.isin(self._years_to_select)]
         if not len(df):
-            return ''
+            return {}
 
         df = df.sort_values('year')
 
@@ -193,7 +193,7 @@ class Displayer(Loader):
             number: tuple = None,
             after: int = None,
             before: int = None,
-    ):
+    ) -> list:
         # set up
         self._after = after
         self._before = before
@@ -267,7 +267,7 @@ class Displayer(Loader):
             df = df[~df.name_lower.str.contains('|'.join(not_contains).lower())]
 
         if not len(df):
-            return
+            return []
 
         summary = df.sort_values('number', ascending=False)
         # summary = self._calcd[self._calcd.name.isin(summary.name)].sort_values('year')
@@ -279,7 +279,7 @@ class Displayer(Loader):
             sex: str = None,
             exclude_deceased: bool = False,
             percentiles: str = '',
-    ):
+    ) -> dict:
         df = self._raw_with_actuarial.copy()
         if exclude_deceased:
             df = df.drop(columns=['number']).rename(columns={'number_living': 'number'})
@@ -325,7 +325,7 @@ class Displayer(Loader):
             name: str,
             birth_year: int = None,
             exclude_deceased: bool = False,
-    ):
+    ) -> dict:
         df = self._raw_with_actuarial.copy()
         if exclude_deceased:
             df = df.drop(columns=['number']).rename(columns={'number_living': 'number'})
@@ -366,7 +366,7 @@ class Displayer(Loader):
         return tuple(range(*years_range))
 
 
-def _calculate_number_delta(df: pd.DataFrame, **delta):
+def _calculate_number_delta(df: pd.DataFrame, **delta) -> pd.DataFrame:
     after = delta.get('after')
     pct = delta.get('pct')
 
@@ -381,7 +381,7 @@ def _calculate_number_delta(df: pd.DataFrame, **delta):
     return df
 
 
-def _calculate_gender_delta(df: pd.DataFrame, **delta):
+def _calculate_gender_delta(df: pd.DataFrame, **delta) -> pd.DataFrame:
     after = delta.get('after')
     fem_ratio = delta.get('fem_ratio')
 
@@ -397,7 +397,7 @@ def _calculate_gender_delta(df: pd.DataFrame, **delta):
     return df
 
 
-def _get_percentiles(percentiles: str = ''):
+def _get_percentiles(percentiles: str = '') -> tuple:
     if percentiles.startswith('tenth'):
         perc = tuple(i / 10 for i in range(1, 11))
     elif percentiles.startswith('quint'):
