@@ -270,7 +270,6 @@ class Displayer(Loader):
             return []
 
         summary = df.sort_values('number', ascending=False)
-        # summary = self._calcd[self._calcd.name.isin(summary.name)].sort_values('year')
         return summary.to_dict('records') if _OUTPUT_RECORDS else summary
 
     def predict_age(
