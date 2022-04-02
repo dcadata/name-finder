@@ -10,7 +10,7 @@ _MAX_YEAR = int(re.search('^yob([0-9]{4}).txt$', os.listdir('data/names/')[-1]).
 _OUTPUT_RECORDS = False
 
 
-class Calculator:
+class Loader:
     def __init__(self, **kwargs):
         self._national_data_directory = 'data/names/'
         self._territories_data_directory = 'data/namesbyterritory/'
@@ -89,7 +89,8 @@ class Calculator:
         actuarial = actuarial.drop(columns=['year', 'survivors']).rename(columns={'birth_year': 'year'})
         return actuarial
 
-class Displayer(Calculator):
+
+class Displayer(Loader):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._after = kwargs.get('after')  # after this year (inclusive)
