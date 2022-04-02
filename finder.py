@@ -159,7 +159,7 @@ class Displayer(Loader):
                     self._first_appearance.name.apply(lambda x: x.lower()) == name.lower(), 'year'
                 ].values[0] if self._first_appearance is not None else None,
             },
-            'history': list(df.to_dict('records')) if _OUTPUT_RECORDS else df,
+            'historic': list(df.to_dict('records')) if _OUTPUT_RECORDS else df,
         }
         return name_record
 
@@ -260,12 +260,14 @@ class Displayer(Loader):
 
         if not len(df):
             return
+
         summary = df.sort_values('number', ascending=False)
-        # history = self.calcd[self.calcd.name.isin(summary.name)].sort_values('year')
-        if _OUTPUT_RECORDS:
-            summary = summary.to_dict('records')
-            # history = history.to_dict('records')
-        return summary
+        return summary.to_dict('records') if _OUTPUT_RECORDS else summary
+
+    def search_historic(self, *args):
+        summary = self.search(*args)
+        historic = self._calcd[self._calcd.name.isin(summary.name)].sort_values('year')
+        return historic.to_dict('records') if _OUTPUT_RECORDS else historic
 
     def predict_age(
             self,
