@@ -48,13 +48,13 @@ class Loader:
         self._first_appearance = self._raw.groupby('name', as_index=False).year.min()
 
         # add ratios
-        self.calcd = self._raw.copy()
-        _separate = lambda x: self.calcd[self.calcd.sex == x].drop(columns=['sex'])
-        self.calcd = _separate('F').merge(_separate('M'), on=['name', 'year'], suffixes=(
+        self._calcd = self._raw.copy()
+        _separate = lambda x: self._calcd[self._calcd.sex == x].drop(columns=['sex'])
+        self._calcd = _separate('F').merge(_separate('M'), on=['name', 'year'], suffixes=(
             '_f', '_m'), how='outer').merge(self._name_by_year, on=['name', 'year'])
         for s in ('f', 'm'):
-            self.calcd[f'number_{s}'] = self.calcd[f'number_{s}'].fillna(0).apply(int)
-            self.calcd[f'ratio_{s}'] = self.calcd[f'number_{s}'] / self.calcd['number']
+            self._calcd[f'number_{s}'] = self._calcd[f'number_{s}'].fillna(0).apply(int)
+            self._calcd[f'ratio_{s}'] = self._calcd[f'number_{s}'] / self._calcd['number']
 
         # add actuarial - loses years before 1900
         self._raw_with_actuarial = pd.concat(self._raw[self._raw.sex == s.upper()].merge(self._load_actuarial(s), on=[
@@ -103,7 +103,7 @@ class Displayer(Loader):
         # set up
         self._after = after
         self._before = before
-        df = self.calcd.copy()
+        df = self._calcd.copy()
 
         # filter on name
         df = df[df['name'].str.lower() == name.lower()]
@@ -189,7 +189,7 @@ class Displayer(Loader):
         # set up
         self._after = after
         self._before = before
-        df = self.calcd.copy()
+        df = self._calcd.copy()
 
         # calculate number/gender delta
         if delta_after:
