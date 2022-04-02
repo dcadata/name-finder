@@ -46,7 +46,7 @@ class Loader:
         self._name_by_year = self._name_by_year.drop(columns=['number_total'])
 
         # first appearance
-        self._first_appearance = self._raw.groupby('name', as_index=False).year.min()
+        self._first_appearance = self._raw.groupby('name').year.min()
 
         # add ratios
         self._calcd = self._raw.copy()
@@ -156,9 +156,7 @@ class Displayer(Loader):
                 'number': latest.number,
             },
             'first_appearance': {
-                'year': self._first_appearance.loc[
-                    self._first_appearance.name.apply(lambda x: x.lower()) == name.lower(), 'year'
-                ].values[0] if self._first_appearance is not None else None,
+                'year': self._first_appearance[grouped['name']],
             },
             'historic': list(df.to_dict('records')) if _OUTPUT_RECORDS else df,
         }
