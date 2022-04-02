@@ -359,6 +359,20 @@ class Displayer(Loader):
         return tuple(range(*years_range))
 
 
+class ExtrasCalculator(Loader):
+    def _calculate_name_by_sex_by_year(self):
+        self._name_by_sex_by_year = self._raw.merge(self._number_per_year, on=['year'], suffixes=('', '_total'))
+        self._name_by_sex_by_year['pct_year'] = (
+                self._name_by_sex_by_year.number / self._name_by_sex_by_year.number_total)
+        self._name_by_sex_by_year = self._name_by_sex_by_year.drop(columns=['number_total'])
+
+    def _decline_of_common_names(self):
+        dfs = {'all': _decline_of_common_names(self._name_by_year)}
+        for s in ('f', 'm'):
+            dfs[s] = _decline_of_common_names(self._name_by_sex_by_year[self._name_by_sex_by_year.sex == s.upper()])
+        return dfs
+
+
 def _calculate_number_delta(df: pd.DataFrame, **delta):
     after = delta.get('after')
     pct = delta.get('pct')
