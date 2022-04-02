@@ -299,7 +299,7 @@ class Displayer(Loader):
             'mean': int(round(df.groupby(df.name).apply(lambda x: np.average(x.age, weights=x.number)).values[0])),
             'percentiles': {},
         }
-        percentiles = tuple(i / buckets for i in range(1, buckets + 1)) if buckets else (0.68, 0.95, 0.997)
+        percentiles = tuple(round(i / buckets, 2) for i in range(1, buckets + 1)) if buckets else (0.68, 0.95, 0.997)
         for percentile in percentiles:
             ages = prob[prob.cumulative <= percentile].age
             if not len(ages):
