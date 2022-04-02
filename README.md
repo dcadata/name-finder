@@ -16,6 +16,13 @@ Actuarial tables [also via SSA](https://www.ssa.gov/oact/HistEst/CohLifeTablesHo
 >- To safeguard privacy, we exclude from our tabulated lists of names those that would indicate, or would allow the ability to determine, names with fewer than 5 occurrences in any geographic area. If a name has less than 5 occurrences for a year of birth in any state, the sum of the state counts for that year will be less than the national count.
 
 
-## Data source(s)
+## Future Features
 
-This project uses United States Social Security Administration data [available from SSA.gov](https://www.ssa.gov/oact/babynames/limits.html). The dataset labeled `National data` was used. It contains first names only. Per SSA, "All names are from Social Security card applications for births that occurred in the United States."
+- combine with Google trends to correlate rises/falls in popularity of name w/ trends around that name
+- game in which users guess (without looking it up) which of two names is more common
+
+
+***
+
+# API Documentation
+
