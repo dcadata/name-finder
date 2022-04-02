@@ -1,12 +1,14 @@
-# Neuname Name API
+# Neuname Name API: data-based tool to get info about US first names
+
+Returns
 
 Age distribution (based on name and optionally sex)
 
-and gender (based on name and optionally age)
-
-of first names
+Gender (based on name and optionally age)
 
 search for first names based on their characteristics
+
+History of any first name
 
 ## API Documentation
 
