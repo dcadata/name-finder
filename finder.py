@@ -126,7 +126,7 @@ class Displayer(Loader):
         # aggregate
         grouped = df.groupby('name', as_index=False).agg({'number': sum, 'number_f': sum, 'number_m': sum})
         for s in ('f', 'm'):
-            grouped[f'ratio_{s}'] = grouped[f'number_{s}'] / grouped.number
+            grouped[f'ratio_{s}'] = (grouped[f'number_{s}'] / grouped.number).apply(lambda x: round(x, 2))
 
         # do final computations
         grouped = grouped.to_dict('records')[0]
