@@ -267,39 +267,6 @@ class Displayer(Loader):
             # history = history.to_dict('records')
         return summary
 
-    def predict_gender(
-            self,
-            name: str,
-            birth_year: int = None,
-            living_only: bool = False,
-    ):
-        df = self._raw_with_actuarial.copy()
-        if living_only:
-            df = df.drop(columns=['number']).rename(columns={'number_living': 'number'})
-
-        # filter dataframe
-        df = df[df['name'].str.lower() == name.lower()].copy()
-        if birth_year:
-            birth_years = list(range(birth_year - 2, birth_year + 3))
-            df = df[df.year.isin(birth_years)]
-        else:
-            birth_years = []
-
-        if not len(df):
-            return {}
-
-        # create output
-        number = df.number.sum()
-        numbers = df.groupby('sex').number.sum()
-        output = {
-            'name': name.title(),
-            'birth_year_range': birth_years,
-            'living_only': bool(living_only),
-            'prediction': 'F' if numbers['F'] > numbers['M'] else 'M',
-            'confidence': round(max(numbers['F'] / number, numbers['M'] / number), 2),
-        }
-        return output
-
     def predict_age(
             self,
             name: str,
@@ -343,6 +310,39 @@ class Displayer(Loader):
             'sex': sex.upper() if sex else None,
             'living_only': bool(living_only),
             'prediction': prediction,
+        }
+        return output
+
+    def predict_gender(
+            self,
+            name: str,
+            birth_year: int = None,
+            living_only: bool = False,
+    ):
+        df = self._raw_with_actuarial.copy()
+        if living_only:
+            df = df.drop(columns=['number']).rename(columns={'number_living': 'number'})
+
+        # filter dataframe
+        df = df[df['name'].str.lower() == name.lower()].copy()
+        if birth_year:
+            birth_years = list(range(birth_year - 2, birth_year + 3))
+            df = df[df.year.isin(birth_years)]
+        else:
+            birth_years = []
+
+        if not len(df):
+            return {}
+
+        # create output
+        number = df.number.sum()
+        numbers = df.groupby('sex').number.sum()
+        output = {
+            'name': name.title(),
+            'birth_year_range': birth_years,
+            'living_only': bool(living_only),
+            'prediction': 'F' if numbers['F'] > numbers['M'] else 'M',
+            'confidence': round(max(numbers['F'] / number, numbers['M'] / number), 2),
         }
         return output
 
