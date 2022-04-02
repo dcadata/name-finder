@@ -275,7 +275,7 @@ class Displayer(Loader):
             name: str,
             sex: str = None,
             exclude_deceased: bool = False,
-            percentiles: str = '',
+            buckets: int = None,
     ) -> dict:
         df = self._raw_with_actuarial.copy()
         if exclude_deceased:
@@ -299,11 +299,12 @@ class Displayer(Loader):
             'mean': int(round(df.groupby(df.name).apply(lambda x: np.average(x.age, weights=x.number)).values[0])),
             'percentiles': {},
         }
-        for i in _get_percentiles(percentiles):
-            ages = prob[prob.cumulative <= i].age
+        percentiles = tuple(i / buckets for i in range(1, buckets + 1)) if buckets else (0.68, 0.95, 0.997)
+        for percentile in percentiles:
+            ages = prob[prob.cumulative <= percentile].age
             if not len(ages):
                 continue
-            prediction['percentiles'][i] = {
+            prediction['percentiles'][percentile] = {
                 'min': ages.min(),
                 'max': ages.max(),
             }
@@ -392,15 +393,3 @@ def _calculate_gender_delta(df: pd.DataFrame, **delta) -> pd.DataFrame:
         chg['delta'] = (chg.ratio_f_y1 - chg.ratio_f_y2).apply(abs).apply(lambda x: x <= 0.01)
     df = df[df.name.isin(chg[chg.delta].name)].copy()
     return df
-
-
-def _get_percentiles(percentiles: str = '') -> tuple:
-    if percentiles.startswith('tenth'):
-        perc = tuple(i / 10 for i in range(1, 11))
-    elif percentiles.startswith('quint'):
-        perc = (0.2, 0.4, 0.6, 0.8, 1)
-    elif percentiles.startswith('quart'):
-        perc = (0.25, 0.5, 0.75, 1)
-    else:
-        perc = (0.68, 0.95, 0.997)
-    return perc
