@@ -94,7 +94,7 @@ class Displayer(Loader):
         self._after = kwargs.get('after')  # after this year (inclusive)
         self._before = kwargs.get('before')  # before this year (inclusive)
 
-    def get_name(
+    def info(
             self,
             name: str,
             after: int = None,
