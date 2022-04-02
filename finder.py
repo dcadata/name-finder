@@ -3,7 +3,6 @@ import re
 
 import numpy as np
 import pandas as pd
-import seaborn as sns
 
 # years as currently available in dataset
 _MIN_YEAR = 1880
@@ -406,13 +405,3 @@ def _get_percentiles(percentiles: str = '') -> tuple:
     else:
         perc = (0.68, 0.95, 0.997)
     return perc
-
-
-def quickplot(calcd: pd.DataFrame, name: str, kind: str = None):
-    df = calcd[calcd['name'].str.lower() == name.lower()] if name else calcd
-    plt = sns.lineplot(x=df.year, y=df[f'{kind}_f'], color='red')
-    sns.lineplot(x=df.year, y=df[f'{kind}_m'], color='blue')
-    if kind == 'number':
-        sns.lineplot(x=df.year, y=df.number, color='gray')
-    plt.set_title(name.title())
-    return plt
