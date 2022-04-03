@@ -170,6 +170,7 @@ class Displayer(Loader):
 
     def search(
             self,
+            pattern: str = None,
             start: tuple = None,
             end: tuple = None,
             contains: tuple = None,
@@ -178,7 +179,6 @@ class Displayer(Loader):
             not_end: tuple = None,
             not_contains: tuple = None,
             order: tuple = None,
-            pattern: str = None,
             length: tuple = None,
             fem: (bool, tuple) = None,
             masc: (bool, tuple) = None,
