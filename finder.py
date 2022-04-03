@@ -58,7 +58,8 @@ class Loader:
         # add actuarial - loses years before 1900
         self._raw_with_actuarial = pd.concat(self._raw[self._raw.sex == s.upper()].merge(self._load_actuarial(s), on=[
             'year']) for s in ('f', 'm'))
-        self._raw_with_actuarial.number = self._raw_with_actuarial.number * self._raw_with_actuarial.survival_prob
+        self._raw_with_actuarial['number_living'] = (
+                self._raw_with_actuarial.number * self._raw_with_actuarial.survival_prob)
 
     def _read_one_file(self, filename, is_territory=None):
         df = self._read_one_file_territory(filename) if is_territory else self._read_one_file_national(filename)
@@ -270,7 +271,9 @@ class Displayer(Loader):
             exclude_deceased: bool = False,
             buckets: int = None,
     ) -> dict:
-        df = self._raw_with_actuarial.copy() if exclude_deceased else self._raw.copy()
+        df = self._raw_with_actuarial.copy()
+        if exclude_deceased:
+            df = df.drop(columns=['number']).rename(columns={'number_living': 'number'})
 
         # filter dataframe
         df = df[df['name'].str.lower() == name.lower()].copy()
@@ -317,7 +320,9 @@ class Displayer(Loader):
             birth_year: int = None,
             exclude_deceased: bool = False,
     ) -> dict:
-        df = self._raw_with_actuarial.copy() if exclude_deceased else self._raw.copy()
+        df = self._raw_with_actuarial.copy()
+        if exclude_deceased:
+            df = df.drop(columns=['number']).rename(columns={'number_living': 'number'})
 
         # filter dataframe
         df = df[df['name'].str.lower() == name.lower()].copy()
