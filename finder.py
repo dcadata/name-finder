@@ -266,7 +266,7 @@ class Displayer(Loader):
         if not len(df):
             return []
 
-        summary = df.sort_values('number', ascending=False)
+        summary = df.sort_values('number', ascending=False).drop(columns=['name_lower'])
         return summary.to_dict('records') if _OUTPUT_RECORDS else summary
 
     def predict_age(
