@@ -345,8 +345,8 @@ class Displayer(Loader):
         if exclude_deceased:
             output['exclude_deceased'] = True
         output.update({
-            'prediction': 'F' if numbers['F'] > numbers['M'] else 'M',
-            'confidence': round(max(numbers['F'] / number, numbers['M'] / number), 2),
+            'prediction': 'F' if numbers.get('F', 0) > numbers.get('M', 0) else 'M',
+            'confidence': round(max(numbers.get('F', 0) / number, numbers.get('M', 0) / number), 2),
         })
         return output
 
