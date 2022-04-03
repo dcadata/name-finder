@@ -185,8 +185,8 @@ class Displayer(Loader):
             neu: (bool, tuple) = None,
             delta_after: int = None,
             delta_pct: float = None,
-            delta_fem_ratio: float = None,
-            delta_masc_ratio: float = None,
+            delta_fem: float = None,
+            delta_masc: float = None,
             number: tuple = None,
             after: int = None,
             before: int = None,
@@ -200,10 +200,10 @@ class Displayer(Loader):
         if delta_after:
             if delta_pct is not None:
                 df = _calculate_number_delta(df, after=delta_after, pct=delta_pct)
-            if delta_fem_ratio is None and delta_masc_ratio is not None:
-                delta_fem_ratio = -delta_masc_ratio
-            if delta_fem_ratio is not None:
-                df = _calculate_gender_delta(df, after=delta_after, fem_ratio=delta_fem_ratio)
+            if delta_fem is None and delta_masc is not None:
+                delta_fem = -delta_masc
+            if delta_fem is not None:
+                df = _calculate_gender_delta(df, after=delta_after, fem_ratio=delta_fem)
 
         # filter on years
         df = df[df.year.isin(self._years_to_select)].copy()
