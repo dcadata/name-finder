@@ -125,7 +125,7 @@ class Displayer(Loader):
         for s in ('f', 'm'):
             grouped[f'ratio_{s}'] = (grouped[f'number_{s}'] / grouped.number).apply(lambda x: round(x, 2))
 
-        # do final computations
+        # format historic
         historic = df[['year', 'number', 'number_f', 'number_m', 'ratio_f', 'ratio_m']].copy()
         for s in ('f', 'm'):
             historic[f'ratio_{s}'] = historic[f'ratio_{s}'].apply(lambda x: round(x, 2))
