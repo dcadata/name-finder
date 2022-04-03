@@ -235,7 +235,7 @@ class Displayer(Loader):
             df = df[(df.ratio_f >= fem[0]) & (df.ratio_f <= fem[1])]
 
         # apply text filters
-        if pattern is not None:
+        if pattern:
             df = df[df.name.apply(lambda x: re.search(pattern, x, re.I)).apply(bool)]
         if start is not None:
             df = df[df.name.apply(lambda x: re.search('^({})'.format('|'.join(start)), x, re.I)).apply(bool)]
@@ -245,7 +245,7 @@ class Displayer(Loader):
             df = df[df.name_lower.apply(lambda x: all((i.lower() in x for i in contains)))]
         if contains_any is not None:
             df = df[df.name.apply(lambda x: re.search('|'.join(contains_any), x, re.I)).apply(bool)]
-        if order is not None:
+        if order:
             df = df[df.name_lower.apply(lambda x: re.search('.*'.join(order), x)).apply(bool)]
 
         # apply text not-filters
