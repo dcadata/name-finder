@@ -228,7 +228,7 @@ class Displayer(Loader):
         if fem is True:
             fem = (0.5, 1)
         elif masc is True:
-            masc = (0.5, 1)
+            fem = (0, 0.5)
         elif neu is True:
             fem = (0.25, 0.75)
         elif neu is not None:
@@ -237,8 +237,6 @@ class Displayer(Loader):
         # filter on ratio
         if fem is not None:
             df = df[(df.ratio_f >= fem[0]) & (df.ratio_f <= fem[1])]
-        elif masc is not None:
-            df = df[(df.ratio_m >= masc[0]) & (df.ratio_m <= masc[1])]
 
         # apply text filters
         if pattern is not None:
