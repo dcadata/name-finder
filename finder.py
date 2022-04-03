@@ -241,24 +241,23 @@ class Displayer(Loader):
         if pattern:
             df = df[df.name.apply(lambda x: re.search(pattern, x, re.I)).apply(bool)]
         if start:
-            df = df[df.name.apply(lambda x: re.search('^({})'.format('|'.join(start)), x, re.I)).apply(bool)]
+            df = df[df.name_lower.str.startswith(tuple(i.lower() for i in start))]
         if end:
-            df = df[df.name.apply(lambda x: re.search('({})$'.format('|'.join(end)), x, re.I)).apply(bool)]
+            df = df[df.name_lower.str.endswith(tuple(i.lower() for i in end))]
         if contains:
             df = df[df.name_lower.apply(lambda x: all((i.lower() in x for i in contains)))]
         if contains_any:
-            df = df[df.name.apply(lambda x: re.search('|'.join(contains_any), x, re.I)).apply(bool)]
+            df = df[df.name_lower.apply(lambda x: any((i.lower() in x for i in contains_any)))]
         if order:
             df = df[df.name_lower.apply(lambda x: re.search('.*'.join(order), x)).apply(bool)]
 
         # apply text not-filters
-        _normalize_type_or = lambda x: tuple(char.lower() for char in x)
         if not_start:
-            df = df[~df.name_lower.str.startswith(_normalize_type_or(not_start))]
+            df = df[~df.name_lower.str.startswith(tuple(i.lower() for i in not_start))]
         if not_end:
-            df = df[~df.name.str.endswith(_normalize_type_or(not_end))]
+            df = df[~df.name_lower.str.endswith(tuple(i.lower() for i in not_end))]
         if not_contains:
-            df = df[~df.name_lower.str.contains('|'.join(not_contains).lower())]
+            df = df[~df.name_lower.apply(lambda x: any((i.lower() in x for i in not_contains)))]
 
         if not len(df):
             return []
