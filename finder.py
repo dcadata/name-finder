@@ -301,13 +301,14 @@ class Displayer(Loader):
             }
 
         # create output
-        output = {
-            'name': name.title(),
-            'sex': sex.upper() if sex else None,
-            'exclude_deceased': bool(exclude_deceased),
-            'buckets': buckets,
-            'prediction': prediction,
-        }
+        output = {'name': name.title()}
+        if sex:
+            output['sex'] = sex.upper()
+        if exclude_deceased:
+            output['exclude_deceased'] = True
+        if buckets:
+            output['buckets'] = buckets
+        output['prediction'] = prediction
         return output
 
     def predict_gender(
@@ -332,13 +333,15 @@ class Displayer(Loader):
         # create output
         number = df.number.sum()
         numbers = df.groupby('sex').number.sum()
-        output = {
-            'name': name.title(),
-            'birth_year_range': birth_years,
-            'exclude_deceased': bool(exclude_deceased),
+        output = {'name': name.title()}
+        if birth_years:
+            output['birth_year_range'] = birth_years
+        if exclude_deceased:
+            output['exclude_deceased'] = True
+        output.update({
             'prediction': 'F' if numbers['F'] > numbers['M'] else 'M',
             'confidence': round(max(numbers['F'] / number, numbers['M'] / number), 2),
-        }
+        })
         return output
 
     @property
