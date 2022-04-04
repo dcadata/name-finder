@@ -184,7 +184,8 @@ class Displayer(Loader):
             delta_pct: float = None,
             delta_fem: float = None,
             delta_masc: float = None,
-            number: tuple = None,
+            number_min: int = None,
+            number_max: int = None,
             after: int = None,
             before: int = None,
     ) -> list:
@@ -213,9 +214,11 @@ class Displayer(Loader):
         # add lowercase name for filtering
         df['name_lower'] = df.name.apply(lambda x: x.lower())
 
-        # filter on number
-        if number:
-            df = df[(df.number >= number[0]) & (df.number <= number[1])]
+        # filter on numbers
+        if number_min:
+            df = df[df.number >= number_min]
+        if number_max:
+            df = df[df.number <= number_max]
 
         # filter on length
         if length:
