@@ -1,4 +1,4 @@
-# Neuname Name API
+# Name Search Tool
 
 ## Feature Overview
 
@@ -24,77 +24,97 @@ INFO
 
 get info and trends/history for a name
 
-## API Documentation
+## Name Search API Documentation
 
 x
 
 ## Examples
 
-### Example usages of `predict_age`
+### Using `predict_age`
 
-Predict age of a person named Dorothy
+Predict ages of male and female Leslies
 
-    >>> self.predict_age('dorothy')
-    {'name': 'Dorothy', 'sex': None, 'exclude_deceased': False, 'buckets': None, 'prediction': {'mean': 89, 'percentiles': {0.68: {'min': 81, 'max': 106}, 0.95: {'min': 57, 'max': 115}, 0.997: {'min': 0, 'max': 119}}}}
+    d.predict_age('leslie', 'm')
+    d.predict_age('leslie', 'f')
 
-Predict age of a person named Dorothy, excluding deceased by probability (via SSA actuarial tables)
+(Note: passing m/f won't make much difference unless the name has trended one way or another over time)
 
-    >>> self.predict_age('dorothy', exclude_deceased=True)
-    {'name': 'Dorothy', 'sex': None, 'exclude_deceased': True, 'buckets': None, 'prediction': {'mean': 78, 'percentiles': {0.68: {'min': 70, 'max': 96}, 0.95: {'min': 46, 'max': 105}, 0.997: {'min': 0, 'max': 107}}}}
+Using buckets: e.g. use `buckets=4` to indicate quartiles
 
-Predict ages of male and female Leslies; note difference in mean age and distributions
-
-> Note: passing `sex` won't make much difference unless the name has trended masculine or feminine over time. The majority of names have no such trend (e.g. Jessica, Matthew, etc.)
-
-    >>> self.predict_age('leslie', 'm')
-    {'name': 'Leslie', 'sex': 'M', 'exclude_deceased': False, 'buckets': None, 'prediction': {'mean': 74, 'percentiles': {0.68: {'min': 55, 'max': 105}, 0.95: {'min': 30, 'max': 110}, 0.997: {'min': 5, 'max': 119}}}}
-
-    >>> self.predict_age('leslie', 'f')
-    {'name': 'Leslie', 'sex': 'F', 'exclude_deceased': False, 'buckets': None, 'prediction': {'mean': 45, 'percentiles': {0.68: {'min': 16, 'max': 68}, 0.95: {'min': 8, 'max': 75}, 0.997: {'min': 0, 'max': 104}}}}
-
-Use `buckets=4` to indicate quartiles
-
-    >>> self.predict_age('catherine', buckets=4, exclude_deceased=True)
-    {'name': 'Catherine', 'sex': None, 'exclude_deceased': True, 'buckets': 4, 'prediction': {'mean': 54, 'percentiles': {0.25: {'min': 59, 'max': 69}, 0.5: {'min': 29, 'max': 74}, 0.75: {'min': 19, 'max': 79}, 1.0: {'min': 0, 'max': 119}}}}
-
-Practical example: 95% of Taylors are <= 34. 95% of Aidens are <= 16. This has implications for what kind of advertising, etc., could be most relevant to a customer named Aiden whose age you don't know.
-
-    >>> self.predict_age('taylor')
-    {'name': 'Taylor', 'sex': None, 'exclude_deceased': False, 'buckets': None, 'prediction': {'mean': 22, 'percentiles': {0.68: {'min': 17, 'max': 30}, 0.95: {'min': 2, 'max': 34}, 0.997: {'min': 0, 'max': 106}}}}
-    >>> self.predict_age('aiden')
-    {'name': 'Aiden', 'sex': None, 'exclude_deceased': False, 'buckets': None, 'prediction': {'mean': 9, 'percentiles': {0.68: {'min': 4, 'max': 13}, 0.95: {'min': 0, 'max': 16}, 0.997: {'min': 0, 'max': 23}}}}
+    d.predict_age('dorothy', buckets=4)
 
 For some names--particularly those that have been in use for generations, but are trending up in recent years--excluding deceased individuals shows a meaningful difference. Without excluding deceased individuals, 95% of Avas are <= 67. When excluding deceased individuals, 95% of Avas are <= 20.
 
-    >>> self.predict_age('ava')
-    {'name': 'Ava', 'sex': None, 'exclude_deceased': False, 'buckets': None, 'prediction': {'mean': 12, 'percentiles': {0.68: {'min': 3, 'max': 14}, 0.95: {'min': 0, 'max': 67}, 0.997: {'min': 0, 'max': 108}}}}
-    >>> self.predict_age('ava', exclude_deceased=True)
-    {'name': 'Ava', 'sex': None, 'exclude_deceased': True, 'buckets': None, 'prediction': {'mean': 11, 'percentiles': {0.68: {'min': 3, 'max': 14}, 0.95: {'min': 0, 'max': 20}, 0.997: {'min': 0, 'max': 89}}}}
+    d.predict_age('ava')
+    d.predict_age('ava', exclude_deceased=True)
 
-### Example usages of `predict_gender`
+Practical example: 95% of Taylors are <= 34. 95% of Aidens are <= 16. This has implications for what kind of advertising, etc., could be most relevant to a customer named Aiden whose age you don't know.
 
-Predict gender of Leslies born in 1930 vs 2000
+    d.predict_age('taylor')
+    d.predict_age('aiden')
 
-    >>> self.predict_gender('leslie', 1930)
-    {'name': 'Leslie', 'birth_year_range': [1928, 1929, 1930, 1931, 1932], 'exclude_deceased': False, 'prediction': 'M', 'confidence': 0.92}
-    >>> self.predict_gender('leslie', 2000)
-    {'name': 'Leslie', 'birth_year_range': [1998, 1999, 2000, 2001, 2002], 'exclude_deceased': False, 'prediction': 'F', 'confidence': 0.97}
+### Using `predict_gender`
 
-Predict gender of Marions born in 1920 vs 2010
+For most names, gender can be predicted with relative certainty:
 
-    >>> self.predict_gender('marion', 1920)
-    {'name': 'Marion', 'birth_year_range': [1918, 1919, 1920, 1921, 1922], 'exclude_deceased': False, 'prediction': 'F', 'confidence': 0.78}
-    >>> self.predict_gender('marion', 2010)
-    {'name': 'Marion', 'birth_year_range': [2008, 2009, 2010, 2011, 2012], 'exclude_deceased': False, 'prediction': 'M', 'confidence': 0.53}
+    d.predict_gender('jessica')
+    d.predict_gender('michael')
 
-However, you don't *have* to specify birth year--in this case, all birth years will be included
+With others, not so much:
 
-    >>> self.predict_gender('elizabeth')
-    {'name': 'Elizabeth', 'birth_year_range': [], 'exclude_deceased': False, 'prediction': 'F', 'confidence': 1.0}
-    >>> self.predict_gender('casey')
-    {'name': 'Casey', 'birth_year_range': [], 'exclude_deceased': False, 'prediction': 'M', 'confidence': 0.59}
-    >>> self.predict_gender('george')
-    {'name': 'George', 'birth_year_range': [], 'exclude_deceased': False, 'prediction': 'M', 'confidence': 0.99}
+    d.predict_gender('casey')
+    d.predict_gender('devon')
+    d.predict_gender('leslie')
+
+For names that have trended masculine or feminine over time, specifying the birth year can allow a more confident gender prediction:
+
+Predict gender of Leslies born in 1940, 1980, and 2000
+
+    d.predict_gender('leslie', 1940)
+    d.predict_gender('leslie', 1980)
+    d.predict_gender('leslie', 2000)
+
+Predict gender of Marions born in 1920 and 2020
+
+    d.predict_gender('marion', 1920)
+    d.predict_gender('marion', 2020)
+
+If `birth_year` is not passed, all birth years will be included
+
+    d.predict_gender('elizabeth')
+    d.predict_gender('william')
+
+### Using `search`
+
+Search for names that both start and end with "A", and are 3 letters long
+
+    d.search(start='a', end='a', length=[3])
+
+Search for masculine names ending in "EA", "IA", or "YA, and not containing "R" or "S"
+
+    d.search(masc=True, end=['ea', 'ia', 'ya'], not_contains=['r', 's'])
+
+Search for names that were masculine before 1980 and have trended at least 20% more feminine since 1980
+
+    d.search(masc=True, before=1980, delta_after=1980, delta_fem=0.2)
+
+Search for feminine names starting with "E" or "I" that have gained at least 10% in popularity since 2010
+
+    d.search(fem=True, start=['e', 'i'], delta_after=2010, delta_pct=0.1)
+
+Search for short names that were neutral before 1990 and have trended at least 1% less popular and 1% more masculine since 1990
+
+    d.search(length=[3, 4, 5], neu=True, before=1990, delta_after=1990, delta_pct=-0.01, delta_masc=0.01)
+
+Search for variations of a name using regex pattern
+
+    d.search(pattern='^e?[ck]ath?e?r[iy]nn?[ea]?$')  # Catherine
+    d.search(pattern='^v[iy][ck]{1,2}tor[iye]{1,2}a$')  # Victoria
+    d.search(pattern='^ja[yie]?d[eiyao]n$')  # Ja(y)den
+
+Search for feminine variations of the name Cory
+
+    d.search(fem=True, pattern='^[ck]orr?(e?y|ie?|ii|ee)$')  # doesn't include variations of Corinne/a
 
 ## Data Sources
 
