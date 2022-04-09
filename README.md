@@ -20,7 +20,7 @@
 
 ### INFO
 
-* Get info and trends/history for specified name
+* Get info and history for specified first name
 
 ## API Documentation
 
