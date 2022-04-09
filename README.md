@@ -24,7 +24,7 @@ search for first names based on their characteristics
 
 get info and trends/history for a name
 
-## Name Search API Documentation
+## API Documentation
 
 (coming eventually)
 
