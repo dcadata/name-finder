@@ -4,25 +4,23 @@
 
 ### AGE PREDICTION
 
-age distribution of people with a given first name
-returns a condensed probability distribution of ages
-optionally, can take gender into account
-competing products generally do not return a condensed probability distribution of ages (they only return a single mean age), nor take gender into account when predicting age
+* Returns the age distribution of people with a specified first name - returns condensed probability distribution of ages
+* Optionally, can take gender into account
+* Similar tools generally do not return a condensed probability distribution of ages (they only return a single mean age), nor take gender into account when predicting age
 
 ### GENDER PREDICTION
 
-gender of people with a given first name
-returns gender prediction with confidence
-optionally, can take age into account--this does not matter for most names, but matters for some traditionally masculine names that have trended feminine (e.g. Leslie)
-competing products generally do not take age into account when predicting gender
+* Returns gender of people with a specified first name (along with confidence level in the prediction)
+* Optionally, can take age into account
+* Competing products generally do not take age into account when predicting gender
 
 ### SEARCH
 
-search for first names based on their characteristics
+* Search for first names based on their characteristics
 
 ### INFO
 
-get info and trends/history for a name
+* Get info and trends/history for specified name
 
 ## API Documentation
 
