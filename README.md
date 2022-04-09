@@ -60,12 +60,6 @@ For most names, gender can be predicted with relative certainty:
     d.predict_gender('jessica')
     d.predict_gender('michael')
 
-With others, not so much:
-
-    d.predict_gender('casey')
-    d.predict_gender('devon')
-    d.predict_gender('leslie')
-
 For names that have trended masculine or feminine over time, specifying the birth year can allow a more confident gender prediction:
 
 Predict gender of Leslies born in 1940, 1980, and 2000
