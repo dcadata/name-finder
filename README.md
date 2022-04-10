@@ -4,7 +4,7 @@
 
 ### AGE PREDICTION
 
-* Returns the age distribution of people with a specified first name - returns condensed probability distribution of ages
+* Returns the age distribution of people with a specified first name
 * Optionally, can take gender into account
 * Similar tools generally do not return a condensed probability distribution of ages (they only return a single mean age), nor take gender into account when predicting age
 
