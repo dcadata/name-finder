@@ -32,8 +32,10 @@
 
 Predict ages of male and female Leslies
 
-    d.predict_age('leslie', 'm')
-    d.predict_age('leslie', 'f')
+```python
+d.predict_age('leslie', 'm')
+d.predict_age('leslie', 'f')
+```
 
 (Note: passing m/f won't make much difference unless the name has trended one way or another over time)
 
