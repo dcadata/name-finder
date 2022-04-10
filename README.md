@@ -1,4 +1,4 @@
-# Name Search Tool
+# NameFirst name-based prediction & name search tool
 
 ## Feature Overview
 
