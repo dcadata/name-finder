@@ -176,7 +176,8 @@ class Displayer(Loader):
             not_end: (str, tuple[str]) = None,
             not_contains: (str, tuple[str]) = None,
             order: tuple[str] = None,
-            length: tuple[int] = None,
+            length_min: int = None,
+            length_max: int = None,
             fem: (bool, tuple[float]) = None,
             masc: (bool, tuple[float]) = None,
             neu: (bool, tuple[float]) = None,
@@ -221,8 +222,10 @@ class Displayer(Loader):
             df = df[df.number <= number_max]
 
         # filter on length
-        if length:
-            df = df[df.name.apply(len).isin(length)]
+        if length_min:
+            df = df[df.name.apply(len) >= length_min]
+        if length_max:
+            df = df[df.name.apply(len) <= length_max]
 
         # set fem/masc lean filters
         if fem is True:
