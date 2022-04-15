@@ -146,20 +146,20 @@ class Displayer(Loader):
             },
             'peak': {
                 'by_number': {
-                    'year': int(peak_by_num.year),
-                    'number': int(peak_by_num.number),
+                    'year': peak_by_num.year,
+                    'number': peak_by_num.number,
                 },
                 'by_pct': {
-                    'year': int(peak_by_pct.year),
-                    'pct': float(peak_by_pct.pct_year),
+                    'year': peak_by_pct.year,
+                    'pct': peak_by_pct.pct_year,
                 },
             },
             'latest': {
-                'year': int(latest.year),
-                'number': int(latest.number),
+                'year': latest.year,
+                'number': latest.number,
             },
             'first_appearance': {
-                'year': int(self._first_appearance[grouped['name']]),
+                'year': self._first_appearance[grouped['name']],
             },
             'historic': list(historic.to_dict('records')) if _OUTPUT_RECORDS else historic,
         }
