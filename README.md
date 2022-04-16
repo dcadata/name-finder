@@ -43,24 +43,24 @@ Predict ages of male and female Leslies
 
 Using buckets: e.g. use `buckets=4` to indicate quartiles
 
-    d.predict_age('dorothy', buckets=4)
+    predict/age/dorothy?buckets=4
 
 For some names--particularly those that have been in use for generations, but are trending up in recent years--excluding deceased individuals shows a meaningful difference. Without excluding deceased individuals, 95% of Avas are <= 67. When excluding deceased individuals, 95% of Avas are <= 20.
 
-    d.predict_age('ava')
-    d.predict_age('ava', exclude_deceased=True)
+    predict/age/ava
+    predict/age/ava?exclude_deceased=true
 
 Practical example: 95% of Taylors are <= 34. 95% of Aidens are <= 16. This has implications for what kind of advertising, etc., could be most relevant to a customer named Aiden whose age you don't know.
 
-    d.predict_age('taylor')
-    d.predict_age('aiden')
+    predict/age/taylor
+    predict/age/aiden
 
 ### Using `predict_gender`
 
 For most names, gender can be predicted with relative certainty:
 
-    d.predict_gender('jessica')
-    d.predict_gender('michael')
+    predict/gender/jessica
+    predict/gender/michael
 
 For names that have trended masculine or feminine over time, specifying the birth year can allow a more confident gender prediction:
 
@@ -75,10 +75,7 @@ Predict gender of Marions born in 1920 and 2020
     d.predict_gender('marion', 1920)
     d.predict_gender('marion', 2020)
 
-If `birth_year` is not passed, all birth years will be included
-
-    d.predict_gender('elizabeth')
-    d.predict_gender('william')
+If `birth_year` is not passed, all birth years will be included.
 
 ### Using `search`
 
