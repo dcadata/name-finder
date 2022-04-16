@@ -22,6 +22,10 @@
 
 * Get info and history for specified first name
 
+### COMPARE
+
+* Compare two or more names
+
 ## API Documentation
 
 (coming eventually)
@@ -32,10 +36,8 @@
 
 Predict ages of male and female Leslies
 
-```python
-d.predict_age('leslie', 'm')
-d.predict_age('leslie', 'f')
-```
+    d.predict_age('leslie', 'm')
+    d.predict_age('leslie', 'f')
 
 (Note: passing m/f won't make much difference unless the name has trended one way or another over time)
 
