@@ -39,7 +39,7 @@ Predict ages of male and female Leslies
     predict/age/leslie?gender=m
     predict/age/leslie?gender=f
 
-(Note: passing the gender won't make much difference unless the name has trended one way or another over time)
+Note: Passing gender won't make a difference for most names, but if you know the gender, you can get a more accurate prediction by passing it.
 
 Using buckets: e.g. use `buckets=4` to indicate quartiles
 
@@ -62,20 +62,18 @@ For most names, gender can be predicted with relative certainty:
     predict/gender/jessica
     predict/gender/michael
 
-For names that have trended masculine or feminine over time, specifying the birth year can allow a more confident gender prediction:
+If you know the birth year, passing it can allow a more confident gender prediction. Otherwise, all years will be included.
 
 Predict gender of Leslies born in 1940, 1980, and 2000
 
-    d.predict_gender('leslie', 1940)
-    d.predict_gender('leslie', 1980)
-    d.predict_gender('leslie', 2000)
+    predict/gender/leslie?year=1940
+    predict/gender/leslie?year=1980
+    predict/gender/leslie?year=2000
 
 Predict gender of Marions born in 1920 and 2020
 
-    d.predict_gender('marion', 1920)
-    d.predict_gender('marion', 2020)
-
-If `birth_year` is not passed, all birth years will be included.
+    predict/gender/marion?year=1920
+    predict/gender/marion?year=2020
 
 ### Using `search`
 
