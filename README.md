@@ -79,7 +79,7 @@ Predict gender of Marions born in 1920 and 2020
 
 Search for names that both start and end with "A", and are 3 letters long
 
-    d.search(start='a', end='a', length=[3])
+    search?start=a&end=a&length=3,3
 
 Search for masculine names ending in "EA", "IA", or "YA, and not containing "R" or "S"
 
@@ -99,13 +99,13 @@ Search for short names that were neutral before 1990 and have trended at least 1
 
 Search for variations of a name using regex pattern
 
-    d.search(pattern='^e?[ck]ath?e?r[iy]nn?[ea]?$')  # Catherine
-    d.search(pattern='^v[iy][ck]{1,2}tor[iye]{1,2}a$')  # Victoria
-    d.search(pattern='^ja[yie]?d[eiyao]n$')  # Ja(y)den
+    search?pattern=^e?[ck]ath?e?r[iy]nn?[ea]?$  # Catherine
+    search?pattern=^v[iy][ck]{1,2}tor[iye]{1,2}a$  # Victoria
+    search?pattern=^ja[yie]?d[eiyao]n$  # Ja(y)den
 
 Search for feminine variations of the name Cory
 
-    d.search(fem=True, pattern='^[ck]orr?(e?y|ie?|ii|ee)$')  # doesn't include variations of Corinne/a
+    search?fem=0.8,1&pattern=^[ck]orr?(e?y|ie?|ii|ee)$  # doesn't include variations of Corinne/a
 
 ## Data Sources
 
