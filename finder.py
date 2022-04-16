@@ -178,17 +178,17 @@ class Displayer(Loader):
             order: tuple[str] = None,
             length_min: int = None,
             length_max: int = None,
+            number_min: int = None,
+            number_max: int = None,
             fem: (bool, tuple[float]) = None,
             masc: (bool, tuple[float]) = None,
             neu: (bool, tuple[float]) = None,
+            after: int = None,
+            before: int = None,
             delta_after: int = None,
             delta_pct: float = None,
             delta_fem: float = None,
             delta_masc: float = None,
-            number_min: int = None,
-            number_max: int = None,
-            after: int = None,
-            before: int = None,
     ) -> list:
         # set up
         self._after = after
