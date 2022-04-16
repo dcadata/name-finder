@@ -36,10 +36,10 @@
 
 Predict ages of male and female Leslies
 
-    d.predict_age('leslie', 'm')
-    d.predict_age('leslie', 'f')
+    predict/age/leslie?gender=m
+    predict/age/leslie?gender=f
 
-(Note: passing m/f won't make much difference unless the name has trended one way or another over time)
+(Note: passing the gender won't make much difference unless the name has trended one way or another over time)
 
 Using buckets: e.g. use `buckets=4` to indicate quartiles
 

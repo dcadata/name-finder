@@ -271,7 +271,7 @@ class Displayer(Loader):
     def predict_age(
             self,
             name: str,
-            sex: str = None,
+            gender: str = None,
             exclude_deceased: bool = False,
             buckets: int = None,
     ) -> dict:
@@ -281,8 +281,8 @@ class Displayer(Loader):
 
         # filter dataframe
         df = df[df['name'].str.lower() == name.lower()].copy()
-        if sex:
-            df = df[df.sex == sex.upper()].copy()
+        if gender:
+            df = df[df.sex == gender.upper()].copy()
 
         if not len(df):
             return {}
@@ -309,8 +309,8 @@ class Displayer(Loader):
 
         # create output
         output = {'name': name.title()}
-        if sex:
-            output['sex'] = sex.upper()
+        if gender:
+            output['sex'] = gender.upper()
         if exclude_deceased:
             output['exclude_deceased'] = True
         if buckets:
