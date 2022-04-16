@@ -18,7 +18,7 @@
 
 * Search for first names based on their characteristics
 
-### INFO
+### NAME
 
 * Get info and history for specified first name
 
