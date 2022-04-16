@@ -307,8 +307,8 @@ class Displayer(Loader):
             if not len(ages):
                 continue
             prediction['percentiles'][percentile] = {
-                'min': ages.min(),
-                'max': ages.max(),
+                'min': float(ages.min()),
+                'max': float(ages.max()),
             }
 
         # create output
