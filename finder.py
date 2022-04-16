@@ -244,15 +244,14 @@ class Displayer(Loader):
             df = df[(df.ratio_m >= masc[0]) & (df.ratio_m <= masc[1])]
 
         # apply text filters
-        _tupleize_string = lambda x: (x,) if type(x) == str else x
         if pattern:
             df = df[df.name.apply(lambda x: re.search(pattern, x, re.I)).apply(bool)]
         if start:
-            df = df[df.name_lower.str.startswith(tuple(i.lower() for i in _tupleize_string(start)))]
+            df = df[df.name_lower.str.startswith(tuple(i.lower() for i in start))]
         if end:
-            df = df[df.name_lower.str.endswith(tuple(i.lower() for i in _tupleize_string(end)))]
+            df = df[df.name_lower.str.endswith(tuple(i.lower() for i in end))]
         if contains:
-            df = df[df.name_lower.apply(lambda x: all((i.lower() in x for i in _tupleize_string(contains))))]
+            df = df[df.name_lower.apply(lambda x: all((i.lower() in x for i in contains)))]
         if contains_any:
             df = df[df.name_lower.apply(lambda x: any((i.lower() in x for i in contains_any)))]
         if order:
@@ -260,11 +259,11 @@ class Displayer(Loader):
 
         # apply text not-filters
         if not_start:
-            df = df[~df.name_lower.str.startswith(tuple(i.lower() for i in _tupleize_string(not_start)))]
+            df = df[~df.name_lower.str.startswith(tuple(i.lower() for i in not_start))]
         if not_end:
-            df = df[~df.name_lower.str.endswith(tuple(i.lower() for i in _tupleize_string(not_end)))]
+            df = df[~df.name_lower.str.endswith(tuple(i.lower() for i in not_end))]
         if not_contains:
-            df = df[~df.name_lower.apply(lambda x: any((i.lower() in x for i in _tupleize_string(not_contains))))]
+            df = df[~df.name_lower.apply(lambda x: any((i.lower() in x for i in not_contains)))]
 
         if not len(df):
             return []
