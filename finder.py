@@ -179,9 +179,7 @@ class Displayer(Loader):
             length: tuple[int] = None,
             number_min: int = None,
             number_max: int = None,
-            fem: (bool, tuple[float]) = None,
-            masc: (bool, tuple[float]) = None,
-            neu: (bool, tuple[float]) = None,
+            gender: tuple[float] = None,
             after: int = None,
             before: int = None,
             delta_after: int = None,
@@ -224,21 +222,9 @@ class Displayer(Loader):
         if length:
             df = df[df.name.apply(len).apply(lambda x: length[0] <= x <= length[1])]
 
-        # set fem/masc lean filters
-        if fem is True:
-            fem = (0.5, 1)
-        elif masc is True:
-            masc = (0.5, 1)
-        elif neu is True:
-            fem = (0.25, 0.75)
-        elif neu is not None:
-            fem = (0.5 - neu, 0.5 + neu)
-
         # filter on ratio
-        if fem is not None:
-            df = df[(df.ratio_f >= fem[0]) & (df.ratio_f <= fem[1])]
-        elif masc is not None:
-            df = df[(df.ratio_m >= masc[0]) & (df.ratio_m <= masc[1])]
+        if gender:
+            df = df[(df.ratio_m >= gender[0]) & (df.ratio_m <= gender[1])]
 
         # apply text filters
         if pattern:
