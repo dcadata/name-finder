@@ -81,9 +81,9 @@ Search for names that both start and end with "A", and are 3 letters long
 
     search?start=a&end=a&length=3,3
 
-Search for masculine names ending in "EA", "IA", or "YA, and not containing "R" or "S"
+Masculine names ending in "A" that aren't super rare
 
-    d.search(masc=True, end=['ea', 'ia', 'ya'], not_contains=['r', 's'])
+    search?gender=0.9,1&end=a,ah,ay,ai,ae&number_min=1000
 
 Search for names that were masculine before 1980 and have trended at least 20% more feminine since 1980
 
@@ -105,7 +105,7 @@ Search for variations of a name using regex pattern
 
 Search for feminine variations of the name Cory
 
-    search?fem=0.8,1&pattern=^[ck]orr?(e?y|ie?|ii|ee)$  # doesn't include variations of Corinne/a
+    search?gender=0,0.2&pattern=^[ck]orr?(e?y|ie?|ii|ee)$  # doesn't include variations of Corinne/a
 
 ## Data Sources
 
