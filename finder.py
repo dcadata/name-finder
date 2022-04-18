@@ -238,7 +238,7 @@ class Displayer(Loader):
         if contains_any:
             df = df[df.name_lower.apply(lambda x: any((i.lower() in x for i in contains_any)))]
         if order:
-            df = df[df.name_lower.apply(lambda x: re.search('.*'.join(order), x)).apply(bool)]
+            df = df[df.name_lower.apply(lambda x: re.search('.*'.join(order), x, re.I)).apply(bool)]
 
         # apply text not-filters
         if not_start:
