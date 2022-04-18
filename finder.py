@@ -263,6 +263,7 @@ class Displayer(Loader):
     ) -> dict:
         df = self._raw_with_actuarial.copy()
         if exclude_deceased:
+            # noinspection PyArgumentList
             df = df.drop(columns=['number']).rename(columns={'number_living': 'number'})
 
         # filter dataframe
@@ -312,6 +313,7 @@ class Displayer(Loader):
     ) -> dict:
         df = self._raw_with_actuarial.copy()
         if exclude_deceased:
+            # noinspection PyArgumentList
             df = df.drop(columns=['number']).rename(columns={'number_living': 'number'})
 
         # filter dataframe
