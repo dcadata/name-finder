@@ -77,33 +77,29 @@ Predict gender of Marions born in 1920 and 2020
 
 ### Using `search`
 
-Search for names that both start and end with "A", and are 3 letters long
+Names that both start and end with "A", and are 3 letters long
 
     search?start=a&end=a&length=3,3
 
-Masculine names ending in "A" that aren't super rare
+Masculine names ending in "A" (and similar sounds) that aren't super rare
 
     search?gender=0.9,1&end=a,ah,ay,ai,ae&number_min=1000
 
-Search for names that were masculine before 1980 and have trended at least 20% more feminine since 1980
-
-    search?gender=0.9,1&before=1980&delta_after=1980&delta_fem=0.2
-
-Search for feminine names starting with "E" or "I" that have gained at least 10% in popularity since 2010
+Feminine names starting with "E" or "I" that have gained at least 10% in popularity since 2010
 
     search?gender=0,0.1&start=e,i&delta_after=2010&delta_pct=0.1
 
-Search for short names that were neutral before 1990 and have trended at least 1% less popular and 1% more masculine since 1990
+Short names that were neutral before 1990 and have trended at least 1% less popular and 1% more masculine since 1990
 
     search?length=3,5&gender=0.2,0.8&before=1990&delta_after=1990&delta_pct=-0.01&delta_masc=0.01
 
-Search for variations of a name using regex pattern
+Variations of a name, using regex pattern
 
     search?pattern=^e?[ck]ath?e?r[iy]nn?[ea]?$  # Catherine
     search?pattern=^v[iy][ck]{1,2}tor[iye]{1,2}a$  # Victoria
     search?pattern=^ja[yie]?d[eiyao]n$  # Ja(y)den
 
-Search for feminine variations of the name Cory
+Feminine variations of the name Cory
 
     search?gender=0,0.2&pattern=^[ck]orr?(e?y|ie?|ii|ee)$  # doesn't include variations of Corinne/a
 
