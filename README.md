@@ -87,15 +87,15 @@ Masculine names ending in "A" that aren't super rare
 
 Search for names that were masculine before 1980 and have trended at least 20% more feminine since 1980
 
-    d.search(masc=True, before=1980, delta_after=1980, delta_fem=0.2)
+    search?gender=0.9,1&before=1980&delta_after=1980&delta_fem=0.2
 
 Search for feminine names starting with "E" or "I" that have gained at least 10% in popularity since 2010
 
-    d.search(fem=True, start=['e', 'i'], delta_after=2010, delta_pct=0.1)
+    search?gender=0,0.1&start=e,i&delta_after=2010&delta_pct=0.1
 
 Search for short names that were neutral before 1990 and have trended at least 1% less popular and 1% more masculine since 1990
 
-    d.search(length=[3, 4, 5], neu=True, before=1990, delta_after=1990, delta_pct=-0.01, delta_masc=0.01)
+    search?length=3,5&gender=0.2,0.8&before=1990&delta_after=1990&delta_pct=-0.01&delta_masc=0.01
 
 Search for variations of a name using regex pattern
 
