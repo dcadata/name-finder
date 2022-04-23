@@ -275,9 +275,12 @@ class Displayer(Loader):
             return {}
 
         # calculate cumulative probabilities
-        total = df.number.sum()
+        number = df.number.sum()
+        if number < 25:
+            return {}
+
         prob = df.groupby('age', as_index=False).number.sum()
-        prob['pct'] = prob.number.apply(lambda x: x / total)
+        prob['pct'] = prob.number.apply(lambda x: x / number)
         prob = prob.sort_values('pct', ascending=False)
         prob['cumulative'] = prob.pct.cumsum()
         prediction = {
@@ -329,6 +332,9 @@ class Displayer(Loader):
 
         # create output
         number = df.number.sum()
+        if number < 25:
+            return {}
+
         numbers = df.groupby('sex').number.sum()
         output = {'name': name.title()}
         if birth_years:
