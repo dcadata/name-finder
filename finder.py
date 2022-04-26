@@ -252,6 +252,8 @@ class Displayer(Loader):
             return []
 
         summary = df.sort_values('number', ascending=False).drop(columns=['name_lower'])
+        for col in ('ratio_f', 'ratio_m'):
+            summary[col] = summary[col].apply(lambda x: round(x, 2))
         return summary.to_dict('records') if _OUTPUT_RECORDS else summary
 
     def predict_age(
