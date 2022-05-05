@@ -48,7 +48,7 @@ Using buckets: e.g. use `buckets=4` to indicate quartiles
 For some names--particularly those that have been in use for generations, but are trending up in recent years--excluding deceased individuals shows a meaningful difference. Without excluding deceased individuals, 95% of Avas are <= 67. When excluding deceased individuals, 95% of Avas are <= 20.
 
     predict/age/ava
-    predict/age/ava?exclude_deceased=true
+    predict/age/ava?living=1
 
 Practical example: 95% of Taylors are <= 34. 95% of Aidens are <= 16. This has implications for what kind of advertising, etc., could be most relevant to a customer named Aiden whose age you don't know.
 
