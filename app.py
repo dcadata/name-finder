@@ -89,7 +89,7 @@ def predict_age(name1):
     data = displayer.predict_age(
         name=escape(name1),
         gender=_escape_optional_string('gender'),
-        exclude_deceased=bool(request.args.get('exclude_deceased', default=0, type=int)),
+        living=bool(request.args.get('living', default=0, type=int)),
         buckets=request.args.get('buckets', default=None, type=int),
     )
     return jsonify(data)
@@ -100,7 +100,7 @@ def predict_gender(name1):
     data = displayer.predict_gender(
         name=escape(name1),
         birth_year=request.args.get('birth_year', default=None, type=int),
-        exclude_deceased=bool(request.args.get('exclude_deceased', default=0, type=int)),
+        living=bool(request.args.get('living', default=0, type=int)),
     )
     return jsonify(data)
 

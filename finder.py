@@ -259,11 +259,11 @@ class Displayer(Loader):
             self,
             name: str,
             gender: str = None,
-            exclude_deceased: bool = False,
+            living: bool = False,
             buckets: int = None,
     ) -> dict:
         df = self._raw_with_actuarial.copy()
-        if exclude_deceased:
+        if living:
             # noinspection PyArgumentList
             df = df.drop(columns=['number']).rename(columns={'number_living': 'number'})
 
@@ -302,8 +302,8 @@ class Displayer(Loader):
         output = {'name': name.title()}
         if gender:
             output['sex'] = gender.upper()
-        if exclude_deceased:
-            output['exclude_deceased'] = True
+        if living:
+            output['living'] = True
         if buckets:
             output['buckets'] = buckets
         output['prediction'] = prediction
@@ -313,10 +313,10 @@ class Displayer(Loader):
             self,
             name: str,
             birth_year: int = None,
-            exclude_deceased: bool = False,
+            living: bool = False,
     ) -> dict:
         df = self._raw_with_actuarial.copy()
-        if exclude_deceased:
+        if living:
             # noinspection PyArgumentList
             df = df.drop(columns=['number']).rename(columns={'number_living': 'number'})
 
@@ -340,8 +340,8 @@ class Displayer(Loader):
         output = {'name': name.title()}
         if birth_years:
             output['birth_year_range'] = birth_years
-        if exclude_deceased:
-            output['exclude_deceased'] = True
+        if living:
+            output['living'] = True
         output.update({
             'prediction': 'F' if numbers.get('F', 0) > numbers.get('M', 0) else 'M',
             'confidence': round(max(numbers.get('F', 0) / number, numbers.get('M', 0) / number), 2),
