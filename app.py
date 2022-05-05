@@ -37,11 +37,6 @@ def _escape_optional_string_into_list_of_ints(arg_name):
     return list(map(int, values))
 
 
-def _escape_optional_string_into_float(arg_name):
-    value = _escape_optional_string(arg_name)
-    return float(value) if value else None
-
-
 @app.route('/')
 def index():
     return 'Index Page'
