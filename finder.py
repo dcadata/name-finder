@@ -61,24 +61,24 @@ class Loader:
         self._raw_with_actuarial['number_living'] = (
                 self._raw_with_actuarial.number * self._raw_with_actuarial.survival_prob)
 
-    def _read_one_file(self, filename, is_territory=None):
+    def _read_one_file(self, filename: str, is_territory: bool = None) -> pd.DataFrame:
         df = self._read_one_file_territory(filename) if is_territory else self._read_one_file_national(filename)
         return df
 
-    def _read_one_file_national(self, filename):
+    def _read_one_file_national(self, filename: str) -> pd.DataFrame:
         df = pd.read_csv(self._national_data_directory + filename, names=['name', 'sex', 'number'], dtype={
             'name': str, 'sex': str, 'number': int}).assign(year=filename)
         df.year = df.year.apply(lambda x: x.rsplit('.', 1)[0].replace('yob', '')).apply(int)
         return df
 
-    def _read_one_file_territory(self, filename):
+    def _read_one_file_territory(self, filename: str) -> pd.DataFrame:
         df = pd.read_csv(self._territories_data_directory + filename, names=[
             'territory', 'sex', 'year', 'name', 'number'], dtype={
             'territory': str, 'name': str, 'sex': str, 'number': int, 'year': int}).drop(columns=['territory'])
         return df
 
     @staticmethod
-    def _load_actuarial(sex: str):
+    def _load_actuarial(sex: str) -> pd.DataFrame:
         actuarial = pd.read_csv(f'data/actuarial/{sex}.csv', dtype=int)
         actuarial = actuarial[actuarial.year == _MAX_YEAR].copy()
         actuarial['birth_year'] = actuarial.year - actuarial.age
