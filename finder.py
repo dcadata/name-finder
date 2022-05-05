@@ -21,12 +21,11 @@ class Loader:
         self._transform()
 
     def _read_data(self):
-        directories = {
-            self._national_data_directory: False,
-            self._territories_data_directory: True,
-        }
         data = []
-        for data_directory, is_territory in directories.items():
+        for data_directory, is_territory in [
+            (self._national_data_directory, False),
+            (self._territories_data_directory, True),
+        ]:
             for filename in os.listdir(data_directory):
                 if not filename.lower().endswith('.txt'):
                     continue
