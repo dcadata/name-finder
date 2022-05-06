@@ -45,7 +45,7 @@ Using buckets: e.g. use `buckets=4` to indicate quartiles
 
     predict/age/dorothy?buckets=4
 
-For some names--particularly those that have been in use for generations, but are trending up in recent years--excluding deceased individuals shows a meaningful difference. Without excluding deceased individuals, 95% of Avas are <= 67. When excluding deceased individuals, 95% of Avas are <= 20.
+For some names--particularly those that have been in use for generations, but are trending up in recent years--including only living individuals shows a meaningful difference. When including both living and deceased individuals, 95% of Avas are <= 67 yo. When including only living individuals, 95% of Avas are <= 20 yo.
 
     predict/age/ava
     predict/age/ava?living=1
