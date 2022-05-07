@@ -90,10 +90,9 @@ def search_by_text():
     text, delta_section = delta_sections[0], delta_sections[-1]
 
     def _safely_check_regex(pattern: str):
-        # noinspection PyBroadException
         try:
             return re.search(pattern, text).groups()[-1]
-        except Exception:
+        except (AttributeError, IndexError):
             return
 
     def _safely_check_regex_and_split_into_tuple(pattern: str):
@@ -101,10 +100,9 @@ def search_by_text():
         return tuple(result.split(',')) if result else None
 
     def _safely_check_regex_delta_section(pattern: str):
-        # noinspection PyBroadException
         try:
             return re.search(pattern, delta_section).groups()[-1]
-        except Exception:
+        except (AttributeError, IndexError):
             return
 
     length_ind = _safely_check_regex('(short|med|long)')
