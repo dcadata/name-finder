@@ -11,7 +11,7 @@ _OUTPUT_RECORDS = False
 
 
 class Loader:
-    def __init__(self, **kwargs):
+    def __init__(self, *args, **kwargs):
         self._national_data_directory = 'data/names/'
         self._territories_data_directory = 'data/namesbyterritory/'
         self._first_appearance = None
@@ -87,10 +87,10 @@ class Loader:
 
 
 class Displayer(Loader):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self._after = kwargs.get('after')  # after this year (inclusive)
-        self._before = kwargs.get('before')  # before this year (inclusive)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._after = None
+        self._before = None
 
     def name(
             self,
