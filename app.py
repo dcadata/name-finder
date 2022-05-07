@@ -117,8 +117,8 @@ def search_by_text():
 
     data = displayer.search(
         pattern=_safely_check_regex('(pattern|regex)\s(.*)[\s$]'),
-        start=_safely_check_regex_and_split_into_tuple('(start|beginn?)(ing|s)?\s([a-z,]+)'),
-        end=_safely_check_regex_and_split_into_tuple('end(ing|s)?\s([a-z,]+)'),
+        start=_safely_check_regex_and_split_into_tuple('(start|beginn?)(ing|s)?(\swith)?\s([a-z,]+)'),
+        end=_safely_check_regex_and_split_into_tuple('end(ing|s)?(\swith)?\s([a-z,]+)'),
         contains=_safely_check_regex_and_split_into_tuple('contain(ing|s)?\s([a-z,]+)'),
         order=_safely_check_regex_and_split_into_tuple('order\s([a-z,]+)'),
         length=dict(short=(0, 5), med=(6, 8), long=(9, 30)).get(length_ind),
