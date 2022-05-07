@@ -1,6 +1,5 @@
 import os
 import re
-import string
 
 import numpy as np
 import pandas as pd
@@ -92,7 +91,6 @@ class Displayer(Loader):
         super().__init__(*args, **kwargs)
         self._after = None
         self._before = None
-        self._consonants = ''.join(set(string.ascii_lowercase) - set('aeiouy'))
 
     def name(
             self,
@@ -173,7 +171,6 @@ class Displayer(Loader):
             end: tuple[str] = None,
             contains: tuple[str] = None,
             contains_any: tuple[str] = None,
-            like: str = None,
             not_start: tuple[str] = None,
             not_end: tuple[str] = None,
             not_contains: tuple[str] = None,
@@ -202,10 +199,6 @@ class Displayer(Loader):
                 delta_fem = -delta_masc
             if delta_fem is not None:
                 df = _calculate_gender_delta(df, after=delta_after, fem_ratio=delta_fem)
-
-        # create like filter if like was passed
-        if like and not order:
-            order = tuple(re.findall('[{}]'.format(self._consonants), like))
 
         # filter on years
         df = df[df.year.isin(self._years_to_select)].copy()
