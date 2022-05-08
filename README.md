@@ -27,11 +27,7 @@
 
 * Compare two or more names
 
-## API Documentation
-
-(coming eventually)
-
-## Examples
+## API Documentation & Examples
 
 ### Using `predict_age`
 
