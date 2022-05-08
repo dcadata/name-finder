@@ -126,8 +126,8 @@ Feminine variations of the name Cory
 #### Params
 
 * `name` - string, required: the name for which you want information
-* `after` - integer, optional: year after which to filter (inclusive)
-* `before` - integer, optional: year before which to filter (inclusive)
+* `after` - integer, optional: year of birth after which to filter (inclusive)
+* `before` - integer, optional: year of birth before which to filter (inclusive)
 
 #### Examples
 
