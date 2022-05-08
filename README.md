@@ -125,7 +125,8 @@ Variations of a name, using regex pattern
 #### Examples
 
     name/darren
-    name/aurora?after=2010
+    name/salma
+    name/helen?after=2010
     name/zachary?after=1980&before=2000
 
 ### Using `compare`
