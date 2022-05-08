@@ -71,7 +71,7 @@ Practical example: 95% of Taylors are <= 34. 95% of Aidens are <= 16. This has i
 
 #### Examples
 
-For most names, gender can be predicted with relative certainty:
+For most names, gender can be predicted with (near-)certainty:
 
     predict/gender/genevieve
     predict/gender/cristobal
