@@ -78,7 +78,7 @@ For most names, gender can be predicted with (near-)certainty:
     predict/gender/barbara
     predict/gender/carlos
     predict/gender/dante
-    predict/gender/elena
+    predict/gender/ellen
 
 However, this is not true of all names:
 
