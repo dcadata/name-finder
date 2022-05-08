@@ -13,26 +13,26 @@ displayer.load()
 app = Flask(__name__)
 
 
-def _escape_optional_string(arg_name):
+def _escape_optional_string(arg_name: str):
     value = request.args.get(arg_name, default=None, type=str)
     return escape(value) if value else None
 
 
-def _escape_optional_string_into_list(arg_name):
+def _escape_optional_string_into_list(arg_name: str):
     value = request.args.get(arg_name, default=None, type=str)
     if not value:
         return None
     return escape(value).split(',')
 
 
-def _escape_optional_string_into_list_of_floats(arg_name):
+def _escape_optional_string_into_list_of_floats(arg_name: str):
     values = _escape_optional_string_into_list(arg_name)
     if not values:
         return
     return list(map(float, values))
 
 
-def _escape_optional_string_into_list_of_ints(arg_name):
+def _escape_optional_string_into_list_of_ints(arg_name: str):
     values = _escape_optional_string_into_list(arg_name)
     if not values:
         return
@@ -40,7 +40,7 @@ def _escape_optional_string_into_list_of_ints(arg_name):
 
 
 @app.route('/name/<string:name1>')
-def name(name1):
+def name(name1: str):
     data = displayer.name(
         name=escape(name1),
         after=request.args.get('after', default=None, type=int),
@@ -128,13 +128,13 @@ def search_by_text():
 
 
 @app.route('/compare/<string:names>')
-def compare(names):
+def compare(names: str):
     data = displayer.search(pattern='^({})$'.format('|'.join(escape(names).split(','))))
     return jsonify(data)
 
 
 @app.route('/predict/age/<string:name1>')
-def predict_age(name1):
+def predict_age(name1: str):
     data = displayer.predict_age(
         name=escape(name1),
         gender=_escape_optional_string('gender'),
@@ -145,7 +145,7 @@ def predict_age(name1):
 
 
 @app.route('/predict/gender/<string:name1>')
-def predict_gender(name1):
+def predict_gender(name1: str):
     data = displayer.predict_gender(
         name=escape(name1),
         birth_year=request.args.get('birth_year', default=None, type=int),
