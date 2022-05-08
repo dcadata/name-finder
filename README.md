@@ -131,6 +131,10 @@ Feminine variations of the name Cory
 
 #### Examples
 
+    name/quinn
+    name/aurora?after=2010
+    name/andrew?after=1980&before=2000
+
 ## Data Sources
 
 This project uses United States Social Security Administration (SSA) data available via ["Beyond the Top 1000 Names" at SSA.gov](https://www.ssa.gov/oact/babynames/limits.html). National data was combined with territory-specific data. 
