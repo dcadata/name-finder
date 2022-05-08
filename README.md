@@ -135,6 +135,17 @@ Feminine variations of the name Cory
     name/aurora?after=2010
     name/zachary?after=1980&before=2000
 
+### Using `compare`
+
+#### Params
+
+* `names` - comma-separated strings, required: the names for which you want information
+
+#### Examples
+
+    compare/louis,lewis
+    compare/gabriel,gabrielle,gabriella
+
 ## Data Sources
 
 This project uses United States Social Security Administration (SSA) data available via ["Beyond the Top 1000 Names" at SSA.gov](https://www.ssa.gov/oact/babynames/limits.html). National data was combined with territory-specific data. 
