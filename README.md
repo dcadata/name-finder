@@ -31,6 +31,13 @@
 
 ### Using `predict_age`
 
+Params:
+
+* `name` - string, required: the name for which you want a prediction
+* `gender` - string, optional: gender of individual - pass "m" or "f" if available; defaults to none
+* `living` - integer, optional: pass 1 if you want to include only living individuals; defaults to 0
+* `buckets` - integer, optional: number of buckets in probability distribution, e.g. pass 5 for quintiles; defaults to 0.68-0.95-0.997
+
 Predict ages of male and female Leslies
 
     predict/age/leslie?gender=m
@@ -53,6 +60,12 @@ Practical example: 95% of Taylors are <= 34. 95% of Aidens are <= 16. This has i
     predict/age/aiden
 
 ### Using `predict_gender`
+
+Params:
+
+* `name` - string, required: the name for which you want a prediction
+* `birth_year` - integer, optional: year in which individual was born
+* `living` - integer, optional: pass 1 if you want to include only living individuals; defaults to 0
 
 For most names, gender can be predicted with relative certainty:
 
