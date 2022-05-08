@@ -39,11 +39,6 @@ def _escape_optional_string_into_list_of_ints(arg_name):
     return list(map(int, values))
 
 
-@app.route('/')
-def index():
-    return 'Index Page'
-
-
 @app.route('/name/<string:name1>')
 def name(name1):
     data = displayer.name(
