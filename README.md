@@ -91,6 +91,10 @@ Predict gender of Marions born in 1920 and 2020
 
 ### Using `search`
 
+#### Params
+
+#### Examples
+
 Names that both start and end with "A", and are 3 letters long
 
     search?start=a&end=a&length=3,3
