@@ -95,9 +95,9 @@ Predict gender of Marions born in 1920 and 2020
 
 #### Examples
 
-Names that both start and end with "A", and are 3 letters long
+Names that both start and end with "A", and are 3-5 letters long
 
-    search?start=a&end=a&length=3,3
+    search?start=a&end=a&length=3,5
 
 Masculine names ending in "A" (and similar sounds) that aren't super rare
 
