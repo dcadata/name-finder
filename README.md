@@ -144,8 +144,10 @@ Feminine variations of the name Cory
 
 #### Examples
 
+    compare/jeremy,jeremiah
+    compare/leander,leandra
     compare/louis,lewis
-    compare/gabriel,gabrielle,gabriella
+    compare/michelle,mikayla,michaela
 
 ## Data Sources
 
