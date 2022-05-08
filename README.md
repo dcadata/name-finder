@@ -73,7 +73,7 @@ Practical example: 95% of Taylors are <= 34. 95% of Aidens are <= 16. This has i
 
 For most names, gender can be predicted with (near-)certainty:
 
-    predict/gender/genevieve
+    predict/gender/chandra
     predict/gender/cristobal
 
 If you know the birth year, passing it can allow a more confident gender prediction. Otherwise, all years will be included.
