@@ -59,7 +59,7 @@ For some names--particularly those that have been in use for generations, but ar
     predict/age/ava
     predict/age/ava?living=1
 
-Practical example: 95% of Taylors are <= 34. This has implications for what kind of advertising, etc., could be most relevant to a customer named Taylor whose age isn't known.
+Practical example: 95% of Taylors are between age 3 and age 36 (inclusive of 2021 data). This has implications for what kind of advertising, etc., could be most relevant to a customer named Taylor whose age isn't otherwise known.
 
     predict/age/taylor
 
