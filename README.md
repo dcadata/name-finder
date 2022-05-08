@@ -116,6 +116,7 @@ Variations of a name, using regex pattern
     search?pattern=^e?[ck]ath?e?r[iy]nn?[ea]?$  # Catherine
     search?pattern=^v[iy][ck]{1,2}tor[iye]{1,2}a$  # Victoria
     search?pattern=^ja[yie]?d[eiyao]n$  # Ja(y)den
+    search?pattern=^gabriell?[ea]?$  # variations of Gabriel
 
 Feminine variations of the name Cory
 
