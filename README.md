@@ -36,7 +36,7 @@ Predict ages of male and female Leslies
     predict/age/leslie?gender=m
     predict/age/leslie?gender=f
 
-Note: Passing gender won't make a difference for most names, but if you know the gender, you can get a more accurate prediction by passing it.
+Note: passing gender won't make a difference for most names, but if you know the gender, you can get a more accurate prediction by passing it.
 
 Using buckets: e.g. use `buckets=4` to indicate quartiles
 
