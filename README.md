@@ -72,8 +72,10 @@ Practical example: 95% of Taylors are <= 34. This has implications for what kind
 
 For most names, gender can be predicted with (near-)certainty:
 
-    predict/gender/chandra
-    predict/gender/cristobal
+    predict/gender/charlotte
+    predict/gender/carlos
+    predict/gender/dante
+    predict/gender/diana
 
 If you know the birth year, passing it can allow a more confident gender prediction. Otherwise, all years will be included.
 
@@ -135,8 +137,9 @@ Variations of a name, using regex pattern
 #### Examples
 
     compare/jeremy,jeremiah
-    compare/leander,leandra
     compare/michelle,mikayla,michaela
+    compare/esmeralda,emerald
+    compare/leander,leandra
 
 ## Data Sources
 
