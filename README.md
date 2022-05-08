@@ -118,10 +118,6 @@ Variations of a name, using regex pattern
     search?pattern=^ja[yie]?d[eiyao]n$  # Ja(y)den
     search?pattern=^gabriell?[ea]?$  # variations of Gabriel
 
-Feminine variations of the name Cory
-
-    search?gender=0,0.2&pattern=^[ck]orr?(e?y|ie?|ii|ee)$  # doesn't include variations of Corinne/a
-
 ### Using `name`
 
 #### Params
