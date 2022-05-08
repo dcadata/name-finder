@@ -128,7 +128,7 @@ Variations of a name, using regex pattern
 
 #### Examples
 
-    name/quinn
+    name/darren
     name/aurora?after=2010
     name/zachary?after=1980&before=2000
 
