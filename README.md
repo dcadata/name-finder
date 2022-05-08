@@ -40,10 +40,10 @@
 
 #### Examples
 
-Predict ages of male and female Leslies
+Predict ages of male and female Lindseys
 
-    predict/age/leslie?gender=m
-    predict/age/leslie?gender=f
+    predict/age/lindsey?gender=m
+    predict/age/lindsey?gender=f
 
 Note: passing gender won't make a difference for most names, but if you know the gender, you can get a more accurate prediction by passing it.
 
