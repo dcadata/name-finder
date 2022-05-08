@@ -77,6 +77,11 @@ For most names, gender can be predicted with (near-)certainty:
     predict/gender/dante
     predict/gender/elena
 
+However, this is not true of all names:
+
+    predict/gender/jordan
+    predict/gender/krishna
+
 If you know the birth year, passing it can allow a more confident gender prediction. Otherwise, all years will be included.
 
 Predict gender of Leslies born in 1940, 1980, and 2000
