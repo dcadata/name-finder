@@ -84,11 +84,6 @@ Predict gender of Leslies born in 1940, 1980, and 2000
     predict/gender/leslie?year=1980
     predict/gender/leslie?year=2000
 
-Predict gender of Marions born in 1920 and 2020
-
-    predict/gender/marion?year=1920
-    predict/gender/marion?year=2020
-
 ### Using `search`
 
 #### Params
@@ -142,7 +137,6 @@ Variations of a name, using regex pattern
 
     compare/jeremy,jeremiah
     compare/leander,leandra
-    compare/louis,lewis
     compare/michelle,mikayla,michaela
 
 ## Data Sources
