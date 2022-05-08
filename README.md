@@ -17,6 +17,7 @@
 ### SEARCH
 
 * Search for first names based on their characteristics
+* `search_by_text` allows similar functionality via natural language string
 
 ### NAME
 
