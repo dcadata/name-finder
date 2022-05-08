@@ -72,10 +72,10 @@ Practical example: 95% of Taylors are <= 34. This has implications for what kind
 
 For most names, gender can be predicted with (near-)certainty:
 
-    predict/gender/charlotte
+    predict/gender/barbara
     predict/gender/carlos
     predict/gender/dante
-    predict/gender/diana
+    predict/gender/elena
 
 If you know the birth year, passing it can allow a more confident gender prediction. Otherwise, all years will be included.
 
