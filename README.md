@@ -121,6 +121,16 @@ Feminine variations of the name Cory
 
     search?gender=0,0.2&pattern=^[ck]orr?(e?y|ie?|ii|ee)$  # doesn't include variations of Corinne/a
 
+### Using `name`
+
+#### Params
+
+* `name` - string, required: the name for which you want information
+* `after` - integer, optional: year after which to filter (inclusive)
+* `before` - integer, optional: year before which to filter (inclusive)
+
+#### Examples
+
 ## Data Sources
 
 This project uses United States Social Security Administration (SSA) data available via ["Beyond the Top 1000 Names" at SSA.gov](https://www.ssa.gov/oact/babynames/limits.html). National data was combined with territory-specific data. 
