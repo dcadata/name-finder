@@ -114,8 +114,8 @@ def search_by_text():
     delta_after = int(delta_after_ind) if delta_after_ind else None
     if not delta_after and (delta_pct_ind or delta_gender_ind):  # suggests they intended to add a trend
         delta_after = finder._MAX_YEAR - 20
-    delta_pct = dict(down=-0.01, up=0.01).get(delta_pct_ind)
-    delta_fem = dict(fem=0.01, masc=-0.01).get(delta_gender_ind)
+    delta_pct = dict(down=-0.001, up=0.001).get(delta_pct_ind)
+    delta_fem = dict(fem=0.001, masc=-0.001).get(delta_gender_ind)
 
     data = displayer.search(
         pattern=_safely_check_regex('(pattern|regex)\s(.*)[\s$]'),
