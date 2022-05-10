@@ -54,7 +54,7 @@ Using buckets: e.g. use `buckets=4` to indicate quartiles
 
     predict/age/rosalyn?buckets=4
 
-For some names--particularly those that have been in use for generations, but are trending up in recent years--including only living individuals shows a meaningful difference. When including both living and deceased individuals, 95% of Avas are <= 67 yo. When including only living individuals, 95% of Avas are <= 20 yo.
+Including only living individuals can show a meaningful difference for some names. When including both living and deceased individuals, 95% of Avas are <= age 68 (inclusive of 2021 data). When including only living individuals, 95% of Avas are <= age 21 (also inclusive of 2021 data).
 
     predict/age/ava
     predict/age/ava?living=1
