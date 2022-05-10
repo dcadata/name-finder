@@ -253,8 +253,8 @@ class Displayer(Loader):
         df = df.sort_values('number', ascending=False).drop(columns=['name_lower'])
         for col in ('ratio_f', 'ratio_m'):
             df[col] = df[col].apply(lambda x: round(x, 2))
-        df['display'] = [_create_display_ratio(*i) for i in df[[
-            'number', 'ratio_f', 'ratio_m']].to_records(index=False)]
+        df['display'] = [_create_display_ratio(*i) for i in df[['number', 'ratio_f', 'ratio_m']].to_records(
+            index=False)]
 
         return df.to_dict('records') if _OUTPUT_RECORDS else df
 
