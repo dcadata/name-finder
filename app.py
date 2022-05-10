@@ -120,7 +120,7 @@ def search_by_text():
         end=_safely_check_regex_and_split_into_tuple('end(ing|s)?(\swith)?\s([a-z,]+)'),
         contains=_safely_check_regex_and_split_into_tuple('contain(ing|s)?\s([a-z,]+)'),
         order=_safely_check_regex_and_split_into_tuple('order\s([a-z,]+)'),
-        length=dict(short=(0, 5), med=(6, 8), long=(9, 30)).get(length_ind),
+        length=dict(short=(3, 5), med=(6, 8), long=(9, 30)).get(length_ind),
         gender=dict(fem=(0, 0.2), neu=(0.2, 0.8), unisex=(0.2, 0.8), masc=(0.8, 1)).get(gender_ind),
         after=int(after_ind) if after_ind else None,
         before=int(before_ind) if before_ind else None,
