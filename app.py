@@ -82,7 +82,10 @@ def search_by_text():
         return {}
     text = escape(text.lower())
     delta_sections = re.split('trend(ing|ed)?\s', text, 1)
-    text, delta_section = delta_sections[0], delta_sections[-1]
+    if len(delta_sections) > 1:
+        text, delta_section = delta_sections[0], delta_sections[-1]
+    else:
+        delta_section = ''
 
     def _safely_check_regex(pattern: str):
         try:
