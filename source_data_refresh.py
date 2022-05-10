@@ -4,14 +4,14 @@ from time import sleep
 import pandas as pd
 import requests
 
-from finder import _MAX_YEAR
+from finder import MAX_YEAR
 
 
 def _refresh_babynames(session):
     # compare to website
     response = session.get('https://www.ssa.gov/oact/babynames/limits.html')
     table = pd.read_html(response.text)[0]
-    if _MAX_YEAR >= int(table.iloc[0, 0]):
+    if MAX_YEAR >= int(table.iloc[0, 0]):
         return False
 
     sleep(3)
@@ -32,7 +32,7 @@ def _refresh_babynames(session):
 def _refresh_actuarial(session):
     url = 'https://www.ssa.gov/oact/HistEst/CohLifeTables/{0}/CohLifeTables_{1}_Alt2_TR{0}.txt'
     for s in ('F', 'M'):
-        response = session.get(url.format(_MAX_YEAR + 2, s))
+        response = session.get(url.format(MAX_YEAR + 2, s))
         if not response.ok:
             return
         sleep(3)

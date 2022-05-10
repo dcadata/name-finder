@@ -6,7 +6,7 @@ import pandas as pd
 
 # years as currently available in dataset
 _MIN_YEAR = 1880
-_MAX_YEAR = int(re.search('^yob([0-9]{4}).txt$', os.listdir('data/names/')[-1]).group(1))
+MAX_YEAR = int(re.search('^yob([0-9]{4}).txt$', os.listdir('data/names/')[-1]).group(1))
 _OUTPUT_RECORDS = False
 
 
@@ -79,7 +79,7 @@ class Loader:
     @staticmethod
     def _load_actuarial(sex: str) -> pd.DataFrame:
         actuarial = pd.read_csv(f'data/actuarial/{sex}.csv', dtype=int)
-        actuarial = actuarial[actuarial.year == _MAX_YEAR].copy()
+        actuarial = actuarial[actuarial.year == MAX_YEAR].copy()
         actuarial['birth_year'] = actuarial.year - actuarial.age
         actuarial['survival_prob'] = actuarial.survivors.apply(lambda x: x / 100000)
         actuarial = actuarial.drop(columns=['year', 'survivors']).rename(columns={'birth_year': 'year'})
@@ -353,11 +353,11 @@ class Displayer(Loader):
         if self._after and self._before:
             years_range = (self._after, self._before + 1)
         elif self._after:
-            years_range = (self._after, _MAX_YEAR + 1)
+            years_range = (self._after, MAX_YEAR + 1)
         elif self._before:
             years_range = (_MIN_YEAR, self._before + 1)
         else:
-            years_range = (_MIN_YEAR, _MAX_YEAR + 1)
+            years_range = (_MIN_YEAR, MAX_YEAR + 1)
         return tuple(range(*years_range))
 
 
@@ -365,7 +365,7 @@ def _calculate_number_delta(df: pd.DataFrame, **delta) -> pd.DataFrame:
     after = delta.get('after')
     pct = delta.get('pct')
 
-    chg = df[df.year == after].merge(df[df.year == _MAX_YEAR], on=['name'], suffixes=('_y1', '_y2'))
+    chg = df[df.year == after].merge(df[df.year == MAX_YEAR], on=['name'], suffixes=('_y1', '_y2'))
     if pct > 0:  # trended up
         chg['delta'] = chg.pct_year_y2 >= chg.pct_year_y1 * (1 + pct)
     elif pct < 0:  # trended down
@@ -381,7 +381,7 @@ def _calculate_gender_delta(df: pd.DataFrame, **delta) -> pd.DataFrame:
     fem_ratio = delta.get('fem_ratio')
 
     chg = df.copy()
-    chg = chg[chg.year == after].merge(chg[chg.year == _MAX_YEAR], on=['name'], suffixes=('_y1', '_y2'))
+    chg = chg[chg.year == after].merge(chg[chg.year == MAX_YEAR], on=['name'], suffixes=('_y1', '_y2'))
     if fem_ratio > 0:  # trended fem
         chg['delta'] = chg.ratio_f_y2 >= chg.ratio_f_y1 + fem_ratio
     elif fem_ratio < 0:  # trended masc
