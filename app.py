@@ -117,7 +117,7 @@ def search_by_text():
     delta_pct = dict(down=-0.001, up=0.001).get(delta_pct_ind)
     delta_fem = dict(fem=0.001, masc=-0.001).get(delta_gender_ind)
 
-    data = displayer.search(
+    conditions = dict(
         pattern=_safely_check_regex('(pattern|regex)\s(.*)[\s$]'),
         start=_safely_check_regex_and_split_into_tuple('(start|beginn?)(ing|s)?(\swith)?\s([a-z,]+)'),
         end=_safely_check_regex_and_split_into_tuple('end(ing|s)?(\swith)?\s([a-z,]+)'),
@@ -131,8 +131,10 @@ def search_by_text():
         delta_pct=delta_pct,
         delta_fem=delta_fem,
     )
+    data = displayer.search(**conditions)
     if data:
-        data = data[:50]
+        data = data[:30]
+    data = dict(conditions=conditions, bot_text=', '.join('{name}({display})'.format(**i) for i in data), data=data)
     return jsonify(data)
 
 
