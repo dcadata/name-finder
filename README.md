@@ -141,14 +141,14 @@ Variations of a name, using regex pattern
 
 #### Params
 
-* `names` - comma-separated strings, required: the names for which you want information
+* `names` - whitespace-separated strings, required: the names for which you want information
 
 #### Examples
 
-    compare/jeremy,jeremiah
-    compare/michelle,mikayla,michaela
-    compare/esmeralda,emerald
-    compare/leander,leandra
+    compare/jeremy jeremiah
+    compare/michelle mikayla michaela
+    compare/esmeralda emerald
+    compare/leander leandra
 
 ## Data Sources
 
