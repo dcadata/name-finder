@@ -253,6 +253,7 @@ class Displayer(Loader):
         df = df.sort_values('number', ascending=False).drop(columns=['name_lower'])
         for col in ('ratio_f', 'ratio_m'):
             df[col] = df[col].apply(lambda x: round(x, 2))
+        df['display'] = [_create_display_ratio(*i) for i in zip(df.number, df.ratio_f, df.ratio_m)]
 
         return df.to_dict('records') if _OUTPUT_RECORDS else df
 
@@ -391,3 +392,15 @@ def _calculate_gender_delta(df: pd.DataFrame, **delta) -> pd.DataFrame:
         chg['delta'] = (chg.ratio_f_y1 - chg.ratio_f_y2).apply(abs).apply(lambda x: x <= 0.01)
     df = df[df.name.isin(chg[chg.delta].name)].copy()
     return df
+
+
+def _create_display_ratio(number: int, ratio_f: float, ratio_m: float) -> str:
+    formatted_number = f'n={number:,}'
+    if ratio_f == 1 or ratio_m == 1:
+        return formatted_number
+    elif ratio_f == ratio_m:
+        return f'{formatted_number}, no lean'
+    elif ratio_f > ratio_m:
+        return f'{formatted_number}, f={ratio_f}'
+    else:  # m > f
+        return f'{formatted_number}, m={ratio_m}'
