@@ -108,6 +108,12 @@ def search_by_text():
     delta_pct_ind = _safely_check_regex_delta_section('(down|up)')
     delta_gender_ind = _safely_check_regex_delta_section('(fem|masc)')
 
+    delta_after = int(delta_after_ind) if delta_after_ind else None
+    delta_pct = dict(down=-0.01, up=0.01).get(delta_pct_ind)
+    delta_fem = dict(fem=0.01, masc=-0.01).get(delta_gender_ind)
+    if not delta_after and (delta_pct or delta_fem):  # suggests they intended to add a trend
+        delta_after = finder._MAX_YEAR - 20
+
     data = displayer.search(
         pattern=_safely_check_regex('(pattern|regex)\s(.*)[\s$]'),
         start=_safely_check_regex_and_split_into_tuple('(start|beginn?)(ing|s)?(\swith)?\s([a-z,]+)'),
@@ -118,9 +124,9 @@ def search_by_text():
         gender=dict(fem=(0, 0.2), neu=(0.2, 0.8), unisex=(0.2, 0.8), masc=(0.8, 1)).get(gender_ind),
         after=int(after_ind) if after_ind else None,
         before=int(before_ind) if before_ind else None,
-        delta_after=int(delta_after_ind) if delta_after_ind else None,
-        delta_pct=dict(down=-0.01, up=0.01).get(delta_pct_ind),
-        delta_fem=dict(fem=0.01, masc=-0.01).get(delta_gender_ind),
+        delta_after=delta_after,
+        delta_pct=delta_pct,
+        delta_fem=delta_fem,
     )
     if data:
         data = data[:50]
