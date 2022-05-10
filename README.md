@@ -54,12 +54,12 @@ Using buckets: e.g. use `buckets=4` to indicate quartiles
 
     predict/age/rosalyn?buckets=4
 
-Including only living individuals can show a meaningful difference for some names. When including both living and deceased individuals, 95% of Avas are <= age 68 (inclusive of 2021 data). When including only living individuals, 95% of Avas are <= age 21 (also inclusive of 2021 data).
+Including only living individuals can show a meaningful difference for some names. When including both living and deceased individuals, 95% of Avas are <= age 68 (as of 2021 data). When including only living individuals, 95% of Avas are <= age 21 (as of 2021 data).
 
     predict/age/ava
     predict/age/ava?living=1
 
-Practical example: 95% of Taylors are between age 3 and age 36 (inclusive of 2021 data). This has implications for what kind of advertising, etc., could be most relevant to a customer named Taylor whose age isn't otherwise known.
+Practical example: 95% of Taylors are between age 3 and age 36 (as of 2021 data). This has implications for what kind of advertising, etc., could be most relevant to a customer named Taylor whose age isn't otherwise known.
 
     predict/age/taylor
 
