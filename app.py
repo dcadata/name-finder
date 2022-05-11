@@ -118,7 +118,7 @@ def search_by_text():
     delta_fem = dict(fem=0.001, masc=-0.001).get(delta_gender_ind)
 
     conditions = dict(
-        pattern=_safely_check_regex('(pattern|regex)\s(.*)[\s$]'),
+        pattern=_safely_check_regex('(pattern|regex)\s(.*)'),
         start=_safely_check_regex_and_split_into_tuple('(start|beginn?)(ing|s)?(\swith)?\s([a-z,]+)'),
         end=_safely_check_regex_and_split_into_tuple('end(ing|s)?(\swith)?\s([a-z,]+)'),
         contains=_safely_check_regex_and_split_into_tuple('contain(ing|s)?\s([a-z,]+)'),
