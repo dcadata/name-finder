@@ -60,9 +60,10 @@ def compare_endpoint(names: str):
     data = []
     for name in names:
         name_data = _get_name(name)
-        if not historic:
-            del name_data['historic']
-        data.append(name_data)
+        if name_data:
+            if not historic:
+                del name_data['historic']
+            data.append(name_data)
     return jsonify(data)
 
 
