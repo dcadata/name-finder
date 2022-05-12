@@ -49,6 +49,12 @@ def name(name1: str):
     return jsonify(data)
 
 
+@app.route('/compare')
+def compare():
+    data = displayer.search(pattern='^({})$'.format('|'.join(_escape_optional_string_into_list('names'))))
+    return jsonify(data)
+
+
 @app.route('/search')
 def search():
     data = displayer.search(
@@ -135,12 +141,6 @@ def search_by_text():
     if data:
         data = data[:30]
     data = dict(conditions=conditions, bot_text=', '.join('{name}({display})'.format(**i) for i in data), data=data)
-    return jsonify(data)
-
-
-@app.route('/compare')
-def compare():
-    data = displayer.search(pattern='^({})$'.format('|'.join(_escape_optional_string_into_list('names'))))
     return jsonify(data)
 
 
