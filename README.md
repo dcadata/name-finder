@@ -153,8 +153,3 @@ Variations of a name, using regex pattern
     compare/michelle-mikayla-michaela?before=2000
     compare/esmeralda-emerald?after=1950
     compare/leander-leandra?after=1915&before=2015
-
-## Future Features
-
-- combine with Google trends to correlate rises/falls in popularity of name w/ trends around that name
-- game in which users guess (without looking it up) which of two names is more common
