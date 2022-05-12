@@ -49,7 +49,7 @@ def _name_base(name1: str):
 
 
 @app.route('/name/<string:name1>')
-def name(name1: str):
+def name_endpoint(name1: str):
     return jsonify(_name_base(name1))
 
 
@@ -60,7 +60,7 @@ def compare():
 
 
 @app.route('/search')
-def search():
+def search_endpoint():
     data = displayer.search(
         pattern=_escape_optional_string('pattern'),
         start=_escape_optional_string_into_list('start'),
@@ -86,7 +86,7 @@ def search():
 
 
 @app.route('/search_by_text')
-def search_by_text():
+def search_by_text_endpoint():
     text = request.args.get('text', default=None, type=str)
     if not text:
         return {}
@@ -149,7 +149,7 @@ def search_by_text():
 
 
 @app.route('/predict/age/<string:name1>')
-def predict_age(name1: str):
+def predict_age_endpoint(name1: str):
     data = displayer.predict_age(
         name=escape(name1),
         gender=_escape_optional_string('gender'),
@@ -160,7 +160,7 @@ def predict_age(name1: str):
 
 
 @app.route('/predict/gender/<string:name1>')
-def predict_gender(name1: str):
+def predict_gender_endpoint(name1: str):
     data = displayer.predict_gender(
         name=escape(name1),
         birth_year=request.args.get('birth_year', default=None, type=int),
