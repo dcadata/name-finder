@@ -54,8 +54,9 @@ def name_endpoint(name1: str):
 
 
 @app.route('/compare')
-def compare():
-    data = displayer.search(pattern='^({})$'.format('|'.join(_escape_optional_string_into_list('names'))))
+def compare_endpoint():
+    names = _escape_optional_string_into_list('names')
+    data = [_name_base(name) for name in names]
     return jsonify(data)
 
 
