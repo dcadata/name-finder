@@ -56,7 +56,13 @@ def name_endpoint(name: str):
 @app.route('/compare')
 def compare_endpoint():
     names = _escape_optional_string_into_list('names')
-    data = [_get_name(name) for name in names]
+    historic = bool(request.args.get('historic', default=0, type=int))
+    data = []
+    for name in names:
+        name_data = _get_name(name)
+        if not historic:
+            del name_data['historic']
+        data.append(name_data)
     return jsonify(data)
 
 
