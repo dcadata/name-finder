@@ -97,6 +97,7 @@ class Displayer(Loader):
             name: str,
             after: int = None,
             before: int = None,
+            show_historic: bool = None,
     ) -> dict:
         # set up
         self._after = after
@@ -160,8 +161,9 @@ class Displayer(Loader):
             'first_appearance': {
                 'year': int(self._first_appearance[grouped['name']]),
             },
-            'historic': list(historic.to_dict('records')) if _OUTPUT_RECORDS else historic,
         }
+        if show_historic:
+            name_record.update({'historic': list(historic.to_dict('records')) if _OUTPUT_RECORDS else historic})
         return name_record
 
     def search(

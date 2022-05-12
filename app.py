@@ -44,6 +44,7 @@ def _get_name(name: str) -> dict:
         name=escape(name),
         after=request.args.get('after', default=None, type=int),
         before=request.args.get('before', default=None, type=int),
+        show_historic=bool(request.args.get('show_historic', default=0, type=int)),
     )
     return data
 
@@ -56,14 +57,7 @@ def name_endpoint(name: str):
 @app.route('/compare/<string:names>')
 def compare_endpoint(names: str):
     names = escape(names).split('-')
-    historic = bool(request.args.get('historic', default=0, type=int))
-    data = []
-    for name in names:
-        name_data = _get_name(name)
-        if name_data:
-            if not historic:
-                del name_data['historic']
-            data.append(name_data)
+    data = [_get_name(name) for name in names]
     return jsonify(data)
 
 
