@@ -317,7 +317,7 @@ class Displayer(Loader):
     def predict_gender(
             self,
             name: str,
-            birth_year: int = None,
+            year: int = None,
             living: bool = False,
     ) -> dict:
         df = self._raw_with_actuarial.copy()
@@ -327,8 +327,8 @@ class Displayer(Loader):
 
         # filter dataframe
         df = df[df['name'].str.lower() == name.lower()].copy()
-        if birth_year:
-            birth_years = list(range(birth_year - 2, birth_year + 3))
+        if year:
+            birth_years = list(range(year - 2, year + 3))
             df = df[df.year.isin(birth_years)]
         else:
             birth_years = []

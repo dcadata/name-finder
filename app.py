@@ -165,7 +165,7 @@ def predict_age_endpoint(name: str):
 def predict_gender_endpoint(name: str):
     data = displayer.predict_gender(
         name=escape(name),
-        birth_year=request.args.get('birth_year', default=None, type=int),
+        year=request.args.get('year', default=None, type=int),
         living=bool(request.args.get('living', default=0, type=int)),
     )
     return jsonify(data)
