@@ -39,18 +39,18 @@ def _escape_optional_string_into_list_of_ints(arg_name: str):
     return list(map(int, values))
 
 
-def _name_base(name1: str) -> dict:
+def _name_base(name: str) -> dict:
     data = displayer.name(
-        name=escape(name1),
+        name=escape(name),
         after=request.args.get('after', default=None, type=int),
         before=request.args.get('before', default=None, type=int),
     )
     return data
 
 
-@app.route('/name/<string:name1>')
-def name_endpoint(name1: str):
-    return jsonify(_name_base(name1))
+@app.route('/name/<string:name>')
+def name_endpoint(name: str):
+    return jsonify(_name_base(name))
 
 
 @app.route('/compare')
@@ -149,10 +149,10 @@ def search_by_text_endpoint():
     return jsonify(data)
 
 
-@app.route('/predict/age/<string:name1>')
-def predict_age_endpoint(name1: str):
+@app.route('/predict/age/<string:name>')
+def predict_age_endpoint(name: str):
     data = displayer.predict_age(
-        name=escape(name1),
+        name=escape(name),
         gender=_escape_optional_string('gender'),
         living=bool(request.args.get('living', default=0, type=int)),
         buckets=request.args.get('buckets', default=None, type=int),
@@ -160,10 +160,10 @@ def predict_age_endpoint(name1: str):
     return jsonify(data)
 
 
-@app.route('/predict/gender/<string:name1>')
-def predict_gender_endpoint(name1: str):
+@app.route('/predict/gender/<string:name>')
+def predict_gender_endpoint(name: str):
     data = displayer.predict_gender(
-        name=escape(name1),
+        name=escape(name),
         birth_year=request.args.get('birth_year', default=None, type=int),
         living=bool(request.args.get('living', default=0, type=int)),
     )
