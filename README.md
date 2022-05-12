@@ -147,10 +147,10 @@ Variations of a name, using regex pattern
 
 #### Examples
 
-    compare/jeremy jeremiah
-    compare/michelle mikayla michaela
-    compare/esmeralda emerald
-    compare/leander leandra
+    compare?names=jeremy,jeremiah
+    compare?names=michelle,mikayla,michaela
+    compare?names=esmeralda,emerald
+    compare?names=leander,leandra
 
 ## Data Sources
 
