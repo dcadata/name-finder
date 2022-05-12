@@ -131,6 +131,7 @@ Variations of a name, using regex pattern
 * `name` - string, required: the name for which you want information
 * `after` - integer, optional: year of birth after which to filter (inclusive)
 * `before` - integer, optional: year of birth before which to filter (inclusive)
+* `show_historic` - integer, optional: pass 1 if you want to show historic data; defaults to 0
 
 #### Examples
 
@@ -143,9 +144,8 @@ Variations of a name, using regex pattern
 
 #### Params
 
-* `names` - whitespace-separated strings, required: the names for which you want information
-* `after` - integer, optional: year of birth after which to filter (inclusive)
-* `before` - integer, optional: year of birth before which to filter (inclusive)
+* `names` - hyphen-separated strings, required: the names for which you want information
+* remaining params same as `name`
 
 #### Examples
 
