@@ -39,14 +39,18 @@ def _escape_optional_string_into_list_of_ints(arg_name: str):
     return list(map(int, values))
 
 
-@app.route('/name/<string:name1>')
-def name(name1: str):
+def _name_base(name1: str):
     data = displayer.name(
         name=escape(name1),
         after=request.args.get('after', default=None, type=int),
         before=request.args.get('before', default=None, type=int),
     )
-    return jsonify(data)
+    return data
+
+
+@app.route('/name/<string:name1>')
+def name(name1: str):
+    return jsonify(_name_base(name1))
 
 
 @app.route('/compare')
