@@ -144,13 +144,15 @@ Variations of a name, using regex pattern
 #### Params
 
 * `names` - whitespace-separated strings, required: the names for which you want information
+* `after` - integer, optional: year of birth after which to filter (inclusive)
+* `before` - integer, optional: year of birth before which to filter (inclusive)
 
 #### Examples
 
-    compare?names=jeremy,jeremiah
-    compare?names=michelle,mikayla,michaela
-    compare?names=esmeralda,emerald
-    compare?names=leander,leandra
+    compare/jeremy-jeremiah
+    compare/michelle-mikayla-michaela?before=2000
+    compare/esmeralda-emerald?after=1950
+    compare/leander-leandra?after=1915&before=2015
 
 ## Data Sources
 
