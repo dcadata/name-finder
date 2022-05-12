@@ -138,9 +138,9 @@ def search_by_text():
     return jsonify(data)
 
 
-@app.route('/compare/<string:names>')
-def compare(names: str):
-    data = displayer.search(pattern='^({})$'.format('|'.join(escape(names).split())))
+@app.route('/compare')
+def compare():
+    data = displayer.search(pattern='^({})$'.format('|'.join(_escape_optional_string_into_list('names'))))
     return jsonify(data)
 
 
