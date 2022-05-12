@@ -145,7 +145,7 @@ Variations of a name, using regex pattern
 #### Params
 
 * `names` - hyphen-separated strings, required: the names for which you want information
-* remaining params same as `name`
+* remaining params same as `name` endpoint
 
 #### Examples
 
