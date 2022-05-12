@@ -39,7 +39,7 @@ def _escape_optional_string_into_list_of_ints(arg_name: str):
     return list(map(int, values))
 
 
-def _name_base(name1: str):
+def _name_base(name1: str) -> dict:
     data = displayer.name(
         name=escape(name1),
         after=request.args.get('after', default=None, type=int),
