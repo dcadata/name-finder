@@ -1,4 +1,4 @@
-# NameFirst name-based prediction & name search tool
+# Name API: predict age and gender based on first name, search for names, and compare names
 
 ## Feature Overview
 
