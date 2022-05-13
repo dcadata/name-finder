@@ -146,7 +146,7 @@ def search_by_text_endpoint():
     data = displayer.search(**conditions)
     if data:
         data = data[:30]
-    data = dict(conditions=conditions, bot_text=', '.join('{name}({display})'.format(**i) for i in data), data=data)
+    data = dict(conditions=conditions, bot_text=', '.join(i['display'] for i in data), data=data)
     return jsonify(data)
 
 
