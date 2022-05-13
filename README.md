@@ -12,7 +12,7 @@
 
 * Returns gender of people with a specified first name (along with confidence level in the prediction)
 * Optionally, can take age into account
-* Competing products generally do not take age into account when predicting gender
+* Similar tools generally do not take age into account when predicting gender
 
 ### SEARCH
 
