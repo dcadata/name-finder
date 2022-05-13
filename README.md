@@ -52,7 +52,7 @@ Note: passing gender won't make a difference for most names, but if you know the
 
 Using buckets: e.g. use `buckets=4` to indicate quartiles
 
-    predict/age/rosalyn?buckets=4
+    predict/age/marcus?buckets=4
 
 Including only living individuals can show a meaningful difference for some names. When including both living and deceased individuals, 95% of Avas are <= age 68 (as of 2021 data). When including only living individuals, 95% of Avas are <= age 21 (as of 2021 data).
 
@@ -136,7 +136,6 @@ Variations of a name, using regex pattern
 #### Examples
 
     name/darren
-    name/salma
     name/helen?after=2010
     name/zachary?after=1980&before=2000
 
