@@ -107,11 +107,11 @@ Names that both start and end with "A", and are 3-5 letters long
 
 Masculine names ending in "A" (and similar sounds) that aren't super rare
 
-    search?gender=0.9,1&end=a,ah,ay,ai,ae&number_min=1000
+    search?gender=0.8,1&end=a,ah,ay,ai,ae&number_min=1000
 
 Feminine names starting with "E" or "I" that have gained at least 10% in popularity since 2010
 
-    search?gender=0,0.1&start=e,i&delta_after=2010&delta_pct=0.1
+    search?gender=0,0.2&start=e,i&delta_after=2010&delta_pct=0.1
 
 Short names that were neutral before 1990 and have trended at least 1% less popular and 1% more masculine since 1990
 
