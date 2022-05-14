@@ -258,6 +258,7 @@ class Displayer(Loader):
         df['display'] = [_create_display_ratio(*i) for i in df[['name', 'number', 'ratio_f', 'ratio_m']].to_records(
             index=False)]
 
+        df = df.head(30)
         return df.to_dict('records') if _OUTPUT_RECORDS else df
 
     def predict_age(
