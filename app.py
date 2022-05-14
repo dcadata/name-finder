@@ -144,8 +144,6 @@ def search_by_text_endpoint():
         delta_fem=delta_fem,
     )
     data = displayer.search(**conditions)
-    if data:
-        data = data[:30]
     data = dict(conditions=conditions, bot_text=', '.join(i['display'] for i in data), data=data)
     return jsonify(data)
 
