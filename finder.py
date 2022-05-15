@@ -126,11 +126,6 @@ class Displayer(Loader):
         for s in ('f', 'm'):
             grouped[f'ratio_{s}'] = (grouped[f'number_{s}'] / grouped.number).apply(lambda x: round(x, 2))
 
-        # format historic
-        historic = df[['year', 'number', 'number_f', 'number_m', 'ratio_f', 'ratio_m']].copy()
-        for s in ('f', 'm'):
-            historic[f'ratio_{s}'] = historic[f'ratio_{s}'].apply(lambda x: round(x, 2))
-
         # create output
         grouped = grouped.to_dict('records')[0]
         name_record = {
@@ -160,7 +155,11 @@ class Displayer(Loader):
             },
             'first_appearance': int(self._first_appearance[grouped['name']]),
         }
+
         if show_historic:
+            historic = df[['year', 'number', 'number_f', 'number_m', 'ratio_f', 'ratio_m']].copy()
+            for s in ('f', 'm'):
+                historic[f'ratio_{s}'] = historic[f'ratio_{s}'].apply(lambda x: round(x, 2))
             name_record.update({'historic': list(historic.to_dict('records')) if _OUTPUT_RECORDS else historic})
         return name_record
 
