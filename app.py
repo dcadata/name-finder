@@ -44,6 +44,7 @@ def _get_name(name: str) -> dict:
         name=escape(name),
         after=request.args.get('after', default=None, type=int),
         before=request.args.get('before', default=None, type=int),
+        year=request.args.get('year', default=None, type=int),
         show_historic=bool(request.args.get('show_historic', default=0, type=int)),
     )
     return data
@@ -79,6 +80,7 @@ def search_endpoint():
         gender=_escape_optional_string_into_list_of_floats('gender'),
         after=request.args.get('after', default=None, type=int),
         before=request.args.get('before', default=None, type=int),
+        year=request.args.get('year', default=None, type=int),
         delta_after=request.args.get('delta_after', default=None, type=int),
         delta_pct=request.args.get('delta_pct', default=None, type=float),
         delta_fem=request.args.get('delta_fem', default=None, type=float),
