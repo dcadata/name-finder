@@ -260,8 +260,8 @@ class Displayer(Loader):
         df = df.sort_values('number', ascending=False).drop(columns=['name_lower'])
         for col in ('ratio_f', 'ratio_m'):
             df[col] = df[col].apply(lambda x: round(x, 2))
-        df['display'] = [_create_display_ratio(*i) for i in df[['name', 'number', 'ratio_f', 'ratio_m']].to_records(
-            index=False)]
+        df['display'] = [_create_search_display_ratio(*i) for i in df[[
+            'name', 'number', 'ratio_f', 'ratio_m']].to_records(index=False)]
 
         df = df.head(30)
         return df.to_dict('records') if _OUTPUT_RECORDS else df
@@ -403,7 +403,7 @@ def _calculate_gender_delta(df: pd.DataFrame, **delta) -> pd.DataFrame:
     return df
 
 
-def _create_display_ratio(name: str, number: int, ratio_f: float, ratio_m: float) -> str:
+def _create_search_display_ratio(name: str, number: int, ratio_f: float, ratio_m: float) -> str:
     formatted_number = f'n={number:,}'
     if ratio_f == 1 or ratio_m == 1:
         return f'{name}({formatted_number})'
