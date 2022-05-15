@@ -158,6 +158,8 @@ class Displayer(Loader):
                 'number': int(latest.number),
             },
             'first_appearance': int(self._first_appearance[grouped['name']]),
+            'display': _create_display_ratio(grouped['name'], grouped['number'], grouped[
+                'ratio_f'], grouped['ratio_m']),
         }
 
         if show_historic:
