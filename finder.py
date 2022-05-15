@@ -91,6 +91,7 @@ class Displayer(Loader):
         super().__init__(*args, **kwargs)
         self._after = None
         self._before = None
+        self._delta_cutoff = 0.0000000000000000000000000000000000000000000000000000000000000000000000000000000001
 
     def name(
             self,
@@ -313,9 +314,6 @@ class Displayer(Loader):
         delta_after = int(delta_after_ind) if delta_after_ind else None
         if not delta_after and (delta_pct_ind or delta_gender_ind):  # suggests intention to add a trend
             delta_after = MAX_YEAR - 20
-        delta_cutoff = 0.0000000000000000000000000000000000000000000000000000000000000000000000000000000001
-        delta_pct = dict(down=-delta_cutoff, up=delta_cutoff).get(delta_pct_ind)
-        delta_fem = dict(fem=delta_cutoff, masc=-delta_cutoff).get(delta_gender_ind)
 
         conditions = dict(
             pattern=_safely_check_regex('(pattern|regex)\s(.*)'),
@@ -328,8 +326,8 @@ class Displayer(Loader):
             after=int(after_ind) if after_ind else None,
             before=int(before_ind) if before_ind else None,
             delta_after=delta_after,
-            delta_pct=delta_pct,
-            delta_fem=delta_fem,
+            delta_pct=dict(down=-self._delta_cutoff, up=self._delta_cutoff).get(delta_pct_ind),
+            delta_fem=dict(fem=self._delta_cutoff, masc=-self._delta_cutoff).get(delta_gender_ind),
         )
         data = self.search(**conditions)
         data = dict(conditions=conditions, data=data, display=', '.join(i['display'] for i in data))
