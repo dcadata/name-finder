@@ -97,9 +97,13 @@ class Displayer(Loader):
             name: str,
             after: int = None,
             before: int = None,
+            year: int = None,
             show_historic: bool = None,
     ) -> dict:
         # set up
+        if year:
+            after = year
+            before = year
         self._after = after
         self._before = before
         df = self._calcd.copy()
