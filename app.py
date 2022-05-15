@@ -60,7 +60,7 @@ def compare_endpoint(names: str):
     names = escape(names).split('-')
     data = [_get_name(name) for name in names]
     data = [i for i in data if i]
-    data = dict(data=data, bot_text='\n\n'.join(i['display'] for i in data))
+    data = dict(data=data, summary='\n\n'.join(i['display'] for i in data))
     return jsonify(data)
 
 
@@ -148,7 +148,7 @@ def search_by_text_endpoint():
         delta_fem=delta_fem,
     )
     data = displayer.search(**conditions)
-    data = dict(conditions=conditions, data=data, bot_text=', '.join(i['display'] for i in data))
+    data = dict(conditions=conditions, data=data, summary=', '.join(i['display'] for i in data))
     return jsonify(data)
 
 
