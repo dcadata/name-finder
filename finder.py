@@ -441,7 +441,7 @@ def _create_name_display_ratio(
     result += f'\nLatest(year={latest_year}, n={latest_number:,})  '
     result += f'\nEarliest(year={first_appearance})  '
 
-    result = f'***{name}*** {result}\n'
+    result = f'***{name}*** {result}'
 
     return result
 
