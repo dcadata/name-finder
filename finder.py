@@ -159,6 +159,18 @@ class Displayer(Loader):
             },
             'first_appearance': int(self._first_appearance[grouped['name']]),
         }
+        # noinspection PyTypeChecker
+        name_record['display'] = _create_name_display_ratio(
+            name_record['name'],
+            name_record['numbers']['total'],
+            name_record['ratios']['f'],
+            name_record['ratios']['m'],
+            name_record['peak']['by_number']['year'],
+            name_record['peak']['by_number']['number'],
+            name_record['latest']['year'],
+            name_record['latest']['number'],
+            name_record['first_appearance'],
+        )
 
         if show_historic:
             historic = df[['year', 'number', 'number_f', 'number_m', 'ratio_f', 'ratio_m']].copy()
@@ -401,6 +413,37 @@ def _calculate_gender_delta(df: pd.DataFrame, **delta) -> pd.DataFrame:
         chg['delta'] = (chg.ratio_f_y1 - chg.ratio_f_y2).apply(abs).apply(lambda x: x <= 0.01)
     df = df[df.name.isin(chg[chg.delta].name)].copy()
     return df
+
+
+def _create_name_display_ratio(
+        name: str,
+        number: int,
+        ratio_f: float,
+        ratio_m: float,
+        peak_year: int,
+        peak_number: int,
+        latest_year: int,
+        latest_number: int,
+        first_appearance: int,
+) -> str:
+    number_and_ratio = f'n={number:,}'
+    if ratio_f == 1 or ratio_m == 1:
+        pass
+    elif ratio_f == ratio_m:
+        number_and_ratio += ', no lean'
+    elif ratio_f > ratio_m:
+        number_and_ratio += f', f={ratio_f}'
+    else:  # m > f
+        number_and_ratio += f', m={ratio_m}'
+
+    result = f'({number_and_ratio})  '
+    result += f'\nPeak(year={peak_year}, n={peak_number:,})  '
+    result += f'\nLatest(year={latest_year}, n={latest_number:,})  '
+    result += f'\nEarliest(year={first_appearance})  '
+
+    result = f'***{name}*** {result}\n'
+
+    return result
 
 
 def _create_search_display_ratio(name: str, number: int, ratio_f: float, ratio_m: float) -> str:
