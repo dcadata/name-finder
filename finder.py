@@ -332,7 +332,7 @@ class Displayer(Loader):
             delta_fem=delta_fem,
         )
         data = self.search(**conditions)
-        data = dict(data=data, display=', '.join(i['display'] for i in data))
+        data = dict(conditions=conditions, data=data, display=', '.join(i['display'] for i in data))
         return data
 
     def predict_age(
