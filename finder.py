@@ -437,13 +437,12 @@ def _create_name_display_ratio(
         number_and_ratio += f', m={ratio_m}'
 
     sections = (
-        f'({number_and_ratio})',
+        f'***{name}*** ({number_and_ratio})',
         f'Peak(year={peak_year}, n={peak_number:,})',
         f'Latest(year={latest_year}, n={latest_number:,})',
         f'Earliest(year={first_appearance})',
     )
-    result = '***{0}*** {1}'.format(name, '  \n'.join(sections))
-
+    result = '  \n'.join(sections)
     return result
 
 
