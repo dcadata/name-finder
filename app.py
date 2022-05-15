@@ -130,8 +130,9 @@ def search_by_text_endpoint():
     delta_after = int(delta_after_ind) if delta_after_ind else None
     if not delta_after and (delta_pct_ind or delta_gender_ind):  # suggests they intended to add a trend
         delta_after = finder.MAX_YEAR - 20
-    delta_pct = dict(down=-0.001, up=0.001).get(delta_pct_ind)
-    delta_fem = dict(fem=0.001, masc=-0.001).get(delta_gender_ind)
+    delta_cutoff = 0.00000000000000000000000001
+    delta_pct = dict(down=-delta_cutoff, up=delta_cutoff).get(delta_pct_ind)
+    delta_fem = dict(fem=delta_cutoff, masc=-delta_cutoff).get(delta_gender_ind)
 
     conditions = dict(
         pattern=_safely_check_regex('(pattern|regex)\s(.*)'),
