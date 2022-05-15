@@ -186,12 +186,16 @@ class Displayer(Loader):
             gender: tuple = None,
             after: int = None,
             before: int = None,
+            year: int = None,
             delta_after: int = None,
             delta_pct: float = None,
             delta_fem: float = None,
             delta_masc: float = None,
     ) -> list:
         # set up
+        if year:
+            after = year
+            before = year
         self._after = after
         self._before = before
         df = self._calcd.copy()
