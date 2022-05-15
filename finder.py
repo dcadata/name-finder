@@ -158,9 +158,7 @@ class Displayer(Loader):
                 'year': int(latest.year),
                 'number': int(latest.number),
             },
-            'first_appearance': {
-                'year': int(self._first_appearance[grouped['name']]),
-            },
+            'first_appearance': int(self._first_appearance[grouped['name']]),
         }
         if show_historic:
             name_record.update({'historic': list(historic.to_dict('records')) if _OUTPUT_RECORDS else historic})
