@@ -3,7 +3,7 @@ from markupsafe import escape
 
 import finder
 
-finder._OUTPUT_RECORDS = True
+finder.OUTPUT_RECORDS = True
 
 displayer = finder.Displayer()
 displayer.load()

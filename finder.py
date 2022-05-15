@@ -7,7 +7,7 @@ import pandas as pd
 # years as currently available in dataset
 _MIN_YEAR = 1880
 MAX_YEAR = int(re.search('^yob([0-9]{4}).txt$', os.listdir('data/names/')[-1]).group(1))
-_OUTPUT_RECORDS = False
+OUTPUT_RECORDS = False
 
 
 class Loader:
@@ -177,7 +177,7 @@ class Displayer(Loader):
             historic = df[['year', 'number', 'number_f', 'number_m', 'ratio_f', 'ratio_m']].copy()
             for s in ('f', 'm'):
                 historic[f'ratio_{s}'] = historic[f'ratio_{s}'].apply(lambda x: round(x, 2))
-            name_record.update({'historic': list(historic.to_dict('records')) if _OUTPUT_RECORDS else historic})
+            name_record.update({'historic': list(historic.to_dict('records')) if OUTPUT_RECORDS else historic})
         return name_record
 
     def search(
@@ -277,7 +277,7 @@ class Displayer(Loader):
             'name', 'number', 'ratio_f', 'ratio_m']].to_records(index=False)]
 
         df = df.head(30)
-        return df.to_dict('records') if _OUTPUT_RECORDS else df
+        return df.to_dict('records') if OUTPUT_RECORDS else df
 
     def search_by_text(self, text: str):
         text = text.lower()
