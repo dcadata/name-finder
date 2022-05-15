@@ -436,12 +436,13 @@ def _create_name_display_ratio(
     else:  # m > f
         number_and_ratio += f', m={ratio_m}'
 
-    result = f'({number_and_ratio})  '
-    result += f'\nPeak(year={peak_year}, n={peak_number:,})  '
-    result += f'\nLatest(year={latest_year}, n={latest_number:,})  '
-    result += f'\nEarliest(year={first_appearance})  '
-
-    result = f'***{name}*** {result}'
+    sections = (
+        f'({number_and_ratio})',
+        f'Peak(year={peak_year}, n={peak_number:,})',
+        f'Latest(year={latest_year}, n={latest_number:,})',
+        f'Earliest(year={first_appearance})',
+    )
+    result = '***{0}*** {1}'.format(name, '  \n'.join(sections))
 
     return result
 
