@@ -1,5 +1,3 @@
-import re
-
 from flask import Flask, request, jsonify
 from markupsafe import escape
 
@@ -96,60 +94,7 @@ def search_by_text_endpoint():
     text = request.args.get('text', default=None, type=str)
     if not text:
         return {}
-    text = escape(text.lower())
-    delta_sections = re.split('trend(ing|ed)?\s', text, 1)
-    if len(delta_sections) > 1:
-        text, delta_section = delta_sections[0], delta_sections[-1]
-    else:
-        delta_section = ''
-
-    def _safely_check_regex(pattern: str):
-        try:
-            return re.search(pattern, text).groups()[-1]
-        except (AttributeError, IndexError):
-            return
-
-    def _safely_check_regex_and_split_into_tuple(pattern: str):
-        result = _safely_check_regex(pattern)
-        return tuple(result.split(',')) if result else None
-
-    def _safely_check_regex_delta_section(pattern: str):
-        try:
-            return re.search(pattern, delta_section).groups()[-1]
-        except (AttributeError, IndexError):
-            return
-
-    length_ind = _safely_check_regex('(short|med|long)')
-    gender_ind = _safely_check_regex('(fem|neu|unisex|masc)')
-    after_ind = _safely_check_regex('(after|since)\s([0-9]{4})')
-    before_ind = _safely_check_regex('before\s([0-9]{4})')
-    delta_after_ind = _safely_check_regex_delta_section('(after|since)\s([0-9]{4})')
-    delta_pct_ind = _safely_check_regex_delta_section('(down|up)')
-    delta_gender_ind = _safely_check_regex_delta_section('(fem|masc)')
-
-    delta_after = int(delta_after_ind) if delta_after_ind else None
-    if not delta_after and (delta_pct_ind or delta_gender_ind):  # suggests they intended to add a trend
-        delta_after = finder.MAX_YEAR - 20
-    delta_cutoff = 0.00000000000000000000000001
-    delta_pct = dict(down=-delta_cutoff, up=delta_cutoff).get(delta_pct_ind)
-    delta_fem = dict(fem=delta_cutoff, masc=-delta_cutoff).get(delta_gender_ind)
-
-    conditions = dict(
-        pattern=_safely_check_regex('(pattern|regex)\s(.*)'),
-        start=_safely_check_regex_and_split_into_tuple('(start|beginn?)(ing|s)?(\swith)?\s([a-z,]+)'),
-        end=_safely_check_regex_and_split_into_tuple('end(ing|s)?(\swith)?\s([a-z,]+)'),
-        contains=_safely_check_regex_and_split_into_tuple('contain(ing|s)?\s([a-z,]+)'),
-        order=_safely_check_regex_and_split_into_tuple('order\s([a-z,]+)'),
-        length=dict(short=(3, 5), med=(6, 8), long=(9, 30)).get(length_ind),
-        gender=dict(fem=(0, 0.2), neu=(0.2, 0.8), unisex=(0.2, 0.8), masc=(0.8, 1)).get(gender_ind),
-        after=int(after_ind) if after_ind else None,
-        before=int(before_ind) if before_ind else None,
-        delta_after=delta_after,
-        delta_pct=delta_pct,
-        delta_fem=delta_fem,
-    )
-    data = displayer.search(**conditions)
-    data = dict(conditions=conditions, data=data, display=', '.join(i['display'] for i in data))
+    data = displayer.search_by_text(text=escape(text))
     return jsonify(data)
 
 
