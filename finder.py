@@ -317,7 +317,7 @@ class Displayer(Loader):
         delta_pct = dict(down=-delta_cutoff, up=delta_cutoff).get(delta_pct_ind)
         delta_fem = dict(fem=delta_cutoff, masc=-delta_cutoff).get(delta_gender_ind)
 
-        data = self.search(
+        conditions = dict(
             pattern=_safely_check_regex('(pattern|regex)\s(.*)'),
             start=_safely_check_regex_and_split_into_tuple('(start|beginn?)(ing|s)?(\swith)?\s([a-z,]+)'),
             end=_safely_check_regex_and_split_into_tuple('end(ing|s)?(\swith)?\s([a-z,]+)'),
@@ -331,6 +331,8 @@ class Displayer(Loader):
             delta_pct=delta_pct,
             delta_fem=delta_fem,
         )
+        data = self.search(**conditions)
+        data = dict(data=data, display=', '.join(i['display'] for i in data))
         return data
 
     def predict_age(
