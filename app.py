@@ -59,6 +59,7 @@ def name_endpoint(name: str):
 def compare_endpoint(names: str):
     names = escape(names).split('-')
     data = [_get_name(name) for name in names]
+    data = [i for i in data if i]
     data = dict(data=data, bot_text=', '.join(i['display'] for i in data))
     return jsonify(data)
 
