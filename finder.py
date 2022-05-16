@@ -511,3 +511,14 @@ def _create_search_display_ratio(name: str, number: int, ratio_f: float, ratio_m
         return f'{name}({formatted_number}, f={ratio_f})'
     else:  # m > f
         return f'{name}({formatted_number}, m={ratio_m})'
+
+
+def _create_predict_gender_aggregation(calcd: pd.DataFrame) -> pd.DataFrame:
+    calcd = calcd[calcd.year >= MAX_YEAR - 80].drop(columns=['ratio_f', 'ratio_m', 'pct_year'])
+    calcd = calcd.groupby('name', as_index=False).agg(dict(number=sum, number_f=sum, number_m=sum))
+    for s in ('f', 'm'):
+        calcd[f'ratio_{s}'] = calcd[f'number_{s}'] / calcd.number
+    calcd.loc[calcd.ratio_f > calcd.ratio_m, 'gender_prediction'] = 'f'
+    calcd.loc[calcd.ratio_f < calcd.ratio_m, 'gender_prediction'] = 'm'
+    calcd.loc[calcd.ratio_f == calcd.ratio_m, 'gender_prediction'] = 'x'
+    return calcd[['name', 'gender_prediction']]
