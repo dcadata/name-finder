@@ -137,6 +137,7 @@ Variations of a name, using regex pattern
 #### Examples
 
     name/darren
+    name/salma?year=2020
     name/helen?after=2010
     name/zachary?after=1980&before=2000
 
