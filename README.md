@@ -137,9 +137,9 @@ Variations of a name, using regex pattern
 #### Examples
 
     name/darren
+    name/helen?after=1960
+    name/zachary?after=1975&before=2000
     name/salma?year=2020
-    name/helen?after=2010
-    name/zachary?after=1980&before=2000
 
 ### Using `compare`
 
@@ -151,6 +151,6 @@ Variations of a name, using regex pattern
 #### Examples
 
     compare/jeremy-jeremiah
-    compare/michelle-mikayla-michaela?before=2000
     compare/esmeralda-emerald?after=1950
     compare/leander-leandra?after=1915&before=2015
+    compare/michelle-mikayla-michaela?year=1980
