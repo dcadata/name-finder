@@ -1,3 +1,5 @@
+from time import sleep
+
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
@@ -58,6 +60,7 @@ class MIStateRepScraper:
             except KeyError:
                 prediction.append(None)
                 confidence.append(None)
+            sleep(1)
         session.close()
 
         self.data = self.data.assign(gender=prediction).assign(gender_confidence=confidence)
