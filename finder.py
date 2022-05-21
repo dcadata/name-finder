@@ -271,8 +271,8 @@ class Displayer(Loader):
             return []
 
         df = df.sort_values('number', ascending=False).drop(columns=['name_lower'])
-        for col in ('ratio_f', 'ratio_m'):
-            df[col] = df[col].apply(lambda x: round(x, 2))
+        for s in ('f', 'm'):
+            df[f'ratio_{s}'] = df[f'ratio_{s}'].apply(lambda x: round(x, 2))
         df['display'] = [_create_search_display_ratio(*i) for i in df[[
             'name', 'number', 'ratio_f', 'ratio_m']].to_records(index=False)]
 
