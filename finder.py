@@ -180,6 +180,11 @@ class Displayer(Loader):
             name_record.update({'historic': list(historic.to_dict('records')) if OUTPUT_RECORDS else historic})
         return name_record
 
+    def compare(self, names: str, *args, **kwargs) -> dict:
+        data = [self.name(name, *args, **kwargs) for name in names.split('-')]
+        data = dict(data=data, display='\n\n'.join(i['display'] for i in data))
+        return data
+
     def search(
             self,
             pattern: str = None,
