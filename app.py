@@ -37,28 +37,25 @@ def _escape_optional_string_into_list_of_ints(arg_name: str):
     return list(map(int, values))
 
 
-def _get_name(name: str) -> dict:
-    data = displayer.name(
-        name=escape(name),
+def _parse_name_args() -> dict:
+    args = dict(
         after=request.args.get('after', default=None, type=int),
         before=request.args.get('before', default=None, type=int),
         year=request.args.get('year', default=None, type=int),
         show_historic=bool(request.args.get('show_historic', default=0, type=int)),
     )
-    return data
+    return args
 
 
 @app.route('/name/<string:name>')
 def name_endpoint(name: str):
-    return jsonify(_get_name(name))
+    data = displayer.name(name=escape(name), **_parse_name_args())
+    return jsonify(data)
 
 
 @app.route('/compare/<string:names>')
 def compare_endpoint(names: str):
-    names = escape(names).split('-')
-    data = [_get_name(name) for name in names]
-    data = [i for i in data if i]
-    data = dict(data=data, display='\n\n'.join(i['display'] for i in data))
+    data = displayer.compare(names=escape(names), **_parse_name_args())
     return jsonify(data)
 
 
