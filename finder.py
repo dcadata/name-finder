@@ -115,8 +115,7 @@ class Displayer(Loader):
             return {}
 
         # create metadata dfs
-        peak_by_num = df.loc[df.number.idxmax()].copy()
-        peak_by_pct = df.loc[df.pct_year.idxmax()].copy()
+        peak = df.loc[df.number.idxmax()].copy()
         latest = df.loc[df.year.idxmax()].copy()
 
         # filter on years
@@ -145,14 +144,8 @@ class Displayer(Loader):
                 'm': grouped['ratio_m'],
             },
             'peak': {
-                'by_number': {
-                    'year': int(peak_by_num.year),
-                    'number': int(peak_by_num.number),
-                },
-                'by_pct': {
-                    'year': int(peak_by_pct.year),
-                    'pct': float(peak_by_pct.pct_year),
-                },
+                'year': int(peak.year),
+                'number': int(peak.number),
             },
             'latest': {
                 'year': int(latest.year),
@@ -166,8 +159,8 @@ class Displayer(Loader):
             name_record['numbers']['total'],
             name_record['ratios']['f'],
             name_record['ratios']['m'],
-            name_record['peak']['by_number']['year'],
-            name_record['peak']['by_number']['number'],
+            name_record['peak']['year'],
+            name_record['peak']['number'],
             name_record['latest']['year'],
             name_record['latest']['number'],
             name_record['first_appearance'],
