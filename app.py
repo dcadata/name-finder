@@ -110,6 +110,8 @@ def predict_age_endpoint(name: str):
 def predict_gender_endpoint(name: str):
     data = displayer.predict_gender(
         name=escape(name),
+        after=request.args.get('after', default=None, type=int),
+        before=request.args.get('before', default=None, type=int),
         year=request.args.get('year', default=None, type=int),
         living=bool(request.args.get('living', default=0, type=int)),
     )
