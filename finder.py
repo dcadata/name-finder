@@ -391,7 +391,9 @@ class Displayer(Loader):
             year: int = None,
             living: bool = False,
     ) -> dict:
+        # set up
         df = self._raw_with_actuarial.copy()
+        birth_years = None
         if living:
             # noinspection PyArgumentList
             df = df.drop(columns=['number']).rename(columns={'number_living': 'number'})
