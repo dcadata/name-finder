@@ -338,15 +338,19 @@ class Displayer(Loader):
             living: bool = False,
             buckets: int = None,
     ) -> dict:
+        # set up
+        output = {}
         df = self._raw_with_actuarial.copy()
         if living:
             # noinspection PyArgumentList
             df = df.drop(columns=['number']).rename(columns={'number_living': 'number'})
+            output['living'] = True
 
         # filter dataframe
         df = df[df['name'].str.lower() == name.lower()].copy()
         if gender:
             df = df[df.sex == gender.upper()].copy()
+            output['gender'] = gender.upper()
 
         if not len(df):
             return {}
@@ -374,12 +378,8 @@ class Displayer(Loader):
                 'max': float(ages.max()),
             }
 
-        # create output
-        output = {'name': name.title(), 'number': number}
-        if gender:
-            output['sex'] = gender.upper()
-        if living:
-            output['living'] = True
+        # add to output
+        output.update({'name': name.title(), 'number': int(number)})
         if buckets:
             output['buckets'] = buckets
         output['prediction'] = prediction
