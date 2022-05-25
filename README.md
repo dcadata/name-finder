@@ -80,7 +80,7 @@ For most names, gender can be predicted with (near-)certainty:
     predict/gender/barbara
     predict/gender/carlos
     predict/gender/dante?after=1995
-    predict/gender/ellen?before=2005
+    predict/gender/ellen?before=2005&living=1
 
 However, this is not true of all names:
 
