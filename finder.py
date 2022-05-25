@@ -375,7 +375,7 @@ class Displayer(Loader):
             }
 
         # create output
-        output = {'name': name.title()}
+        output = {'name': name.title(), 'number': number}
         if gender:
             output['sex'] = gender.upper()
         if living:
