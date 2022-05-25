@@ -68,7 +68,9 @@ Practical example: 95% of Taylors are between age 3 and age 36 (as of 2021 data)
 #### Params
 
 * `name` - string, required: the name for which you want a prediction
-* `year` - integer, optional: year in which individual was born
+* `after` - integer, optional: year of birth after which to filter (inclusive)
+* `before` - integer, optional: year of birth before which to filter (inclusive)
+* `year` - integer, optional: year of birth on which to filter
 * `living` - integer, optional: pass 1 if you want to include only living individuals; defaults to 0
 
 #### Examples
