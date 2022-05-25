@@ -415,7 +415,7 @@ class Displayer(Loader):
             return {}
 
         numbers = df.groupby('sex').number.sum()
-        output = {'name': name.title()}
+        output = {'name': name.title(), 'number': df.number.sum()}
         if birth_years:
             output['birth_year_range'] = birth_years
         if living:
