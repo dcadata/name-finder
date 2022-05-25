@@ -418,7 +418,7 @@ class Displayer(Loader):
         if not len(df):
             return {}
 
-        # create output
+        # add to output
         number = df.number.sum()
         if number < 25:
             return {}
@@ -426,7 +426,7 @@ class Displayer(Loader):
         numbers = df.groupby('sex').number.sum()
         output.update({
             'name': name.title(),
-            'number': number,
+            'number': int(number),
             'prediction': 'F' if numbers.get('F', 0) > numbers.get('M', 0) else 'M',
             'confidence': round(max(numbers.get('F', 0) / number, numbers.get('M', 0) / number), 2),
         })
