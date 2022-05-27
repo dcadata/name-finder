@@ -9,7 +9,7 @@ _REPRESENTATIVES_DATA_PATH = 'representatives.csv'
 _API_BASE_URL = 'http://127.0.0.1:5000'
 
 
-class MIStateRepScraper:
+class Scraper:
     def run(self):
         self._scrape_representative_info()
         self._arrange_representative_info()
