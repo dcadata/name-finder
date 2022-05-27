@@ -28,9 +28,8 @@ class Scraper:
             rep.select_one('div.col-md-4'),
             rep.find('a', attrs=dict(href=lambda x: x.startswith('tel'))),
             rep.find('a', attrs=dict(href=lambda x: x.startswith('mailto'))),
-            rep.find('a', attrs=dict(href=lambda x: x.startswith('/media/District Maps/')))
         ) for rep in self._representative_elems]
-        self.data = pd.DataFrame(representative_data, columns=['rep', 'office', 'phone', 'email', 'district_map'])
+        self.data = pd.DataFrame(representative_data, columns=['rep', 'office', 'phone', 'email'])
 
     def _clean_representative_info(self):
         self.data = self.data.dropna()
@@ -39,7 +38,6 @@ class Scraper:
         self.data.office = self.data.office.apply(lambda x: x.text.strip())
         self.data.phone = self.data.phone.apply(lambda x: x['href'].replace('tel:', '').strip())
         self.data.email = self.data.email.apply(lambda x: x['href'].replace('mailto:', '').strip())
-        self.data.district_map = self.data.district_map.apply(lambda x: x['href'].strip())
 
         self.data[['last_name', 'rep']] = self.data.rep.str.split(', ', 1, expand=True)
         self.data[['first_name', 'rep']] = self.data.rep.str.split(' \(', 1, expand=True)
