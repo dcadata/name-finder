@@ -5,16 +5,14 @@ import requests
 from bs4 import BeautifulSoup
 from scipy import stats
 
-_REPRESENTATIVES_DATA_PATH = 'representatives.csv'
 _API_BASE_URL = 'http://127.0.0.1:5000'
 
 
 class Scraper:
-    def run(self):
+    def scrape(self):
         self._scrape_representative_info()
         self._arrange_representative_info()
         self._clean_representative_info()
-        self._get_gender_predictions()
         self._save()
 
     def _scrape_representative_info(self):
@@ -45,33 +43,47 @@ class Scraper:
         self.data[['rep', 'district']] = self.data.rep.str.split('-', 1, expand=True)
         self.data = self.data.drop(columns='rep')
 
+    def _save(self):
         self.data.to_csv('representatives.csv', index=False)
 
-    def _get_gender_predictions(self):
-        prediction = []
-        confidence = []
 
+class Predictor:
+    def predict(self):
+        self._read_scraped_data()
+        self._get_gender_predictions()
+        self._save()
+
+    def _read_scraped_data(self):
+        self.data = pd.read_csv('representatives.csv').drop_duplicates()
+
+    def _get_gender_predictions(self):
+        self._predictions = []
         session = requests.Session()
-        for name in self.data.first_name:
-            try:
-                response = session.get(f'{_API_BASE_URL}/predict/gender/{name}?living=1').json()
-                prediction.append(response['prediction'])
-                confidence.append(response['confidence'])
-            except KeyError:
-                prediction.append(None)
-                confidence.append(None)
+        for name in self.data.first_name.unique():
+            response = session.get(f'{_API_BASE_URL}/predict/gender/{name}', params=dict(
+                before=2001, living=1)).json()  # age limit of 21+
+            if not response:
+                continue
+            self._predictions.append(dict(
+                first_name=name,
+                gender=response['prediction'],
+                gender_confidence=response['confidence'],
+                gender_number=response['number'],
+            ))
             sleep(1)
         session.close()
 
-        self.data = self.data.assign(gender=prediction).assign(gender_confidence=confidence)
-
     def _save(self):
-        self.data.to_csv(_REPRESENTATIVES_DATA_PATH, index=False)
+        predictions = pd.DataFrame(self._predictions)
+        predictions.to_csv('predictions.csv', index=False)
+
+        self.data = self.data.merge(predictions, on='first_name')
+        self.data.to_csv('representatives_with_predictions.csv', index=False)
 
 
 def summarize():
-    df = pd.read_csv(_REPRESENTATIVES_DATA_PATH).dropna()
-    df = df[df.gender_confidence >= 0.8].copy()  # drop low-confidence predictions
+    df = pd.read_csv('representatives_with_predictions.csv').dropna()
+    df = df[(df.gender_confidence >= 0.8) & (df.gender_number >= 25)].copy()  # drop low-confidence predictions
     grouped_by_gender = df.groupby(['party', 'gender']).first_name.count()
 
     output = ['GENDER - compared to general population']
