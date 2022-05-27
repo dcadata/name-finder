@@ -45,6 +45,8 @@ class Scraper:
         self.data[['rep', 'district']] = self.data.rep.str.split('-', 1, expand=True)
         self.data = self.data.drop(columns='rep')
 
+        self.data.to_csv('representatives.csv', index=False)
+
     def _get_gender_predictions(self):
         prediction = []
         confidence = []
