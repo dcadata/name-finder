@@ -77,7 +77,7 @@ class Loader:
 
     @staticmethod
     def _load_actuarial(sex: str) -> pd.DataFrame:
-        actuarial = pd.read_csv(f'data/actuarial/{sex}.csv', dtype=int)
+        actuarial = pd.read_csv(f'data/actuarial/{sex}.csv', usecols=['year', 'age', 'survivors'], dtype=int)
         actuarial = actuarial[actuarial.year == MAX_YEAR].copy()
         actuarial['birth_year'] = actuarial.year - actuarial.age
         actuarial['survival_prob'] = actuarial.survivors.apply(lambda x: x / 100_000)
