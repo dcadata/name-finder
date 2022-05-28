@@ -14,7 +14,6 @@ class Loader:
     def __init__(self, *args, **kwargs):
         self._national_data_directory = 'data/names/'
         self._territories_data_directory = 'data/namesbyterritory/'
-        self._first_appearance = None
 
     def load(self):
         self._read_data()
