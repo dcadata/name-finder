@@ -199,6 +199,7 @@ class Displayer(Loader):
             delta_pct: float = None,
             delta_fem: float = None,
             delta_masc: float = None,
+            top: int = 30,
     ) -> list:
         # set up
         if year:
@@ -273,7 +274,8 @@ class Displayer(Loader):
         df['display'] = [_create_search_display_ratio(*i) for i in df[[
             'name', 'number', 'ratio_f', 'ratio_m']].to_records(index=False)]
 
-        df = df.head(30)
+        if top:
+            df = df.head(top)
         return df.to_dict('records') if OUTPUT_RECORDS else df
 
     def search_by_text(self, text: str):
