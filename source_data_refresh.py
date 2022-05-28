@@ -38,7 +38,7 @@ def _refresh_actuarial(session):
         sleep(3)
         lines = [line.split() for line in response.text.splitlines()]
         table = pd.DataFrame(lines[6:], columns=lines[5])
-        columns = {'Year': 'year', 'x': 'age', 'l(x)': 'survivors', 'N(x)': 'number'}
+        columns = {'Year': 'year', 'x': 'age', 'l(x)': 'survivors'}
         table = table[list(columns.keys())].rename(columns=columns)
         for col in table.columns:
             table[col] = table[col].apply(int)
