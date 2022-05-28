@@ -80,7 +80,7 @@ class Loader:
         actuarial = pd.read_csv(f'data/actuarial/{sex}.csv', dtype=int)
         actuarial = actuarial[actuarial.year == MAX_YEAR].copy()
         actuarial['birth_year'] = actuarial.year - actuarial.age
-        actuarial['survival_prob'] = actuarial.survivors.apply(lambda x: x / 100000)
+        actuarial['survival_prob'] = actuarial.survivors.apply(lambda x: x / 100_000)
         actuarial = actuarial.drop(columns=['year', 'survivors']).rename(columns={'birth_year': 'year'})
         return actuarial
 
