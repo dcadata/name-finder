@@ -32,7 +32,7 @@ def _refresh_babynames(session):
 def _refresh_actuarial(session):
     url = 'https://www.ssa.gov/oact/HistEst/CohLifeTables/{0}/CohLifeTables_{1}_Alt2_TR{0}.txt'
     for s in ('F', 'M'):
-        response = session.get(url.format(MAX_YEAR + 2, s))
+        response = session.get(url.format(MAX_YEAR + 1, s))
         if not response.ok:
             return
         sleep(3)
