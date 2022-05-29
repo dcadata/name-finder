@@ -81,14 +81,21 @@ class Predictor:
 def summarize():
     df = pd.read_csv('representatives_with_predictions.csv').dropna()
     df = df[(df.gender_confidence >= 0.8) & (df.gender_number >= 25)].copy()  # drop low-confidence predictions
-    grouped_by_gender = df.groupby(['party', 'gender']).first_name.count()
+    grouped_by_gender = df.groupby('gender').first_name.count()
+    grouped_by_gender_and_party = df.groupby(['party', 'gender']).first_name.count()
 
     output = [
         '# Gender Prediction Example - Michigan State Representatives',
         'Gender prediction compared to general population (assumed to be 50/50)',
     ]
+
+    data = tuple(grouped_by_gender[i] for i in ('M', 'F'))
+    p_value = stats.chisquare(data).pvalue
+    p_value_status = '*' if p_value > 0.05 else ''
+    output.append('{}: Mx{}, Fx{} -> p={}{}'.format('All', *data, round(p_value, 2), p_value_status))
+
     for major_party in ('Democrat', 'Republican'):
-        data = tuple(grouped_by_gender[major_party][i] for i in ('M', 'F'))
+        data = tuple(grouped_by_gender_and_party[major_party][i] for i in ('M', 'F'))
         p_value = stats.chisquare(data).pvalue
         p_value_status = '*' if p_value > 0.05 else ''
         output.append('{}: Mx{}, Fx{} -> p={}{}'.format(f'{major_party}s', *data, round(p_value, 2), p_value_status))
