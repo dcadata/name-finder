@@ -10,41 +10,38 @@ _API_BASE_URL = 'http://127.0.0.1:5000'
 
 class Scraper:
     def scrape(self):
-        self._scrape_representative_info()
-        self._arrange_representative_info()
-        self._clean_representative_info()
+        self._scrape()
+        self._clean()
         self._save()
 
-    def _scrape_representative_info(self):
+    def _scrape(self):
         response = requests.get('https://www.house.mi.gov/AllRepresentatives?handler=SortReps&sortby=Alpha')
         soup = BeautifulSoup(response.text, 'lxml')
-        self._representative_elems = soup.select('li')
-
-    def _arrange_representative_info(self):
+        representative_elems = soup.select('li')
         representative_data = [(
             rep.select_one('a.page-search-target'),
             rep.select_one('div.col-md-4'),
             rep.find('a', attrs=dict(href=lambda x: x.startswith('tel'))),
             rep.find('a', attrs=dict(href=lambda x: x.startswith('mailto'))),
-        ) for rep in self._representative_elems]
-        self.data = pd.DataFrame(representative_data, columns=['rep', 'office', 'phone', 'email'])
+        ) for rep in representative_elems]
+        self._data = pd.DataFrame(representative_data, columns=['rep', 'office', 'phone', 'email'])
 
-    def _clean_representative_info(self):
-        self.data = self.data.dropna()
+    def _clean(self):
+        self._data = self._data.dropna()
 
-        self.data.rep = self.data.rep.apply(lambda x: x.text.strip())
-        self.data.office = self.data.office.apply(lambda x: x.text.strip())
-        self.data.phone = self.data.phone.apply(lambda x: x['href'].replace('tel:', '').strip())
-        self.data.email = self.data.email.apply(lambda x: x['href'].replace('mailto:', '').strip())
+        self._data.rep = self._data.rep.apply(lambda x: x.text.strip())
+        self._data.office = self._data.office.apply(lambda x: x.text.strip())
+        self._data.phone = self._data.phone.apply(lambda x: x['href'].replace('tel:', '').strip())
+        self._data.email = self._data.email.apply(lambda x: x['href'].replace('mailto:', '').strip())
 
-        self.data[['last_name', 'rep']] = self.data.rep.str.split(', ', 1, expand=True)
-        self.data[['first_name', 'rep']] = self.data.rep.str.split(' \(', 1, expand=True)
-        self.data[['party', 'rep']] = self.data.rep.str.split('\) ', 1, expand=True)
-        self.data[['rep', 'district']] = self.data.rep.str.split('-', 1, expand=True)
-        self.data = self.data.drop(columns='rep')
+        self._data[['last_name', 'rep']] = self._data.rep.str.split(', ', 1, expand=True)
+        self._data[['first_name', 'rep']] = self._data.rep.str.split(' \(', 1, expand=True)
+        self._data[['party', 'rep']] = self._data.rep.str.split('\) ', 1, expand=True)
+        self._data[['rep', 'district']] = self._data.rep.str.split('-', 1, expand=True)
+        self._data = self._data.drop(columns='rep')
 
     def _save(self):
-        self.data.to_csv('representatives.csv', index=False)
+        self._data.to_csv('representatives.csv', index=False)
 
 
 class Predictor:
@@ -54,12 +51,12 @@ class Predictor:
         self._save()
 
     def _read_scraped_data(self):
-        self.data = pd.read_csv('representatives.csv').drop_duplicates()
+        self._data = pd.read_csv('representatives.csv').drop_duplicates()
 
     def _get_gender_predictions(self):
         self._predictions = []
         session = requests.Session()
-        for name in self.data.first_name.unique():
+        for name in self._data.first_name.unique():
             response = session.get(f'{_API_BASE_URL}/predict/gender/{name}', params=dict(
                 before=2001, living=1)).json()  # age limit of 21+
             if not response:
@@ -77,7 +74,7 @@ class Predictor:
         predictions = pd.DataFrame(self._predictions)
         predictions.to_csv('predictions.csv', index=False)
 
-        data = self.data.merge(predictions, on='first_name')
+        data = self._data.merge(predictions, on='first_name')
         data.to_csv('representatives_with_predictions.csv', index=False)
 
 
