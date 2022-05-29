@@ -89,7 +89,6 @@ def summarize():
     output = ['GENDER - compared to general population']
     for major_party in ('Democrat', 'Republican'):
         data = (grouped_by_gender[major_party]['F'], grouped_by_gender[major_party]['M'])
-        # noinspection PyUnresolvedReferences
         p_value = stats.chisquare(data).pvalue
         p_value_status = '*' if p_value > 0.05 else ''
         output.append('{}: Fx{}, Mx{} -> p={}{}'.format(major_party[0], *data, round(p_value, 2), p_value_status))
