@@ -77,8 +77,8 @@ class Predictor:
         predictions = pd.DataFrame(self._predictions)
         predictions.to_csv('predictions.csv', index=False)
 
-        self.data = self.data.merge(predictions, on='first_name')
-        self.data.to_csv('representatives_with_predictions.csv', index=False)
+        data = self.data.merge(predictions, on='first_name')
+        data.to_csv('representatives_with_predictions.csv', index=False)
 
 
 def summarize():
