@@ -24,24 +24,24 @@ class Scraper:
             rep.find('a', attrs=dict(href=lambda x: x.startswith('tel'))),
             rep.find('a', attrs=dict(href=lambda x: x.startswith('mailto'))),
         ) for rep in representative_elems]
-        self._data = pd.DataFrame(representative_data, columns=['rep', 'office', 'phone', 'email'])
+        self._reps = pd.DataFrame(representative_data, columns=['rep', 'office', 'phone', 'email'])
 
     def _clean(self):
-        self._data = self._data.dropna()
+        self._reps = self._reps.dropna()
 
-        self._data.rep = self._data.rep.apply(lambda x: x.text.strip())
-        self._data.office = self._data.office.apply(lambda x: x.text.strip())
-        self._data.phone = self._data.phone.apply(lambda x: x['href'].replace('tel:', '').strip())
-        self._data.email = self._data.email.apply(lambda x: x['href'].replace('mailto:', '').strip())
+        self._reps.rep = self._reps.rep.apply(lambda x: x.text.strip())
+        self._reps.office = self._reps.office.apply(lambda x: x.text.strip())
+        self._reps.phone = self._reps.phone.apply(lambda x: x['href'].replace('tel:', '').strip())
+        self._reps.email = self._reps.email.apply(lambda x: x['href'].replace('mailto:', '').strip())
 
-        self._data[['last_name', 'rep']] = self._data.rep.str.split(', ', 1, expand=True)
-        self._data[['first_name', 'rep']] = self._data.rep.str.split(' \(', 1, expand=True)
-        self._data[['party', 'rep']] = self._data.rep.str.split('\) ', 1, expand=True)
-        self._data[['rep', 'district']] = self._data.rep.str.split('-', 1, expand=True)
-        self._data = self._data.drop(columns='rep')
+        self._reps[['last_name', 'rep']] = self._reps.rep.str.split(', ', 1, expand=True)
+        self._reps[['first_name', 'rep']] = self._reps.rep.str.split(' \(', 1, expand=True)
+        self._reps[['party', 'rep']] = self._reps.rep.str.split('\) ', 1, expand=True)
+        self._reps[['rep', 'district']] = self._reps.rep.str.split('-', 1, expand=True)
+        self._reps = self._reps.drop(columns='rep')
 
     def _save(self):
-        self._data.to_csv('representatives.csv', index=False)
+        self._reps.to_csv('representatives.csv', index=False)
 
 
 class Predictor:
@@ -51,12 +51,12 @@ class Predictor:
         self._save()
 
     def _read_scraped_data(self):
-        self._data = pd.read_csv('representatives.csv').drop_duplicates()
+        self._reps = pd.read_csv('representatives.csv').drop_duplicates()
 
     def _get_gender_predictions(self):
         self._predictions = []
         session = requests.Session()
-        for name in self._data.first_name.unique():
+        for name in self._reps.first_name.unique():
             response = session.get(f'{_API_BASE_URL}/predict/gender/{name}', params=dict(
                 before=2001, living=1)).json()  # age limit of 21+
             if not response:
@@ -74,8 +74,8 @@ class Predictor:
         predictions = pd.DataFrame(self._predictions)
         predictions.to_csv('predictions.csv', index=False)
 
-        data = self._data.merge(predictions, on='first_name')
-        data.to_csv('representatives_with_predictions.csv', index=False)
+        representatives_with_predictions = self._reps.merge(predictions, on='first_name')
+        representatives_with_predictions.to_csv('representatives_with_predictions.csv', index=False)
 
 
 def summarize():
