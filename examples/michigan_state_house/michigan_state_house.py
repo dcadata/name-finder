@@ -84,7 +84,7 @@ def summarize():
     grouped_by_gender = df.groupby('gender').first_name.count()
     grouped_by_gender_and_party = df.groupby(['party', 'gender']).first_name.count()
 
-    output = [
+    lines = [
         '# Gender Prediction Example - Michigan State Representatives',
         'Gender prediction compared to general population (assumed to be 50/50)',
     ]
@@ -92,17 +92,17 @@ def summarize():
     data = tuple(grouped_by_gender[i] for i in ('M', 'F'))
     p_value = stats.chisquare(data).pvalue
     p_value_status = '*' if p_value > 0.05 else ''
-    output.append('{}: Mx{}, Fx{} -> p={}{}'.format('All', *data, round(p_value, 2), p_value_status))
+    lines.append('{}: Mx{}, Fx{} -> p={}{}'.format('All', *data, round(p_value, 2), p_value_status))
 
     for major_party in ('Democrat', 'Republican'):
         data = tuple(grouped_by_gender_and_party[major_party][i] for i in ('M', 'F'))
         p_value = stats.chisquare(data).pvalue
         p_value_status = '*' if p_value > 0.05 else ''
-        output.append('{}: Mx{}, Fx{} -> p={}{}'.format(f'{major_party}s', *data, round(p_value, 2), p_value_status))
+        lines.append('{}: Mx{}, Fx{} -> p={}{}'.format(f'{major_party}s', *data, round(p_value, 2), p_value_status))
 
-    output.append('*Not statistically significant')
+    lines.append('*Not statistically significant')
 
-    open('README.md', 'w').write('\n\n'.join(output))
+    open('README.md', 'w').write('\n\n'.join(lines))
 
 
 if __name__ == '__main__':
