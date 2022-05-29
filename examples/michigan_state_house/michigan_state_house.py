@@ -83,14 +83,19 @@ def summarize():
     df = df[(df.gender_confidence >= 0.8) & (df.gender_number >= 25)].copy()  # drop low-confidence predictions
     grouped_by_gender = df.groupby(['party', 'gender']).first_name.count()
 
-    output = ['GENDER - compared to general population']
+    output = [
+        '# Gender Prediction Example - Michigan State Representatives',
+        'Gender prediction compared to general population (assumed to be 50/50)',
+    ]
     for major_party in ('Democrat', 'Republican'):
-        data = (grouped_by_gender[major_party]['F'], grouped_by_gender[major_party]['M'])
+        data = tuple(grouped_by_gender[major_party][i] for i in ('M', 'F'))
         p_value = stats.chisquare(data).pvalue
         p_value_status = '*' if p_value > 0.05 else ''
-        output.append('{}: Fx{}, Mx{} -> p={}{}'.format(major_party[0], *data, round(p_value, 2), p_value_status))
+        output.append('{}: Mx{}, Fx{} -> p={}{}'.format(f'{major_party}s', *data, round(p_value, 2), p_value_status))
 
-    print('\n'.join(output))
+    output.append('*Not statistically significant')
+
+    open('README.md', 'w').write('\n\n'.join(output))
 
 
 if __name__ == '__main__':
