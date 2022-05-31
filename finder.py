@@ -488,23 +488,13 @@ def _create_name_display_ratio(
         latest_number: int,
         first_appearance: int,
 ) -> str:
-    number_and_ratio = f'n={number:,}'
-    if ratio_f == 1 or ratio_m == 1:
-        pass
-    elif ratio_f == ratio_m:
-        number_and_ratio += ', no lean'
-    elif ratio_f > ratio_m:
-        number_and_ratio += f', f={ratio_f}'
-    else:  # m > f
-        number_and_ratio += f', m={ratio_m}'
-
     sections = (
-        f'***{name}*** ({number_and_ratio})',
+        _create_search_display_ratio(name, number, ratio_f, ratio_m)[:-1],
         f'Peak(year={peak_year}, n={peak_number:,})',
         f'Latest(year={latest_year}, n={latest_number:,})',
-        f'Earliest(year={first_appearance})',
+        f'Earliest(year={first_appearance}))',
     )
-    result = '  \n'.join(sections)
+    result = ', '.join(sections)
     return result
 
 
