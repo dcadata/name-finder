@@ -306,6 +306,7 @@ class Displayer(Loader):
         gender_ind = _safely_check_regex('(fem|neu|unisex|masc)')
         after_ind = _safely_check_regex('(after|since)\s([0-9]{4})')
         before_ind = _safely_check_regex('before\s([0-9]{4})')
+        year_ind = _safely_check_regex('in\s([0-9]{4})')
         delta_after_ind = _safely_check_regex_delta_section('(after|since)\s([0-9]{4})')
         delta_pct_ind = _safely_check_regex_delta_section('(down|up)')
         delta_gender_ind = _safely_check_regex_delta_section('(fem|masc)')
@@ -324,6 +325,7 @@ class Displayer(Loader):
             gender=dict(fem=(0, 0.2), neu=(0.2, 0.8), unisex=(0.2, 0.8), masc=(0.8, 1)).get(gender_ind),
             after=int(after_ind) if after_ind else None,
             before=int(before_ind) if before_ind else None,
+            year=int(year_ind) if year_ind else None,
             delta_after=delta_after,
             delta_pct=dict(down=-self._delta_cutoff, up=self._delta_cutoff).get(delta_pct_ind),
             delta_fem=dict(fem=self._delta_cutoff, masc=-self._delta_cutoff).get(delta_gender_ind),
