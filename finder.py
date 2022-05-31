@@ -174,7 +174,7 @@ class Displayer(Loader):
 
     def compare(self, names: str, *args, **kwargs) -> dict:
         data = [self.name(name, *args, **kwargs) for name in names.split('-')]
-        data = dict(data=data, display='\n'.join(i['display'] for i in data))
+        data = dict(data=data, display='  \n'.join(i['display'] for i in data))
         return data
 
     def search(
