@@ -15,9 +15,9 @@ class Scraper:
         self._save()
 
     def _scrape(self):
-        response = requests.get('https://www.house.mi.gov/AllRepresentatives?handler=SortReps&sortby=Alpha')
+        response = requests.get('https://www.house.mi.gov/AllRepresentatives')
         soup = BeautifulSoup(response.text, 'lxml')
-        representative_elems = soup.select('li')
+        representative_elems = soup.find('ul', attrs=dict(id='allrepslist')).find_all('li')[1:]
         representative_data = [(
             rep.select_one('a.page-search-target'),
             rep.select_one('div.col-md-4'),
