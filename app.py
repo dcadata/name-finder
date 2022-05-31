@@ -11,13 +11,15 @@ app = Flask(__name__)
 
 def _escape_optional_string(arg_name: str):
     value = request.args.get(arg_name, default=None, type=str)
-    return escape(value) if value else None
+    if not value:
+        return
+    return escape(value)
 
 
 def _escape_optional_string_into_list(arg_name: str):
     value = request.args.get(arg_name, default=None, type=str)
     if not value:
-        return None
+        return
     return escape(value).split(',')
 
 
