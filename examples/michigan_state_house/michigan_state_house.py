@@ -9,6 +9,10 @@ _API_BASE_URL = 'http://127.0.0.1:5000'
 
 
 class Scraper:
+    """
+    Scrape current list of Michigan State Representatives
+    """
+
     def scrape(self):
         self._scrape()
         self._clean()
@@ -44,7 +48,11 @@ class Scraper:
         self._reps.to_csv('representatives.csv', index=False)
 
 
-class Predictor:
+class GenderPredictor:
+    """
+    Predict genders of legislators based on first name
+    """
+
     def predict(self):
         self._read_scraped_data()
         self._get_gender_predictions()
