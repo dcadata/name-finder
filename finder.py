@@ -337,7 +337,7 @@ class Displayer(Loader):
             delta_fem=dict(fem=self._delta_cutoff, masc=-self._delta_cutoff).get(delta_gender_ind),
         )
         data = self.search(**conditions)
-        data = dict(conditions=conditions, data=data, display=', '.join(i['display'] for i in data))
+        data['conditions'] = conditions
         return data
 
     def predict_age(
