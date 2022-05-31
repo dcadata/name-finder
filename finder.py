@@ -284,7 +284,7 @@ class Displayer(Loader):
             data = dict(data=df, display=', '.join(df.display))
         return data
 
-    def search_by_text(self, text: str):
+    def search_by_text(self, text: str) -> dict:
         text = text.lower()
         delta_sections = re.split('trend(ing|ed)?\s', text, 1)
         if len(delta_sections) > 1:
@@ -442,7 +442,7 @@ class Displayer(Loader):
         return output
 
     @property
-    def _years_to_select(self):
+    def _years_to_select(self) -> tuple:
         if self._after and self._before:
             years_range = (self._after, self._before + 1)
         elif self._after:
