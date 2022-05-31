@@ -200,7 +200,7 @@ class Displayer(Loader):
             delta_fem: float = None,
             delta_masc: float = None,
             top: int = 30,
-    ) -> list:
+    ) -> dict:
         # set up
         if year:
             after = year
@@ -266,7 +266,7 @@ class Displayer(Loader):
             df = df[~df.name_lower.apply(lambda x: any((i.lower() in x for i in not_contains)))]
 
         if not len(df):
-            return []
+            return {}
 
         df = df.sort_values('number', ascending=False).drop(columns=['name_lower'])
         for s in ('f', 'm'):
@@ -276,7 +276,13 @@ class Displayer(Loader):
 
         if top:
             df = df.head(top)
-        return df.to_dict('records') if OUTPUT_RECORDS else df
+
+        if OUTPUT_RECORDS:
+            records = df.to_dict('records')
+            data = dict(data=records, display=', '.join(i['display'] for i in records))
+        else:
+            data = dict(data=df, display=', '.join(df.display))
+        return data
 
     def search_by_text(self, text: str):
         text = text.lower()
