@@ -169,7 +169,7 @@ class Displayer(Loader):
             historic = df[['year', 'number', 'number_f', 'number_m', 'ratio_f', 'ratio_m']].copy()
             for s in ('f', 'm'):
                 historic[f'ratio_{s}'] = historic[f'ratio_{s}'].apply(lambda x: round(x, 2))
-            name_record.update({'historic': list(historic.to_dict('records')) if OUTPUT_RECORDS else historic})
+            name_record['historic'] = list(historic.to_dict('records')) if OUTPUT_RECORDS else historic
         return name_record
 
     def compare(self, names: str, *args, **kwargs) -> dict:
