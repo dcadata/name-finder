@@ -7,7 +7,7 @@ import pandas as pd
 # years as currently available in dataset
 _MIN_YEAR = 1880
 MAX_YEAR = int(re.search('^yob([0-9]{4}).txt$', os.listdir('data/names/')[-1]).group(1))
-OUTPUT_RECORDS = False
+OUTPUT_RECORDS = True
 
 
 class Loader:

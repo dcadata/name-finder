@@ -3,8 +3,6 @@ from markupsafe import escape
 
 import finder
 
-finder.OUTPUT_RECORDS = True
-
 displayer = finder.Displayer()
 displayer.load()
 
