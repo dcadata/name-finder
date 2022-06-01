@@ -293,10 +293,7 @@ class Displayer(Loader):
             delta_section = ''
 
         def _safely_check_regex(pattern: str):
-            try:
-                return re.search(pattern, text).groups()[-1]
-            except (AttributeError, IndexError):
-                return
+            return _safe_regex_search(pattern, text)
 
         def _safely_check_regex_and_split_into_tuple(pattern: str):
             result = _safely_check_regex(pattern)
@@ -452,6 +449,13 @@ class Displayer(Loader):
         else:
             years_range = (_MIN_YEAR, MAX_YEAR + 1)
         return tuple(range(*years_range))
+
+
+def _safe_regex_search(pattern: str, text: str):
+    try:
+        return re.search(pattern, text).groups()[-1]
+    except (AttributeError, IndexError):
+        return
 
 
 def _calculate_number_delta(df: pd.DataFrame, **delta) -> pd.DataFrame:
