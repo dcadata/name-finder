@@ -177,6 +177,31 @@ class Displayer(Loader):
         data = dict(data=data, display='  \n'.join(i['display'] for i in data))
         return data
 
+    def name_or_compare_by_text(self, text: str) -> dict:
+        text = text.lower()
+
+        def _safely_check_regex(pattern: str):
+            return _safe_regex_search(pattern, text)
+
+        names_ind = text.split(None, 1)[0].split('/')
+        after_ind = _safely_check_regex('(after|since)\s([0-9]{4})')
+        before_ind = _safely_check_regex('before\s([0-9]{4})')
+        year_ind = _safely_check_regex('in\s([0-9]{4})')
+
+        conditions = dict(
+            after=int(after_ind) if after_ind else None,
+            before=int(before_ind) if before_ind else None,
+            year=int(year_ind) if year_ind else None,
+        )
+        if len(names_ind) == 1:
+            conditions['name'] = names_ind[0]
+            data = self.name(**conditions)
+        else:
+            conditions['names'] = tuple(names_ind)
+            data = self.compare(**conditions)
+        data['conditions'] = conditions
+        return data
+
     def search(
             self,
             pattern: str = None,
