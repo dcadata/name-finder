@@ -147,12 +147,12 @@ Variations of a name, using regex pattern
 
 #### Params
 
-* `names` - hyphen-separated strings, required: the names for which you want information
+* `names` - slash-separated strings, required: the names for which you want information
 * remaining params same as `name` endpoint
 
 #### Examples
 
-    compare/jeremy-jeremiah
-    compare/esmeralda-emerald?after=1950&show_historic=1
-    compare/leander-leandra?after=1915&before=2015
-    compare/michelle-mikayla-michaela?year=1980
+    compare/jeremy/jeremiah
+    compare/esmeralda/emerald?after=1950&show_historic=1
+    compare/leander/leandra?after=1915&before=2015
+    compare/michelle/mikayla/michaela?year=1980
