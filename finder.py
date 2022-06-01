@@ -235,6 +235,8 @@ class Displayer(Loader):
         df = self._calcd.copy()
 
         # calculate number/gender delta
+        if not delta_after and (delta_pct or delta_fem or delta_masc):  # then use default delta_after
+            delta_after = MAX_YEAR - 20
         if delta_after:
             if delta_pct is not None:
                 df = _calculate_number_delta(df, after=delta_after, pct=delta_pct)
@@ -339,10 +341,6 @@ class Displayer(Loader):
         delta_pct_ind = _safely_check_regex_delta_section('(down|up)')
         delta_gender_ind = _safely_check_regex_delta_section('(fem|masc)')
 
-        delta_after = int(delta_after_ind) if delta_after_ind else None
-        if not delta_after and (delta_pct_ind or delta_gender_ind):  # suggests intention to add a trend
-            delta_after = MAX_YEAR - 20
-
         conditions = dict(
             pattern=_safely_check_regex('(pattern|regex)\s(.*)'),
             start=_safely_check_regex_and_split_into_tuple('(start|beginn?)(ing|s)?(\swith)?\s([a-z,]+)'),
@@ -354,7 +352,7 @@ class Displayer(Loader):
             after=int(after_ind) if after_ind else None,
             before=int(before_ind) if before_ind else None,
             year=int(year_ind) if year_ind else None,
-            delta_after=delta_after,
+            delta_after=int(delta_after_ind) if delta_after_ind else None,
             delta_pct=dict(down=-self._delta_cutoff, up=self._delta_cutoff).get(delta_pct_ind),
             delta_fem=dict(fem=self._delta_cutoff, masc=-self._delta_cutoff).get(delta_gender_ind),
         )
