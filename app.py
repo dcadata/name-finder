@@ -86,15 +86,6 @@ def search_endpoint():
     return jsonify(data)
 
 
-@app.route('/search_by_text')
-def search_by_text_endpoint():
-    text = request.args.get('text', default=None, type=str)
-    if not text:
-        return {}
-    data = displayer.search_by_text(text=escape(text))
-    return jsonify(data)
-
-
 @app.route('/predict/age/<string:name>')
 def predict_age_endpoint(name: str):
     data = displayer.predict_age(

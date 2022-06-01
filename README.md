@@ -18,10 +18,6 @@
 
 * Search for first names based on their characteristics
 
-### SEARCH BY TEXT
-
-* Allows search functionality via natural language string
-
 ### NAME
 
 * Get info and history for specified first name
