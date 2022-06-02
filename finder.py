@@ -234,7 +234,7 @@ class Displayer(Loader):
         df = self._calcd.copy()
 
         # calculate number/gender delta
-        if not delta_after and (delta_pct or delta_fem):  # then use default delta_after
+        if not delta_after and (delta_pct is not None or delta_fem is not None):  # then use default delta_after
             delta_after = MAX_YEAR - 20
         if delta_after:
             if delta_pct is not None:
