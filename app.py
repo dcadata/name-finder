@@ -81,7 +81,6 @@ def search_endpoint():
         delta_after=request.args.get('delta_after', default=None, type=int),
         delta_pct=request.args.get('delta_pct', default=None, type=float),
         delta_fem=request.args.get('delta_fem', default=None, type=float),
-        delta_masc=request.args.get('delta_masc', default=None, type=float),
     )
     return jsonify(data)
 
