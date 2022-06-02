@@ -238,9 +238,9 @@ class Displayer(Loader):
             delta_after = MAX_YEAR - 20
         if delta_after:
             if delta_pct is not None:
-                df = _calculate_number_delta(df, after=delta_after, pct=delta_pct)
+                df = _calculate_number_delta(df, delta_after, delta_pct)
             if delta_fem is not None:
-                df = _calculate_gender_delta(df, after=delta_after, fem_ratio=delta_fem)
+                df = _calculate_gender_delta(df, delta_after, delta_fem)
 
         # filter on years
         df = df[df.year.isin(self._years_to_select)].copy()
@@ -478,10 +478,7 @@ def _safe_regex_search(pattern: str, text: str):
         return
 
 
-def _calculate_number_delta(df: pd.DataFrame, **delta) -> pd.DataFrame:
-    after = delta.get('after')
-    pct = delta.get('pct')
-
+def _calculate_number_delta(df: pd.DataFrame, after: int, pct: float) -> pd.DataFrame:
     chg = df[df.year == after].merge(df[df.year == MAX_YEAR], on=['name'], suffixes=('_y1', '_y2'))
     if pct > 0:  # trended up
         chg['delta'] = chg.pct_year_y2 >= chg.pct_year_y1 * (1 + pct)
@@ -493,10 +490,7 @@ def _calculate_number_delta(df: pd.DataFrame, **delta) -> pd.DataFrame:
     return df
 
 
-def _calculate_gender_delta(df: pd.DataFrame, **delta) -> pd.DataFrame:
-    after = delta.get('after')
-    fem_ratio = delta.get('fem_ratio')
-
+def _calculate_gender_delta(df: pd.DataFrame, after: int, fem_ratio: float) -> pd.DataFrame:
     chg = df.copy()
     chg = chg[chg.year == after].merge(chg[chg.year == MAX_YEAR], on=['name'], suffixes=('_y1', '_y2'))
     if fem_ratio > 0:  # trended fem
