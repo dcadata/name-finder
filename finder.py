@@ -15,11 +15,11 @@ class Loader:
         self._national_data_directory = 'data/names/'
         self._territories_data_directory = 'data/namesbyterritory/'
 
-    def load(self):
+    def load(self) -> None:
         self._read_data()
         self._transform()
 
-    def _read_data(self):
+    def _read_data(self) -> None:
         data = []
         for data_directory, is_territory in [
             (self._national_data_directory, False),
@@ -31,7 +31,7 @@ class Loader:
                 data.append(self._read_one_file(filename, is_territory))
         self._concatenated = pd.concat(data)
 
-    def _transform(self):
+    def _transform(self) -> None:
         # combine territories w/ national
         self._raw = self._concatenated.groupby(['name', 'sex', 'year'], as_index=False).number.sum()
         self._number_per_year = self._concatenated.groupby('year', as_index=False).number.sum()
