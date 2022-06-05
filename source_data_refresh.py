@@ -30,18 +30,18 @@ def _refresh_babynames(session: requests.Session) -> bool:
 
 def _refresh_actuarial(session: requests.Session) -> None:
     url = 'https://www.ssa.gov/oact/HistEst/CohLifeTables/{0}/CohLifeTables_{1}_Alt2_TR{0}.txt'
+    columns = {'Year': 'year', 'x': 'age', 'l(x)': 'survivors'}
     for s in ('F', 'M'):
         response = session.get(url.format(MAX_YEAR + 1, s))
         if not response.ok:
             return
         sleep(3)
         lines = [line.split() for line in response.text.splitlines()]
-        table = pd.DataFrame(lines[6:], columns=lines[5])
-        columns = {'Year': 'year', 'x': 'age', 'l(x)': 'survivors'}
-        table = table[list(columns.keys())].rename(columns=columns)
-        for col in table.columns:
-            table[col] = table[col].apply(int)
-        table.to_csv(f'data/actuarial/{s.lower()}.csv', index=False)
+        df = pd.DataFrame(lines[6:], columns=lines[5])
+        df = df[list(columns.keys())].rename(columns=columns)
+        for col in df.columns:
+            df[col] = df[col].apply(int)
+        df.to_csv(f'data/actuarial/{s.lower()}.csv', index=False)
 
 
 def main() -> None:
