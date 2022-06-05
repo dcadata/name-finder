@@ -131,7 +131,7 @@ class Displayer(Loader):
 
         # create output
         grouped = grouped.to_dict('records')[0]
-        name_record = {
+        output = {
             'name': grouped['name'],
             'numbers': {
                 'total': grouped['number'],
@@ -153,24 +153,24 @@ class Displayer(Loader):
             'first_appearance': int(self._first_appearance[grouped['name']]),
         }
         # noinspection PyTypeChecker
-        name_record['display'] = _create_name_display_ratio(
-            name_record['name'],
-            name_record['numbers']['total'],
-            name_record['ratios']['f'],
-            name_record['ratios']['m'],
-            name_record['peak']['year'],
-            name_record['peak']['number'],
-            name_record['latest']['year'],
-            name_record['latest']['number'],
-            name_record['first_appearance'],
+        output['display'] = _create_name_display_ratio(
+            output['name'],
+            output['numbers']['total'],
+            output['ratios']['f'],
+            output['ratios']['m'],
+            output['peak']['year'],
+            output['peak']['number'],
+            output['latest']['year'],
+            output['latest']['number'],
+            output['first_appearance'],
         )
 
         if show_historic:
             historic = df[['year', 'number', 'number_f', 'number_m', 'ratio_f', 'ratio_m']].copy()
             for s in ('f', 'm'):
                 historic[f'ratio_{s}'] = historic[f'ratio_{s}'].apply(lambda x: round(x, 2))
-            name_record['historic'] = list(historic.to_dict('records')) if OUTPUT_RECORDS else historic
-        return name_record
+            output['historic'] = list(historic.to_dict('records')) if OUTPUT_RECORDS else historic
+        return output
 
     def compare(self, names: tuple, *args, **kwargs) -> dict:
         data = [self.name(name, *args, **kwargs) for name in names]
