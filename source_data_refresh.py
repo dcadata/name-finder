@@ -7,7 +7,7 @@ import requests
 from finder import MAX_YEAR
 
 
-def _refresh_babynames(session):
+def _refresh_babynames(session: requests.Session) -> bool:
     # compare to website
     response = session.get('https://www.ssa.gov/oact/babynames/limits.html')
     table = pd.read_html(response.text)[0]
@@ -25,11 +25,10 @@ def _refresh_babynames(session):
         sleep(3)
         with zipfile.ZipFile(filepath) as z:
             z.extractall(filepath[:-4])
-
     return True
 
 
-def _refresh_actuarial(session):
+def _refresh_actuarial(session: requests.Session) -> None:
     url = 'https://www.ssa.gov/oact/HistEst/CohLifeTables/{0}/CohLifeTables_{1}_Alt2_TR{0}.txt'
     for s in ('F', 'M'):
         response = session.get(url.format(MAX_YEAR + 1, s))
@@ -45,7 +44,7 @@ def _refresh_actuarial(session):
         table.to_csv(f'data/actuarial/{s.lower()}.csv', index=False)
 
 
-def main():
+def main() -> None:
     session = requests.Session()
     if _refresh_babynames(session):
         _refresh_actuarial(session)
