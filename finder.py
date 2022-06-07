@@ -223,8 +223,8 @@ class Displayer(Loader):
             before: int = None,
             year: int = None,
             delta_after: int = None,
-            delta_pct: float = None,
-            delta_fem: float = None,
+            delta_pct: (float, bool) = None,
+            delta_fem: (float, bool) = None,
             top: int = 30,
     ) -> dict:
         # set up
@@ -238,7 +238,18 @@ class Displayer(Loader):
         # calculate number/gender delta
         if not delta_after and (delta_pct is not None or delta_fem is not None):  # then use default delta_after
             delta_after = MAX_YEAR - 20
+
         if delta_after:
+            if delta_pct is True:
+                delta_pct = self._delta_cutoff
+            elif delta_pct is False:
+                delta_pct = -self._delta_cutoff
+
+            if delta_fem is True:
+                delta_fem = self._delta_cutoff
+            elif delta_fem is False:
+                delta_fem = -self._delta_cutoff
+
             if delta_pct is not None:
                 df = _calculate_number_delta(df, delta_after, delta_pct)
             if delta_fem is not None:
