@@ -153,7 +153,7 @@ class Displayer(Loader):
             'first_appearance': int(self._first_appearance[grouped['name']]),
         }
         # noinspection PyTypeChecker
-        output['display'] = _create_name_display_ratio(
+        output['display'] = _create_display_details(
             output['name'],
             output['numbers']['total'],
             output['ratios']['f'],
@@ -503,7 +503,7 @@ def _calculate_gender_delta(df: pd.DataFrame, after: int, fem_ratio: float) -> p
     return df
 
 
-def _create_name_display_ratio(
+def _create_display_details(
         name: str,
         number: int,
         ratio_f: float,
