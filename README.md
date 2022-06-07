@@ -113,7 +113,7 @@ Feminine names starting with "E" or "I" that have gained at least 10% in popular
 
 Short names that were neutral before 1990 and have trended at least 1% less popular and 1% more masculine since 1990
 
-    search?length=3,5&gender=0.2,0.8&before=1990&delta_after=1990&delta_pct=-0.01&delta_masc=0.01
+    search?length=3,5&gender=0.2,0.8&before=1990&delta_after=1990&delta_pct=-0.01&delta_fem=-0.01
 
 Variations of a name, using regex pattern
 
