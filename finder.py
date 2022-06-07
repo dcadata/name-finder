@@ -525,15 +525,14 @@ def _create_name_display_ratio(
 
 
 def _create_search_display_ratio(name: str, number: int, ratio_f: float, ratio_m: float) -> str:
-    formatted_number = f'n={number:,}'
     if ratio_f == 1 or ratio_m == 1:
-        return f'{name}({formatted_number})'
+        return f'{name}(n={number:,})'
     elif ratio_f == ratio_m:
-        return f'{name}({formatted_number}, no lean)'
+        return f'{name}(n={number:,}, no lean)'
     elif ratio_f > ratio_m:
-        return f'{name}({formatted_number}, f={ratio_f})'
+        return f'{name}(n={number:,}, f={ratio_f})'
     else:  # m > f
-        return f'{name}({formatted_number}, m={ratio_m})'
+        return f'{name}(n={number:,}, m={ratio_m})'
 
 
 def _create_predict_gender_reference(calcd: pd.DataFrame) -> pd.DataFrame:
