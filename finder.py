@@ -153,9 +153,11 @@ class Displayer(Loader):
             'first_appearance': int(self._first_appearance[grouped['name']]),
         }
         # noinspection PyTypeChecker
-        output['display'] = _create_display_details(
+        output['display'] = _create_display_for_name(
             output['name'],
             output['numbers']['total'],
+            output['numbers']['f'],
+            output['numbers']['m'],
             output['ratios']['f'],
             output['ratios']['m'],
             output['peak']['year'],
@@ -174,7 +176,7 @@ class Displayer(Loader):
 
     def compare(self, names: tuple, *args, **kwargs) -> dict:
         data = [self.name(name, *args, **kwargs) for name in names]
-        data = dict(data=data, display='  \n'.join(i['display'] for i in data))
+        data = dict(data=data, display='\n\n'.join(i['display'] for i in data))
         return data
 
     def name_or_compare_by_text(self, text: str) -> dict:
@@ -295,7 +297,7 @@ class Displayer(Loader):
         df = df.sort_values('number', ascending=False).drop(columns=['name_lower'])
         for s in ('f', 'm'):
             df[f'ratio_{s}'] = df[f'ratio_{s}'].apply(lambda x: round(x, 2))
-        df['display'] = [_create_search_display_ratio(*i) for i in df[[
+        df['display'] = [_create_display_for_search(*i) for i in df[[
             'name', 'number', 'ratio_f', 'ratio_m']].to_records(index=False)]
 
         if top:
@@ -503,9 +505,22 @@ def _calculate_gender_delta(df: pd.DataFrame, after: int, fem_ratio: float) -> p
     return df
 
 
-def _create_display_details(
+def _create_display_ratio(ratio_f: float, ratio_m: float, ignore_ones: bool = True) -> str:
+    if ignore_ones and (ratio_f == 1 or ratio_m == 1):
+        return ''
+    elif ratio_f > ratio_m:
+        return f'f={ratio_f}'
+    elif ratio_m > ratio_f:
+        return f'm={ratio_m}'
+    else:  # they're equal
+        return 'no lean'
+
+
+def _create_display_for_name(
         name: str,
         number: int,
+        number_f: int,
+        number_m: int,
         ratio_f: float,
         ratio_m: float,
         peak_year: int,
@@ -514,25 +529,23 @@ def _create_display_details(
         latest_number: int,
         first_appearance: int,
 ) -> str:
+    numbers_fm = f'f={number_f:,}, m={number_m:,}' if number_f >= number_m else f'm={number_m:,}, f={number_f:,}'
     sections = (
-        _create_search_display_ratio(name, number, ratio_f, ratio_m)[:-1],
-        f'Peak(year={peak_year}, n={peak_number:,})',
-        f'Latest(year={latest_year}, n={latest_number:,})',
-        f'Earliest(year={first_appearance}))',
+        name,
+        f'. Total Usages: n={number:,} ({numbers_fm})',
+        f'. Ratio: {_create_display_ratio(ratio_f, ratio_m, ignore_ones=False)}',
+        f'. Peak({peak_year}): n={peak_number:,}',
+        f'. Latest({latest_year}): n={latest_number:,}',
+        f'. Earliest({first_appearance})',
     )
-    result = ', '.join(sections)
+    result = '  \n'.join(sections)
     return result
 
 
-def _create_search_display_ratio(name: str, number: int, ratio_f: float, ratio_m: float) -> str:
-    if ratio_f == 1 or ratio_m == 1:
-        return f'{name}(n={number:,})'
-    elif ratio_f == ratio_m:
-        return f'{name}(n={number:,}, no lean)'
-    elif ratio_f > ratio_m:
-        return f'{name}(n={number:,}, f={ratio_f})'
-    else:  # m > f
-        return f'{name}(n={number:,}, m={ratio_m})'
+def _create_display_for_search(name: str, number: int, ratio_f: float, ratio_m: float) -> str:
+    if display_ratio := _create_display_ratio(ratio_f, ratio_m):
+        display_ratio = ', ' + display_ratio
+    return f'{name}(n={number:,}{display_ratio})'
 
 
 def _create_predict_gender_reference(calcd: pd.DataFrame) -> pd.DataFrame:
