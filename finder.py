@@ -171,7 +171,14 @@ class Displayer(Loader):
             historic = df[['year', 'number', 'number_f', 'number_m', 'ratio_f', 'ratio_m']].copy()
             for s in ('f', 'm'):
                 historic[f'ratio_{s}'] = historic[f'ratio_{s}'].apply(lambda x: round(x, 2))
+            blocks = '▓', '▒', '░'
+            historic['ratio_bars'] = (
+                    historic.ratio_f.apply(lambda x: 'f ' + int(round(x * 50)) * blocks[0]) +
+                    historic.ratio_m.apply(lambda x: int(round(x * 50)) * blocks[1] + ' m') +
+                    historic.year.apply(str).apply(lambda x: f' {x}')
+            )
             output['historic'] = list(historic.to_dict('records')) if OUTPUT_RECORDS else historic
+            output['display'] = '  \n'.join((output['display'], '. Ratio Bars', *historic.ratio_bars))
         return output
 
     def compare(self, names: tuple, *args, **kwargs) -> dict:
