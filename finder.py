@@ -178,7 +178,7 @@ class Displayer(Loader):
                     historic.year.apply(str).apply(lambda x: f' {x}')
             )
             output['historic'] = list(historic.to_dict('records')) if OUTPUT_RECORDS else historic
-            historic4bars = historic[historic.year.apply(lambda x: x % 5 == 0)] if not (
+            historic4bars = historic[historic.year.apply(lambda x: (x >= MAX_YEAR - 80) & (x % 5 == 0))] if not (
                     after or before or year) else historic
             output['display'] = '  \n'.join((output['display'], '. Ratio Bars', *historic4bars.ratio_bars))
         return output
