@@ -203,6 +203,7 @@ class Displayer(Loader):
             after=int(after_ind) if after_ind else None,
             before=int(before_ind) if before_ind else None,
             year=int(year_ind) if year_ind else None,
+            show_historic=True,
         )
         if len(names_ind) == 1:
             conditions['name'] = names_ind[0]
