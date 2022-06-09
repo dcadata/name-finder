@@ -1,4 +1,4 @@
-# Name API: predict age and gender based on first name, search for names, and compare names
+# Name API: predict age and gender based on first name, and search for names
 
 ## Feature Overview
 
@@ -21,10 +21,6 @@
 ### NAME
 
 * Get info and history for specified first name
-
-### COMPARE
-
-* Compare two or more names
 
 ## API Documentation & Examples
 
@@ -138,17 +134,3 @@ Variations of a name, using regex pattern
     name/helen?after=1960
     name/zachary?after=1975&before=2000
     name/salma?year=2020
-
-### Using `compare`
-
-#### Params
-
-* `names` - slash-separated strings, required: the names for which you want information
-* remaining params same as `name` endpoint
-
-#### Examples
-
-    compare/jeremy/jeremiah
-    compare/esmeralda/emerald?after=1950&show_historic=1
-    compare/leander/leandra?after=1915&before=2015
-    compare/michelle/mikayla/michaela?year=1980
