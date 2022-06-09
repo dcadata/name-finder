@@ -556,7 +556,7 @@ def _create_display_for_name(
 ) -> str:
     numbers_fm = f'f={number_f:,}, m={number_m:,}' if number_f >= number_m else f'm={number_m:,}, f={number_f:,}'
     sections = (
-        name,
+        f'**{name}**',
         f'. Total Usages: n={number:,} ({numbers_fm})',
         f'. Ratio: {_create_display_ratio(ratio_f, ratio_m, ignore_ones=False)}',
         f'. Peak({peak_year}): n={peak_number:,}',
