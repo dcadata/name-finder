@@ -182,7 +182,8 @@ class Displayer(Loader):
                 )
                 historic4bars = historic[historic.year.apply(lambda x: (x >= MAX_YEAR - 80) & (x % 5 == 0))] if not (
                         after or before or year) else historic
-                output['display'] = '  \n'.join((output['display'], '. Ratio Bars', *historic4bars.ratio_bars))
+                output['display'] = '  \n'.join((
+                    output['display'], '. Ratio Bars (f <-> m)', *historic4bars.ratio_bars))
         return output
 
     def compare(self, names: tuple, *args, **kwargs) -> dict:
