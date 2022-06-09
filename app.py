@@ -53,12 +53,6 @@ def name_endpoint(name: str):
     return jsonify(data)
 
 
-@app.route('/compare/<string:names>')
-def compare_endpoint(names: str):
-    data = displayer.compare(names=tuple(escape(names).split('/')), **_parse_name_args())
-    return jsonify(data)
-
-
 @app.route('/search')
 def search_endpoint():
     data = displayer.search(
