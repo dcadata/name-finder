@@ -174,7 +174,7 @@ class Displayer(Loader):
                 historic[f'ratio_{s}'] = historic[f'ratio_{s}'].apply(lambda x: round(x, 2))
             output['historic'] = list(historic.to_dict('records')) if OUTPUT_RECORDS else historic
 
-            if not (output['ratios']['f'] == 1 or output['ratios']['m'] == 1):
+            if not (output['ratios']['f'] >= 0.99 or output['ratios']['m'] >= 0.99):
                 historic['ratio_bars'] = (
                         historic.ratio_f.apply(lambda x: 'f ' + int(round(x * 50)) * self._blocks[0]) +
                         historic.ratio_m.apply(lambda x: int(round(x * 50)) * self._blocks[1] + ' m') +
