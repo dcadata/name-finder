@@ -251,7 +251,7 @@ class Displayer(Loader):
 
         # calculate number/gender delta
         if not delta_after and (delta_pct is not None or delta_fem is not None):  # then use default delta_after
-            delta_after = MAX_YEAR - 20
+            delta_after = MAX_YEAR - 30
 
         if delta_after:
             if delta_pct is True:
