@@ -90,6 +90,7 @@ class Displayer(Loader):
         super().__init__(*args, **kwargs)
         self._after = None
         self._before = None
+        self._blocks = '▓', '▒', '░'
         self._delta_cutoff = 0.0000000000000000000000000000000000000000000000000000000000000000000000000000000001
 
     def name(
@@ -174,16 +175,16 @@ class Displayer(Loader):
             output['historic'] = list(historic.to_dict('records')) if OUTPUT_RECORDS else historic
 
             if not (output['ratios']['f'] == 1 or output['ratios']['m'] == 1):
-                blocks = '▓', '▒', '░'
                 historic['ratio_bars'] = (
-                        historic.ratio_f.apply(lambda x: 'f ' + int(round(x * 50)) * blocks[0]) +
-                        historic.ratio_m.apply(lambda x: int(round(x * 50)) * blocks[1] + ' m') +
+                        historic.ratio_f.apply(lambda x: 'f ' + int(round(x * 50)) * self._blocks[0]) +
+                        historic.ratio_m.apply(lambda x: int(round(x * 50)) * self._blocks[1] + ' m') +
                         historic.year.apply(str).apply(lambda x: f' {x}')
                 )
                 historic4bars = historic[historic.year.apply(lambda x: (x >= MAX_YEAR - 80) & (x % 5 == 0))] if not (
                         after or before or year) else historic
                 output['display'] = '  \n'.join((
                     output['display'], '. Ratio Bars (f <-> m)', *historic4bars.ratio_bars))
+
         return output
 
     def compare(self, names: tuple, *args, **kwargs) -> dict:
