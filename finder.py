@@ -192,11 +192,11 @@ class Displayer(Loader):
 
     def name_or_compare_by_text(self, text: str) -> dict:
         text = text.lower()
+        names_ind = text.split(None, 1)[0].split('/')
 
         def _safely_check_regex(pattern: str):
             return _safe_regex_search(pattern, text)
 
-        names_ind = text.split(None, 1)[0].split('/')
         after_ind = _safely_check_regex('(after|since)\s([0-9]{4})')
         before_ind = _safely_check_regex('before\s([0-9]{4})')
         year_ind = _safely_check_regex('in\s([0-9]{4})')
