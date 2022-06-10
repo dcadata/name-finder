@@ -197,9 +197,11 @@ class Displayer(Loader):
         def _safely_check_regex(pattern: str):
             return _safe_regex_search(pattern, text)
 
-        after_ind = _safely_check_regex('(after|since)\s([0-9]{4})')
-        before_ind = _safely_check_regex('before\s([0-9]{4})')
-        year_ind = _safely_check_regex('in\s([0-9]{4})')
+        year_ind = _safely_check_regex('year:([0-9]{4})')
+        if years_ind := re.search('years:([0-9]{4})-([0-9]{4})', text, re.I):
+            after_ind, before_ind = map(int, years_ind.groups())
+        else:
+            after_ind, before_ind = None, None
 
         conditions = dict(
             after=int(after_ind) if after_ind else None,
