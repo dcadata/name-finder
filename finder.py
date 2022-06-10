@@ -337,7 +337,7 @@ class Displayer(Loader):
 
     def search_by_text(self, text: str) -> dict:
         text = text.lower()
-        delta_sections = re.split('trend(ing|ed)?\s', text, 1)
+        delta_sections = re.split('trend:', text, 1)
         if len(delta_sections) > 1:
             text, delta_section = delta_sections[0], delta_sections[-1]
         else:
@@ -356,32 +356,27 @@ class Displayer(Loader):
             except (AttributeError, IndexError):
                 return
 
-        length_ind = _safely_check_regex('(short|med|long)')
-        gender_ind = _safely_check_regex('(fem|neu|unisex|masc)')
-        after_ind = _safely_check_regex('(after|since)\s([0-9]{4})')
-        before_ind = _safely_check_regex('before\s([0-9]{4})')
-        year_ind = _safely_check_regex('in\s([0-9]{4})')
-        delta_after_ind = _safely_check_regex_delta_section('(after|since)\s([0-9]{4})')
-        delta_pct_ind = _safely_check_regex_delta_section('(down|up)')
-        delta_gender_ind = _safely_check_regex_delta_section('(fem|masc)')
+        length_ind = _safely_check_regex('length:([0-9]+-[0-9]+)')
+        year_ind = _safely_check_regex('year:([0-9]{4})')
+        if years_ind := re.search('years:([0-9]{4})-([0-9]{4})', text, re.I):
+            after_ind, before_ind = map(int, years_ind.groups())
+        else:
+            after_ind, before_ind = None, None
 
-        conditions = dict(
-            pattern=_safely_check_regex('(pattern|regex)\s(.*)'),
-            start=_safely_check_regex_and_split_into_tuple('(start|beginn?)(ing|s)?(\swith)?\s([a-z,]+)'),
-            end=_safely_check_regex_and_split_into_tuple('end(ing|s)?(\swith)?\s([a-z,]+)'),
-            contains=_safely_check_regex_and_split_into_tuple('contain(ing|s)?\s([a-z,]+)'),
-            order=_safely_check_regex_and_split_into_tuple('order\s([a-z,]+)'),
-            length=dict(short=(3, 5), med=(6, 8), long=(9, 30)).get(length_ind),
-            gender=dict(fem=(0, 0.2), neu=(0.2, 0.8), unisex=(0.2, 0.8), masc=(0.8, 1)).get(gender_ind),
-            after=int(after_ind) if after_ind else None,
-            before=int(before_ind) if before_ind else None,
+        data = self.search(
+            pattern=_safely_check_regex('pattern:(.*)'),
+            start=_safely_check_regex_and_split_into_tuple('start:([a-z,]+)'),
+            end=_safely_check_regex_and_split_into_tuple('end:([a-z,]+)'),
+            contains=_safely_check_regex_and_split_into_tuple('contains:([a-z,]+)'),
+            order=_safely_check_regex_and_split_into_tuple('order:([a-z,]+)'),
+            length=tuple(map(int, length_ind.split('-'))) if length_ind else None,
+            gender=dict(f=(0, 0.2), x=(0.2, 0.8), m=(0.8, 1)).get(_safely_check_regex('gender:(f|x|m)')),
+            after=after_ind,
+            before=before_ind,
             year=int(year_ind) if year_ind else None,
-            delta_after=int(delta_after_ind) if delta_after_ind else None,
-            delta_pct=dict(down=-self._delta_cutoff, up=self._delta_cutoff).get(delta_pct_ind),
-            delta_fem=dict(fem=self._delta_cutoff, masc=-self._delta_cutoff).get(delta_gender_ind),
+            delta_pct=dict(down=False, up=True).get(_safely_check_regex_delta_section('(down|up)')),
+            delta_fem=dict(fem=True, masc=False).get(_safely_check_regex_delta_section('(fem|masc)')),
         )
-        data = self.search(**conditions)
-        data['conditions'] = conditions
         return data
 
     def predict_age(
