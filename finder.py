@@ -153,7 +153,6 @@ class Displayer(Loader):
             },
             'first_appearance': int(self._first_appearance[grouped['name']]),
         }
-        # noinspection PyTypeChecker
         output['display'] = _create_display_for_name(
             output['name'],
             output['numbers']['total'],
