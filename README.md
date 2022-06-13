@@ -103,11 +103,11 @@ Masculine names ending in "A" (and similar sounds) that aren't super rare
 
     search?gender=0.8,1&end=a,ah,ay,ai,ae&number_min=1000
 
-Feminine names starting with "E" or "I" that have gained at least 10% in popularity since 2010
+Feminine names starting with "E" or "I" that have gained at least 10% in popularity after 2010
 
     search?gender=0,0.2&start=e,i&delta_after=2010&delta_pct=0.1
 
-Short names that were neutral before 1990 and have trended at least 1% less popular and 1% more masculine since 1990
+Short names that were neutral before 1990 and have trended at least 1% less popular and 1% more masculine after 1990
 
     search?length=3,5&gender=0.2,0.8&before=1990&delta_after=1990&delta_pct=-0.01&delta_fem=-0.01
 
