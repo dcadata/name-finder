@@ -65,25 +65,21 @@ class GenderPredictor:
         self._predictions = []
         session = requests.Session()
         for name in self._reps.first_name.unique():
-            response = session.get(f'{_API_BASE_URL}/predict/gender/{name}', params=dict(
-                before=2001, living=1)).json()  # age limit of 21+
-            if not response:
-                continue
-            self._predictions.append(dict(
-                first_name=name,
-                gender=response['prediction'],
-                gender_confidence=response['confidence'],
-                gender_number=response['number'],
-            ))
+            if response := session.get(f'{_API_BASE_URL}/predict/gender/{name}', params=dict(
+                    before=2001, living=1)).json():  # age limit of 21+
+                self._predictions.append(dict(
+                    first_name=name,
+                    gender=response['prediction'],
+                    gender_confidence=response['confidence'],
+                    gender_number=response['number'],
+                ))
             sleep(1)
         session.close()
 
     def _save(self):
         predictions = pd.DataFrame(self._predictions)
         predictions.to_csv('predictions.csv', index=False)
-
-        representatives_with_predictions = self._reps.merge(predictions, on='first_name')
-        representatives_with_predictions.to_csv('representatives_with_predictions.csv', index=False)
+        self._reps.merge(predictions, on='first_name').to_csv('representatives_with_predictions.csv', index=False)
 
 
 def summarize():
