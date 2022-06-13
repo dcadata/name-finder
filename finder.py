@@ -190,31 +190,11 @@ class Displayer(Loader):
         return data
 
     def name_or_compare_by_text(self, text: str) -> dict:
-        text = text.lower()
-        names_ind = text.split(None, 1)[0].split('/')
-
-        def _safely_check_regex(pattern: str):
-            return _safe_regex_search(pattern, text)
-
-        year_ind = _safely_check_regex('year:([0-9]{4})')
-        if years_ind := re.search('years:([0-9]{4})-([0-9]{4})', text, re.I):
-            after_ind, before_ind = map(int, years_ind.groups())
-        else:
-            after_ind, before_ind = None, None
-
-        conditions = dict(
-            after=int(after_ind) if after_ind else None,
-            before=int(before_ind) if before_ind else None,
-            year=int(year_ind) if year_ind else None,
-            show_historic=True,
-        )
+        names_ind = text.lower().split(None, 1)[0].split('/')
         if len(names_ind) == 1:
-            conditions['name'] = names_ind[0]
-            data = self.name(**conditions)
+            data = self.name(name=names_ind[0], show_historic=True)
         else:
-            conditions['names'] = tuple(names_ind)
-            data = self.compare(**conditions)
-        data['conditions'] = conditions
+            data = self.compare(names=tuple(names_ind), show_historic=True)
         return data
 
     def search(
