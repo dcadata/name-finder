@@ -179,9 +179,8 @@ class Displayer(Loader):
                         historic.ratio_m.apply(lambda x: int(round(x * 50)) * self._blocks[1] + ' m') +
                         historic.year.apply(str).apply(lambda x: f' {x}')
                 )
-                historic4bars = historic if after or before or year else historic[historic.year.apply(
-                    lambda x: (x >= MAX_YEAR - 80) and (x % 5 == 0))]
-                output['display'] += '  \n'.join(('', '. Ratio Bars (f <-> m)', *historic4bars.ratio_bars))
+                output['display'] += '  \n'.join(('', '. Ratio Bars (f <-> m)', *historic[historic.year.apply(
+                    lambda x: (x >= MAX_YEAR - 80) and (x % 5 == 0))].ratio_bars))
 
         return output
 
