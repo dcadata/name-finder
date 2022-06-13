@@ -82,27 +82,27 @@ class GenderPredictor:
         self._reps.merge(predictions, on='first_name').to_csv('representatives_with_predictions.csv', index=False)
 
 
-def summarize():
-    df = pd.read_csv('representatives_with_predictions.csv').dropna()
-    df = df[(df.gender_confidence >= 0.8) & (df.gender_number >= 25)].copy()  # drop low-confidence predictions
-    grouped_by_gender = df.groupby('gender').first_name.count()
-    grouped_by_gender_and_party = df.groupby(['party', 'gender']).first_name.count()
+def summarize_example(data: pd.DataFrame):
+    data = data.dropna()
+    data = data[(data.gender_confidence >= 0.8) & (data.gender_number >= 25)].copy()  # drop low-confidence predictions
+    grouped_by_gender = data.groupby('gender').first_name.count()
+    grouped_by_gender_and_party = data.groupby(['party', 'gender']).first_name.count()
 
     lines = [
         '# Gender Prediction Example - Michigan State Representatives',
         'Gender prediction compared to general population (assumed to be 50/50)',
     ]
 
-    data = tuple(grouped_by_gender[i] for i in ('M', 'F'))
-    p_value = stats.chisquare(data).pvalue
+    temp = tuple(grouped_by_gender[i] for i in ('M', 'F'))
+    p_value = stats.chisquare(temp).pvalue
     p_value_status = '*' if p_value > 0.05 else ''
-    lines.append('{}: Mx{}, Fx{} -> p={}{}'.format('All', *data, round(p_value, 2), p_value_status))
+    lines.append('{}: Mx{}, Fx{} -> p={}{}'.format('All', *temp, round(p_value, 2), p_value_status))
 
     for major_party in ('Democrat', 'Republican'):
-        data = tuple(grouped_by_gender_and_party[major_party][i] for i in ('M', 'F'))
-        p_value = stats.chisquare(data).pvalue
+        temp = tuple(grouped_by_gender_and_party[major_party][i] for i in ('M', 'F'))
+        p_value = stats.chisquare(temp).pvalue
         p_value_status = '*' if p_value > 0.05 else ''
-        lines.append('{}: Mx{}, Fx{} -> p={}{}'.format(f'{major_party}s', *data, round(p_value, 2), p_value_status))
+        lines.append('{}: Mx{}, Fx{} -> p={}{}'.format(f'{major_party}s', *temp, round(p_value, 2), p_value_status))
 
     lines.append('*Not statistically significant')
 
@@ -110,4 +110,4 @@ def summarize():
 
 
 if __name__ == '__main__':
-    summarize()
+    summarize_example(pd.read_csv('representatives_with_predictions.csv'))
