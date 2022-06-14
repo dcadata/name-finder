@@ -63,7 +63,7 @@ Range (inclusive)
 
     !search gender:m start:k years:1970-1990
 
-One year
+Single year
 
     !search gender:m start:k year:1955
 
