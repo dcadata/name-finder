@@ -57,6 +57,12 @@ Must be placed last in a series of conditions.
 
     !search length:3-5 contains:a,z gender:f
 
+#### Gender
+
+Filter on the aggregate gender lean of the name. Options are `m` (masculine), `f` (feminine), and `x` (gender-neutral or unisex).
+
+    !search length:4-7 gender:x start:q
+
 #### Years:
 
 Range (inclusive)
