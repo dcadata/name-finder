@@ -59,7 +59,7 @@ Must be placed last in a series of conditions.
 
 #### Length - hyphen-separated integers
 
-    !search length:3-5 contains:a,z gender:f
+    !search length:3-5 ~contains:s,z,x
 
 #### Gender
 
