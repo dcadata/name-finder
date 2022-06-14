@@ -30,7 +30,7 @@ You can mix-and-match the below conditions:
 
 Must be placed last in a series of conditions.
 
-    !search pattern:^a[iye]+d[eiyo]n$
+    !search pattern:^a[iyeo]+dh?[eiyoa]n$
     !search gender:f pattern:^al[ei](x|j|ss?|ks|k?z)an
 
 #### Start & end - single string or comma-separated strings
