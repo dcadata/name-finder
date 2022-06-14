@@ -196,14 +196,6 @@ class Displayer(Loader):
         data = dict(data=data, display='\n\n'.join(i['display'] for i in data))
         return data
 
-    def name_or_compare_by_text(self, text: str, *args, **kwargs) -> dict:
-        names_ind = text.lower().split(None, 1)[0].split('/')
-        if len(names_ind) == 1:
-            data = self.name(name=names_ind[0], *args, **kwargs)
-        else:
-            data = self.compare(names=tuple(names_ind), *args, **kwargs)
-        return data
-
     def search(
             self,
             pattern: str = None,

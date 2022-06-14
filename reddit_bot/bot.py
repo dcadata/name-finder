@@ -1,3 +1,5 @@
+import re
+
 from markupsafe import escape
 from praw import Reddit
 from praw.models import Comment
@@ -67,9 +69,14 @@ class Bot(Displayer):
         return reply_lines
 
     def _query_per_command(self, command: str) -> str:
-        cleaned_command = ' '.join(i for i in command.split() if not i.startswith('!'))
+        cleaned_command = re.sub('!(name|search)\s', '', command, 1, re.I)
         if command.startswith(self._name_trigger):
-            return self.name_or_compare_by_text(cleaned_command, show_bars=20).get('display', '')
+            names_ind = cleaned_command.split(None, 1)[0].split('/')
+            if len(names_ind) == 1:
+                data = self.name(name=names_ind[0], show_bars=20)
+            else:
+                data = self.compare(names=tuple(names_ind), show_bars=20)
+            return data.get('display', '')
         elif command.startswith(self._search_trigger):
             return self.search_by_text(cleaned_command).get('display', '')
         return ''
