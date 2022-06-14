@@ -562,7 +562,7 @@ def _create_display_for_search(name: str, number: int, ratio_f: float, ratio_m: 
 
 
 def _create_predict_gender_reference(calcd: pd.DataFrame) -> pd.DataFrame:
-    calcd = calcd[calcd.year.apply(lambda x: MAX_YEAR - 80 <= x <= MAX_YEAR - 25)].drop(columns=[
+    calcd = calcd[calcd.year.apply(lambda x: MAX_YEAR - 90 <= x <= MAX_YEAR - 25)].drop(columns=[
         'ratio_f', 'ratio_m', 'pct_year'])
     calcd = calcd.groupby('name', as_index=False).agg(dict(number=sum, number_f=sum, number_m=sum))
     for s in ('f', 'm'):
