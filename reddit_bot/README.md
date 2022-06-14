@@ -46,6 +46,12 @@ Must be placed last in a series of conditions.
     !search start:f contains:r
     !search end:a,ah gender:m
 
+### NOT start/end/contains - single string or comma-separated strings (uses AND condition)
+
+    !search ~start:r,s,t
+    !search ~end:n,m
+    !search ~contains:a,e,i,o,u
+
 #### Order - comma-separated strings
 
     !search order:j,d,n gender:x
