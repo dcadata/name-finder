@@ -567,7 +567,10 @@ def _create_predict_gender_reference(calcd: pd.DataFrame) -> pd.DataFrame:
     calcd = calcd.groupby('name', as_index=False).agg(dict(number=sum, number_f=sum, number_m=sum))
     for s in ('f', 'm'):
         calcd[f'ratio_{s}'] = calcd[f'number_{s}'] / calcd.number
+    calcd = calcd[(calcd.ratio_f >= 0.8) | (calcd.ratio_m >= 0.8)].copy()
     calcd.loc[calcd.ratio_f > calcd.ratio_m, 'gender_prediction'] = 'f'
     calcd.loc[calcd.ratio_f < calcd.ratio_m, 'gender_prediction'] = 'm'
-    calcd.loc[calcd.ratio_f == calcd.ratio_m, 'gender_prediction'] = 'x'
-    return calcd[['name', 'gender_prediction']]
+    for g in ('f', 'm'):
+        condition = calcd.gender_prediction == g
+        calcd.loc[condition, 'gender_prediction_confidence'] = calcd.loc[condition, f'ratio_{g}']
+    return calcd[['name', 'gender_prediction', 'gender_prediction_confidence']]
