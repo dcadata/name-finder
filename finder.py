@@ -561,17 +561,14 @@ def _create_display_for_search(name: str, number: int, ratio_f: float, ratio_m: 
     return f'{name}(n={number:,}{display_ratio})'
 
 
-def _create_predict_gender_reference(calcd: pd.DataFrame) -> pd.DataFrame:
-    calcd = calcd[calcd.year.apply(lambda x: MAX_YEAR - 90 <= x <= MAX_YEAR - 25)].drop(columns=[
-        'ratio_f', 'ratio_m', 'pct_year'])
+def _create_predict_gender_reference(
+        calcd: pd.DataFrame, age_range: tuple, confidence_min: float, n_min: int) -> pd.DataFrame:
+    calcd = calcd[calcd.year.apply(lambda x: MAX_YEAR - age_range[1] <= x <= MAX_YEAR - age_range[0])].copy()
     calcd = calcd.groupby('name', as_index=False).agg(dict(number=sum, number_f=sum, number_m=sum))
-    calcd = calcd[calcd.number >= 25].copy()
+    calcd = calcd[calcd.number >= n_min].copy()
     for s in ('f', 'm'):
         calcd[f'ratio_{s}'] = calcd[f'number_{s}'] / calcd.number
-    calcd = calcd[(calcd.ratio_f >= 0.8) | (calcd.ratio_m >= 0.8)].copy()
+    calcd = calcd[(calcd.ratio_f >= confidence_min) | (calcd.ratio_m >= confidence_min)].copy()
     calcd.loc[calcd.ratio_f > calcd.ratio_m, 'gender_prediction'] = 'f'
     calcd.loc[calcd.ratio_f < calcd.ratio_m, 'gender_prediction'] = 'm'
-    for g in ('f', 'm'):
-        condition = calcd.gender_prediction == g
-        calcd.loc[condition, 'gender_prediction_confidence'] = calcd.loc[condition, f'ratio_{g}']
-    return calcd[['name', 'gender_prediction', 'gender_prediction_confidence']]
+    return calcd[['name', 'gender_prediction']]
