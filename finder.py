@@ -345,6 +345,15 @@ class Displayer(Loader):
             if before_ind := _safely_check_regex('before:([0-9]{4})'):
                 before_ind = int(before_ind)
 
+        if gender_ind := _safely_check_regex_and_split_into_tuple('gender:([fxm,]{1,3})'):
+            gender_ind = set(gender_ind)
+            if gender_ind == {'f', 'x'}:
+                gender_ind = (0, 0.8)
+            elif gender_ind == {'m', 'x'}:
+                gender_ind = (0.2, 1)
+            elif len(gender_ind) == 1:
+                gender_ind = dict(f=(0, 0.2), x=(0.2, 0.8), m=(0.8, 1)).get(gender_ind.pop())
+
         data = self.search(
             pattern=_safely_check_regex('pattern:(.*)'),
             start=_safely_check_regex_and_split_into_tuple('(\s|^)start:([a-z,]+)'),
@@ -355,7 +364,7 @@ class Displayer(Loader):
             not_contains=_safely_check_regex_and_split_into_tuple('~contains:([a-z,]+)'),
             order=_safely_check_regex_and_split_into_tuple('order:([a-z,]+)'),
             length=tuple(map(int, length_ind.split('-'))) if length_ind else None,
-            gender=dict(f=(0, 0.2), x=(0.2, 0.8), m=(0.8, 1)).get(_safely_check_regex('gender:(f|x|m)')),
+            gender=gender_ind,
             after=after_ind,
             before=before_ind,
             year=int(year_ind) if year_ind else None,
