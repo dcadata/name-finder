@@ -565,6 +565,7 @@ def _create_predict_gender_reference(calcd: pd.DataFrame) -> pd.DataFrame:
     calcd = calcd[calcd.year.apply(lambda x: MAX_YEAR - 90 <= x <= MAX_YEAR - 25)].drop(columns=[
         'ratio_f', 'ratio_m', 'pct_year'])
     calcd = calcd.groupby('name', as_index=False).agg(dict(number=sum, number_f=sum, number_m=sum))
+    calcd = calcd[calcd.number >= 25].copy()
     for s in ('f', 'm'):
         calcd[f'ratio_{s}'] = calcd[f'number_{s}'] / calcd.number
     calcd = calcd[(calcd.ratio_f >= 0.8) | (calcd.ratio_m >= 0.8)].copy()
