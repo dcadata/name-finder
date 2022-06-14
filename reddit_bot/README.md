@@ -33,7 +33,7 @@ Must be placed last in a series of conditions.
     !search pattern:^a[iye]+d[eiyo]n$
     !search gender:f pattern:^al[ei](x|j|ss?|ks|k?z)an
 
-#### Start & End - single string or comma-separated strings
+#### Start & end - single string or comma-separated strings
 
     !search start:ash
     !search start:ma,na
@@ -63,7 +63,7 @@ Filter on the aggregate gender lean of the name. Options are `m` (masculine), `f
 
     !search length:4-7 gender:x start:q
 
-#### Years:
+#### Years
 
 Range (inclusive)
 
@@ -77,4 +77,3 @@ After/before years (inclusive)
 
     !search gender:m start:k after:1990
     !search gender:m start:k before:1976
-    !search gender:m start:k after:1970 before:1990 (equivalent to !search gender:m start:k years:1970-1990)
