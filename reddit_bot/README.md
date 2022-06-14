@@ -66,6 +66,7 @@ Must be placed last in a series of conditions.
 Filter on the aggregate gender lean of the name. Options are `m` (masculine), `f` (feminine), and `x` (gender-neutral or unisex).
 
     !search length:4-7 gender:x start:q
+    !search gender:m,x contains:rose
 
 #### Years
 
