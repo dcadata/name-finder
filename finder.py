@@ -347,9 +347,12 @@ class Displayer(Loader):
 
         data = self.search(
             pattern=_safely_check_regex('pattern:(.*)'),
-            start=_safely_check_regex_and_split_into_tuple('start:([a-z,]+)'),
-            end=_safely_check_regex_and_split_into_tuple('end:([a-z,]+)'),
-            contains=_safely_check_regex_and_split_into_tuple('contains?:([a-z,]+)'),
+            start=_safely_check_regex_and_split_into_tuple('(\s|^)start:([a-z,]+)'),
+            end=_safely_check_regex_and_split_into_tuple('(\s|^)end:([a-z,]+)'),
+            contains=_safely_check_regex_and_split_into_tuple('(\s|^)contains?:([a-z,]+)'),
+            not_start=_safely_check_regex_and_split_into_tuple('~start:([a-z,]+)'),
+            not_end=_safely_check_regex_and_split_into_tuple('~end:([a-z,]+)'),
+            not_contains=_safely_check_regex_and_split_into_tuple('~contains?:([a-z,]+)'),
             order=_safely_check_regex_and_split_into_tuple('order:([a-z,]+)'),
             length=tuple(map(int, length_ind.split('-'))) if length_ind else None,
             gender=dict(f=(0, 0.2), x=(0.2, 0.8), m=(0.8, 1)).get(_safely_check_regex('gender:(f|x|m)')),
