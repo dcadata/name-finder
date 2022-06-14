@@ -1,6 +1,4 @@
-# How to use the reddit bot
-
-The reddit bot provides the following information:
+# How to use the reddit bot /u/USNamesBot
 
 ## Get data about name(s)
 
