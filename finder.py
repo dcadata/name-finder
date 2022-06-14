@@ -340,7 +340,10 @@ class Displayer(Loader):
         if years_ind := re.search('years:([0-9]{4})-([0-9]{4})', text, re.I):
             after_ind, before_ind = map(int, years_ind.groups())
         else:
-            after_ind, before_ind = None, None
+            if after_ind := _safely_check_regex('after:([0-9]{4})'):
+                after_ind = int(after_ind)
+            if before_ind := _safely_check_regex('before:([0-9]{4})'):
+                before_ind = int(before_ind)
 
         data = self.search(
             pattern=_safely_check_regex('pattern:(.*)'),
