@@ -100,6 +100,7 @@ class Displayer(Loader):
             before: int = None,
             year: int = None,
             show_historic: bool = None,
+            show_bars: (bool, int) = None,
     ) -> dict:
         # set up
         if year:
@@ -107,6 +108,7 @@ class Displayer(Loader):
             before = year
         self._after = after
         self._before = before
+        bars_lookback_years = 100
         df = self._calcd.copy()
 
         # filter on name
@@ -167,20 +169,25 @@ class Displayer(Loader):
             output['first_appearance'],
         )
 
-        if show_historic:
+        if show_historic or show_bars:
             historic = df[['year', 'number', 'number_f', 'number_m', 'ratio_f', 'ratio_m']].copy()
             for s in ('f', 'm'):
                 historic[f'ratio_{s}'] = historic[f'ratio_{s}'].apply(lambda x: round(x, 2))
-            output['historic'] = list(historic.to_dict('records')) if OUTPUT_RECORDS else historic
 
-            if not (output['ratios']['f'] >= 0.99 or output['ratios']['m'] >= 0.99):
+            if show_historic:
+                output['historic'] = list(historic.to_dict('records')) if OUTPUT_RECORDS else historic
+
+            if show_bars and not (output['ratios']['f'] >= 0.99 or output['ratios']['m'] >= 0.99):
                 historic['ratio_bars'] = (
                         historic.ratio_f.apply(lambda x: 'f ' + int(round(x * 50)) * self._blocks[0]) +
                         historic.ratio_m.apply(lambda x: int(round(x * 50)) * self._blocks[1] + ' m') +
                         historic.year.apply(str).apply(lambda x: f' {x}')
                 )
-                output['display'] += '  \n'.join(('', '. Ratio Bars (f <-> m)', *historic[historic.year.apply(
-                    lambda x: (x >= MAX_YEAR - 80) and (x % 5 == 0))].ratio_bars))
+                if show_bars is True:
+                    show_bars = bars_lookback_years
+                hist_temp = historic[historic.year.apply(lambda x: (x >= MAX_YEAR - bars_lookback_years) and (x % int(
+                    bars_lookback_years / show_bars) == 0))]
+                output['display'] += '  \n'.join(('', '. Ratio Bars (f <-> m)', *hist_temp.ratio_bars))
 
         return output
 

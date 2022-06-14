@@ -69,7 +69,7 @@ class Bot(Displayer):
     def _query_per_command(self, command: str) -> str:
         cleaned_command = ' '.join(i for i in command.split() if not i.startswith('!'))
         if command.startswith(self._name_trigger):
-            return self.name_or_compare_by_text(cleaned_command, show_historic=True).get('display', '')
+            return self.name_or_compare_by_text(cleaned_command, show_bars=20).get('display', '')
         elif command.startswith(self._search_trigger):
             return self.search_by_text(cleaned_command).get('display', '')
         return ''
