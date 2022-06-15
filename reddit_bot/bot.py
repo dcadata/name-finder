@@ -69,8 +69,10 @@ class Bot(Displayer):
         return reply_lines
 
     def _query_per_command(self, command: str) -> str:
-        cleaned_command = re.sub('!(name|search)\s', '', command, 1, re.I)
-        if command.startswith(self._name_trigger):
+        cleaned_command = re.sub('!(name|search)\s?', '', command, 1, re.I)
+        if not cleaned_command:
+            pass
+        elif command.startswith(self._name_trigger):
             names_ind = cleaned_command.split(None, 1)[0].split('/')
             if len(names_ind) == 1:
                 data = self.name(name=names_ind[0], show_bars=20)
