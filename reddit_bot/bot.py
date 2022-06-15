@@ -70,7 +70,9 @@ class Bot(Displayer):
         command_sections.pop(0)
         command_type = command_sections.pop(0)
         cleaned_command = command_sections[0]
-        if command_type == 'name':
+        if not cleaned_command:
+            pass
+        elif command_type == 'name':
             names_ind = cleaned_command.split(None, 1)[0].split('/')
             if len(names_ind) == 1:
                 data = self.name(name=names_ind[0], show_bars=20)
