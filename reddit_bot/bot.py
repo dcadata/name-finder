@@ -11,8 +11,6 @@ class Bot(Displayer):
     def __init__(self, reddit: Reddit = None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._reddit = reddit
-        self._name_trigger = '!name'
-        self._search_trigger = '!search'
         self._footer = (
             '---',
             'Search for names based on data from the US Social Security Administration. [How to use]('
@@ -52,8 +50,7 @@ class Bot(Displayer):
         return ''
 
     def _query_per_request_body(self, body: str) -> list:
-        raw_commands = [line for line in body.splitlines() if line.startswith((
-            self._name_trigger, self._search_trigger))]
+        raw_commands = [line for line in body.splitlines() if line.startswith(('!name', '!search'))]
 
         not_found = False
         reply_lines = []
@@ -69,17 +66,18 @@ class Bot(Displayer):
         return reply_lines
 
     def _query_per_command(self, command: str) -> str:
-        cleaned_command = re.sub('!(name|search)\s?', '', command, 1, re.I)
-        if not cleaned_command:
-            pass
-        elif command.startswith(self._name_trigger):
+        command_sections = re.split('!(name|search)\s?', command, 1, re.I)
+        command_sections.pop(0)
+        command_type = command_sections.pop(0)
+        cleaned_command = command_sections[0]
+        if command_type == 'name':
             names_ind = cleaned_command.split(None, 1)[0].split('/')
             if len(names_ind) == 1:
                 data = self.name(name=names_ind[0], show_bars=20)
             else:
                 data = self.compare(names=tuple(names_ind), show_bars=20)
             return data.get('display', '')
-        elif command.startswith(self._search_trigger):
+        elif command_type == 'search':
             return self.search_by_text(cleaned_command).get('display', '')
         return ''
 
