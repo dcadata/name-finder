@@ -111,7 +111,7 @@ Short names that were neutral before 1990 and have trended at least 1% less popu
 
     search?length=3,5&gender=0.2,0.8&before=1990&delta_after=1990&delta_pct=-0.01&delta_fem=-0.01
 
-Variations of a name, using regex pattern
+Variations of a name, using regex pattern (Python)
 
     search?pattern=^e?[ck]ath?e?r[iy]nn?[ea]?$  # Catherine
     search?pattern=^v[iy][ck]{1,2}tor[iye]{1,2}a$  # Victoria

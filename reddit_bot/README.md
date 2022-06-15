@@ -24,7 +24,7 @@
 
 You can mix-and-match the below conditions:
 
-#### Regex pattern
+#### Regex pattern (Python)
 
 Must be placed last in a series of conditions.
 
