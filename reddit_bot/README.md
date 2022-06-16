@@ -39,12 +39,16 @@ Must be placed last in a series of conditions.
     !search end:z,s
     !search start:g end:y
 
-#### Contains - single string or comma-separated strings (uses AND condition)
+#### Contains (uses AND condition) - single string or comma-separated strings
 
     !search contains:dre
     !search contains:ie,n
     !search start:f contains:r
     !search end:a,ah gender:m
+
+#### Contains-any (uses OR condition) - single string or comma-separated strings
+
+    !search contains-any:eli,elli
 
 ### NOT start/end/contains - single string or comma-separated strings (uses AND condition)
 
