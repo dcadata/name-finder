@@ -66,21 +66,18 @@ class Bot(Displayer):
         return reply_lines
 
     def _query_per_command(self, command: str) -> str:
-        command_sections = re.split('!(name|search)\s?', command, 1, re.I)
-        command_sections.pop(0)
-        command_type = command_sections.pop(0)
-        cleaned_command = command_sections[0]
-        if not cleaned_command:
+        _, command_type, query = re.split('!(name|search)\s?', command, 1, re.I)
+        if not query:
             pass
         elif command_type == 'name':
-            names_ind = cleaned_command.split(None, 1)[0].split('/')
+            names_ind = query.split(None, 1)[0].split('/')
             if len(names_ind) == 1:
                 data = self.name(name=names_ind[0], show_bars=20)
             else:
                 data = self.compare(names=tuple(names_ind), show_bars=20)
             return data.get('display', '')
         elif command_type == 'search':
-            return self.search_by_text(cleaned_command).get('display', '')
+            return self.search_by_text(query).get('display', '')
         return ''
 
 
