@@ -18,9 +18,8 @@ class Bot(Displayer):
         )
 
     def create_reddit(self) -> None:
-        if not self._reddit:
-            self._reddit = Reddit('USNamesBot', user_agent='Search tool for US name data')
-            self._reddit.validate_on_submit = True
+        self._reddit = Reddit('USNamesBot', user_agent='Search tool for US name data')
+        self._reddit.validate_on_submit = True
 
     def run_bot(self) -> None:
         self._create_multireddit()
@@ -38,10 +37,9 @@ class Bot(Displayer):
         if request.saved:
             return
         if message := self._create_reply(escape(request.body)):
-            if self._reddit:
-                request.save()
-                my = request.reply(body=message)
-                my.disable_inbox_replies()
+            request.save()
+            my = request.reply(body=message)
+            my.disable_inbox_replies()
 
     def _create_reply(self, body: str) -> str:
         if reply_lines := self._query_per_request_body(body):
