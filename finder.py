@@ -358,6 +358,7 @@ class Displayer(Loader):
             start=_safely_check_regex_and_split_into_tuple('(\s|^)start:([a-z,]+)'),
             end=_safely_check_regex_and_split_into_tuple('(\s|^)end:([a-z,]+)'),
             contains=_safely_check_regex_and_split_into_tuple('(\s|^)contains:([a-z,]+)'),
+            contains_any=_safely_check_regex_and_split_into_tuple('(\s|^)contains-any:([a-z,]+)'),
             not_start=_safely_check_regex_and_split_into_tuple('~start:([a-z,]+)'),
             not_end=_safely_check_regex_and_split_into_tuple('~end:([a-z,]+)'),
             not_contains=_safely_check_regex_and_split_into_tuple('~contains:([a-z,]+)'),
