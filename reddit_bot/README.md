@@ -36,29 +36,28 @@ Must be placed last in a series of conditions.
     !search start:ash
     !search start:ma,na
     !search end:der
-    !search end:z,s
+    !search end:a,ah gender:m
     !search start:g end:y
 
 #### Contains (uses AND condition) - single string or comma-separated strings
 
-    !search contains:dre
-    !search contains:ie,n
-    !search start:f contains:r
-    !search end:a,ah gender:m
+    !search contains:nn
+    !search start:c contains:i,e
 
 #### Contains-any (uses OR condition) - single string or comma-separated strings
 
-    !search contains-any:eli,elli
+    !search contains-any:eli
+    !search contains-any:lee,leigh
 
 ### NOT start/end/contains - single string or comma-separated strings (uses AND condition)
 
     !search ~start:r,s,t
-    !search ~end:n,m
     !search ~contains:a,e,i,o,u
+    !search start:s ~end:n,m
 
 #### Order - comma-separated strings
 
-    !search order:j,d,n gender:x
+    !search order:j,n gender:x
     !search gender:f order:d,l,n
 
 #### Length - hyphen-separated integers
