@@ -13,8 +13,9 @@ class Bot(Displayer):
         self._reddit = reddit
         self._footer = (
             '---',
-            'Search for names based on data from the US Social Security Administration. [How to use]('
-            ')',
+            'Search for names based on data from the US Social Security Administration | [How to use]('
+            'https://github.com/dcadata/name-finder/tree/main/reddit_bot#how-to-use-the-reddit-bot-uusnamesbot) |'
+            ' [Data sources](https://github.com/dcadata/name-finder/blob/main/data-sources.md#data-sources--caveats)',
         )
 
     def create_reddit(self) -> None:
@@ -58,7 +59,9 @@ class Bot(Displayer):
             else:
                 not_found = True
 
-        if not_found:
+        if not_found and not reply_lines:
+            reply_lines.append('Queries could not be processed.')
+        elif not_found:
             reply_lines.append('Remaining queries could not be processed.')
 
         return reply_lines
