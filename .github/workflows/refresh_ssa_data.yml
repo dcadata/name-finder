@@ -1,4 +1,4 @@
-name: source_data_refresh
+name: Refresh SSA Data
 
 on:
   workflow_dispatch:
@@ -14,12 +14,11 @@ jobs:
         with:
           python-version: '3.10'
       - run: pip3 install pandas requests lxml
-      - run: python source_data_refresh.py
+      - run: python refresh_ssa_data.py
       - name: Commit and push if changed
         run: |-
           git config user.name "Automated"
           git config user.email "actions@users.noreply.github.com"
           git add -A
-          timestamp=$(date -u)
-          git commit -m "source_data_refresh - ${timestamp}" || exit 0
+          git commit -m "Update SSA data" || exit 0
           git push
