@@ -155,8 +155,7 @@ class Displayer(Loader):
             },
             'first_appearance': int(self._first_appearance[grouped['name']]),
         }
-        output['display'] = _create_display_for_name(
-            output['name'],
+        output['display'] = dict(info=_create_display_for_name(
             output['numbers']['total'],
             output['numbers']['f'],
             output['numbers']['m'],
@@ -167,7 +166,7 @@ class Displayer(Loader):
             output['latest']['year'],
             output['latest']['number'],
             output['first_appearance'],
-        )
+        ))
 
         if show_historic or show_bars:
             historic = df[['year', 'number', 'number_f', 'number_m', 'ratio_f', 'ratio_m']].copy()
@@ -187,14 +186,10 @@ class Displayer(Loader):
                     show_bars = bars_lookback_years
                 hist_temp = historic[historic.year.apply(lambda x: (x >= MAX_YEAR - bars_lookback_years) and (x % int(
                     bars_lookback_years / show_bars) == 0))]
-                output['display'] += '  \n'.join(('', '. Ratio Bars (f <-> m)', *hist_temp.ratio_bars))
+                output['display']['bars'] = list(hist_temp.ratio_bars)
+                output['display']['bars'].insert(0, 'Ratio Bars (f <-> m)')
 
         return output
-
-    def compare(self, names: tuple, *args, **kwargs) -> dict:
-        data = [self.name(name, *args, **kwargs) for name in names]
-        data = dict(data=data, display='\n\n'.join(i['display'] for i in data))
-        return data
 
     def search(
             self,
@@ -531,7 +526,6 @@ def _create_display_ratio(ratio_f: float, ratio_m: float, ignore_ones: bool = Tr
 
 
 def _create_display_for_name(
-        name: str,
         number: int,
         number_f: int,
         number_m: int,
@@ -542,18 +536,16 @@ def _create_display_for_name(
         latest_year: int,
         latest_number: int,
         first_appearance: int,
-) -> str:
+) -> list:
     numbers_fm = f'f={number_f:,}, m={number_m:,}' if number_f >= number_m else f'm={number_m:,}, f={number_f:,}'
-    sections = (
-        f'**{name}**',
+    sections = [
         f'. Total Usages: n={number:,} ({numbers_fm})',
         f'. Ratio: {_create_display_ratio(ratio_f, ratio_m, ignore_ones=False)}',
         f'. Peak({peak_year}): n={peak_number:,}',
         f'. Latest({latest_year}): n={latest_number:,}',
         f'. Earliest({first_appearance})',
-    )
-    result = '  \n'.join(sections)
-    return result
+    ]
+    return sections
 
 
 def _create_display_for_search(name: str, number: int, ratio_f: float, ratio_m: float) -> str:

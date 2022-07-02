@@ -71,12 +71,14 @@ class Bot(Displayer):
         if not query:
             pass
         elif command_type == 'name':
-            names_ind = query.split(None, 1)[0].split('/')
-            if len(names_ind) == 1:
-                data = self.name(name=names_ind[0], show_bars=20)
-            else:
-                data = self.compare(names=tuple(names_ind), show_bars=20)
-            return data.get('display', '')
+            data = self.name(name=query.split(None, 1)[0], show_bars=20)
+            if data.get('display'):
+                return '\n\n'.join((
+                    f'> {command}',
+                    ''.join((f'{line}  \n' for line in data['display']['info'])),
+                    ''.join((f'{line}  \n' for line in data['display'].get('bars', ()))),
+                ))
+            return ''
         elif command_type == 'search':
             return self.search_by_text(query).get('display', '')
         return ''

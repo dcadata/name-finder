@@ -37,20 +37,22 @@ def _escape_optional_string_into_list_of_ints(arg_name: str):
     return list(map(int, values))
 
 
-def _parse_name_args() -> dict:
-    args = dict(
+@app.route('/name/<string:name>')
+def name_endpoint(name: str):
+    data = displayer.name(
+        name=escape(name),
         after=request.args.get('after', default=None, type=int),
         before=request.args.get('before', default=None, type=int),
         year=request.args.get('year', default=None, type=int),
-        show_historic=bool(request.args.get('show_historic', default=0, type=int)),
+        show_historic=True,
+        show_bars=50,
     )
-    return args
-
-
-@app.route('/name/<string:name>')
-def name_endpoint(name: str):
-    data = displayer.name(name=escape(name), **_parse_name_args())
-    return jsonify(data)
+    html = open('templates/name.html').read().format(
+        name=name.title(),
+        info=''.join((f'{line}<br>' for line in data['display']['info'])),
+        bars=''.join((f'{line}<br>' for line in data['display'].get('bars', ()))),
+    )
+    return html
 
 
 @app.route('/search')
