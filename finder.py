@@ -308,16 +308,16 @@ class Displayer(Loader):
             data = dict(data=df, display=', '.join(df.display))
         return data
 
-    def search_by_text(self, text: str) -> dict:
-        text = text.lower()
-        delta_sections = re.split('trend:', text, 1)
+    def search_by_text(self, query: str) -> dict:
+        query = query.lower()
+        delta_sections = re.split('trend:', query, 1)
         if len(delta_sections) > 1:
-            text, delta_section = delta_sections[0], delta_sections[-1]
+            query, delta_section = delta_sections[0], delta_sections[-1]
         else:
             delta_section = ''
 
         def _safely_check_regex(pattern: str):
-            return _safe_regex_search(pattern, text)
+            return _safe_regex_search(pattern, query)
 
         def _safely_check_regex_and_split_into_tuple(pattern: str):
             result = _safely_check_regex(pattern)
@@ -331,7 +331,7 @@ class Displayer(Loader):
 
         length_ind = _safely_check_regex('length:([0-9]+-[0-9]+)')
         year_ind = _safely_check_regex('year:([0-9]{4})')
-        if years_ind := re.search('years:([0-9]{4})-([0-9]{4})', text, re.I):
+        if years_ind := re.search('years:([0-9]{4})-([0-9]{4})', query, re.I):
             after_ind, before_ind = map(int, years_ind.groups())
         else:
             if after_ind := _safely_check_regex('after:([0-9]{4})'):
