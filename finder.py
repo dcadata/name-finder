@@ -301,11 +301,7 @@ class Displayer(Loader):
         if top:
             df = df.head(top)
 
-        if OUTPUT_RECORDS:
-            records = df.to_dict('records')
-            data = dict(data=records, display=', '.join(i['display'] for i in records))
-        else:
-            data = dict(data=df, display=', '.join(df.display))
+        data = dict(data=df.to_dict('records') if OUTPUT_RECORDS else df)
         return data
 
     def search_by_text(self, query: str, *args, **kwargs) -> dict:
