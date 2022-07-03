@@ -56,7 +56,7 @@ class Bot(Displayer):
         reply_lines = []
         for raw_command in raw_commands:
             if result := self._query_per_command(raw_command):
-                reply_lines.extend((f'> {raw_command}', result))
+                reply_lines.extend((f'> {raw_command}', result.format(self._base_url)))
             else:
                 not_found = True
 
@@ -81,14 +81,14 @@ class Bot(Displayer):
                     '  \n'.join((f'    {line}' for line in data['display']['number_bars'])),
                     self.ratio_bars_header_text if data['display']['ratio_bars'] else '',
                     '  \n'.join((f'    {line}' for line in data['display']['ratio_bars'])),
-                )).format(self._base_url)
+                ))
             return ''
         elif command_type == 'search':
             data = self.search_by_text(query)
             return '\n\n'.join((
                 ', '.join('[{name}]({{0}}/n/{name}){display}'.format(**i) for i in data),
                 '[Details about your query]({{0}}/q/{query})'.format(query=query),
-            )).format(self._base_url)
+            ))
         return ''
 
 
