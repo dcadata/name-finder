@@ -104,25 +104,13 @@ See bot section
 
 ## API Overview
 
-### AGE PREDICTION
+### Using `predict_age`
+
+#### About
 
 * Returns age distribution of people with a specified first name
 * Optionally, can take gender into account
 * Similar tools generally do not return a probability distribution of ages (they only return a single mean age), nor take gender into account when predicting age
-
-### GENDER PREDICTION
-
-* Returns gender of people with a specified first name (along with confidence level in the prediction)
-* Optionally, can take age into account
-* Similar tools generally do not take age into account when predicting gender
-
-### SEARCH
-
-* Search for first names based on their characteristics
-
-## API Examples
-
-### Using `predict_age`
 
 #### Params
 
@@ -155,6 +143,12 @@ Practical example: 95% of Taylors are between age 3 and age 36 (as of 2021 data)
 
 ### Using `predict_gender`
 
+#### About
+
+* Returns gender of people with a specified first name (along with confidence level in the prediction)
+* Optionally, can take age into account
+* Similar tools generally do not take age into account when predicting gender
+
 #### Params
 
 * `name` - string, required: the name for which you want a prediction
@@ -186,6 +180,10 @@ Predict gender of Leslies born in 1940, 1980, and 2000
     predict/gender/leslie?year=2000
 
 ### Using `search`
+
+#### About
+
+* Search for first names based on their characteristics
 
 #### Params
 
