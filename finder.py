@@ -177,6 +177,11 @@ class Displayer(Loader):
                 output['historic'] = list(historic.to_dict('records')) if OUTPUT_RECORDS else historic
 
             if show_bars and not (output['ratios']['f'] >= 0.99 or output['ratios']['m'] >= 0.99):
+                number_bars_mult = 100 / peak.number
+                historic['number_bars'] = (
+                        historic.year.apply(str).apply(lambda x: f'{x} ') +
+                        historic.number.apply(lambda x: int(round(x * number_bars_mult)) * self._blocks[2] + f' {x:,}')
+                )
                 historic['ratio_bars'] = (
                         historic.ratio_f.apply(lambda x: 'f ' + int(round(x * 50)) * self._blocks[0]) +
                         historic.ratio_m.apply(lambda x: int(round(x * 50)) * self._blocks[1] + ' m') +
@@ -187,7 +192,8 @@ class Displayer(Loader):
                     show_bars = bars_lookback_years
                 hist_temp = historic[historic.year.apply(lambda x: (x >= MAX_YEAR - bars_lookback_years) and (x % int(
                     bars_lookback_years / show_bars) == 0))]
-                output['display']['bars'] = list(hist_temp.ratio_bars)
+                output['display']['number_bars'] = list(hist_temp.number_bars)
+                output['display']['ratio_bars'] = list(hist_temp.ratio_bars)
 
         return output
 
