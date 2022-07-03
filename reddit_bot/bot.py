@@ -80,7 +80,8 @@ class Bot(Displayer):
                 ))
             return ''
         elif command_type == 'search':
-            return self.search_by_text(query).get('display', '')
+            data = self.search_by_text(query)
+            return ', '.join('[{name}](http://127.0.0.1:5000/n/{name}) {display}'.format(**i) for i in data)
         return ''
 
 

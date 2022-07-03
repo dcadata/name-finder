@@ -303,8 +303,8 @@ class Displayer(Loader):
         df = df.sort_values('number', ascending=False).drop(columns=['name_lower'])
         for s in ('f', 'm'):
             df[f'ratio_{s}'] = df[f'ratio_{s}'].apply(lambda x: round(x, 2))
-        df['display'] = [_create_display_for_search(*i) for i in df[[
-            'name', 'number', 'ratio_f', 'ratio_m']].to_records(index=False)]
+        df['display'] = [_create_display_for_search(*i) for i in df[['number', 'ratio_f', 'ratio_m']].to_records(
+            index=False)]
 
         if top:
             df = df.head(top)
@@ -554,10 +554,10 @@ def _create_display_for_name(
     return sections
 
 
-def _create_display_for_search(name: str, number: int, ratio_f: float, ratio_m: float) -> str:
+def _create_display_for_search(number: int, ratio_f: float, ratio_m: float) -> str:
     if display_ratio := _create_display_ratio(ratio_f, ratio_m):
         display_ratio = ', ' + display_ratio
-    return f'{name}(n={number:,}{display_ratio})'
+    return f'(n={number:,}{display_ratio})'
 
 
 def _create_predict_gender_reference(calcd: pd.DataFrame, ages: tuple, conf_min: float, n_min: int) -> pd.DataFrame:
