@@ -541,11 +541,11 @@ def _create_display_for_name(
 ) -> list:
     numbers_fm = f'f={number_f:,}, m={number_m:,}' if number_f >= number_m else f'm={number_m:,}, f={number_f:,}'
     sections = [
-        f'. Total Usages: n={number:,} ({numbers_fm})',
-        f'. Ratio: {_create_display_ratio(ratio_f, ratio_m, ignore_ones=False)}',
-        f'. Peak({peak_year}): n={peak_number:,}',
-        f'. Latest({latest_year}): n={latest_number:,}',
-        f'. Earliest({first_appearance})',
+        f'Total Usages: n={number:,} ({numbers_fm})',
+        f'Ratio: {_create_display_ratio(ratio_f, ratio_m, ignore_ones=False)}',
+        f'Peak({peak_year}): n={peak_number:,}',
+        f'Latest({latest_year}): n={latest_number:,}',
+        f'Earliest({first_appearance})',
     ]
     return sections
 
