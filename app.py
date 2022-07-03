@@ -49,7 +49,7 @@ def name_endpoint(name: str):
     )
     html = open('templates/name.html').read().format(
         name=name.title(),
-        info=''.join((f'{line}<br>' for line in data['display']['info'])),
+        info=''.join((f'<li>{line}</li>' for line in data['display']['info'])),
         bars=''.join((f'{line}<br>' for line in data['display'].get('bars', ()))),
     )
     return html
