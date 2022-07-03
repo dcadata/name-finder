@@ -37,7 +37,7 @@ def _escape_optional_string_into_list_of_ints(arg_name: str):
     return list(map(int, values))
 
 
-@app.route('/name/<string:name>')
+@app.route('/n/<string:name>')
 def name_page(name: str):
     data = displayer.name(
         name=escape(name),
@@ -47,12 +47,23 @@ def name_page(name: str):
         show_historic=True,
         show_bars=50,
     )
-    html = open('templates/name.html').read().format(
+    html = open('templates/n.html').read().format(
         name=name.title(),
         info=''.join((f'<li>{line}</li>' for line in data['display']['info'])),
-        bars=''.join((f'{line}<br>' for line in data['display'].get('bars', ()))),
+        number_bars=''.join((f'{line}<br>' for line in data['display']['number_bars'])),
+        ratio_bars=''.join((f'{line}<br>' for line in data['display']['ratio_bars'])),
+        number_bars_header_text=displayer.number_bars_header_text,
         ratio_bars_header_text=displayer.ratio_bars_header_text,
     )
+    return html
+
+
+@app.route('/q/<string:query>')
+def search_by_text_page(query: str):
+    escaped_query = escape(query)
+    data = displayer.search_by_text(escaped_query, top=200)
+    html = open('templates/q.html').read().format(query=escaped_query, top=200, info=''.join(
+        '<li><a href="/n/{name}">{name}</a> {display}</li>'.format(**i) for i in data))
     return html
 
 
