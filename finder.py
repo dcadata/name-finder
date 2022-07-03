@@ -90,6 +90,7 @@ class Displayer(Loader):
         super().__init__(*args, **kwargs)
         self._after = None
         self._before = None
+        self.ratio_bars_header_text = 'Gender Ratio Bars (f <-> m)'
         self._blocks = '▓', '▒', '░'
         self._delta_cutoff = 0.0000000000000000000000000000000000000000000000000000000000000000000000000000000001
 
@@ -187,7 +188,6 @@ class Displayer(Loader):
                 hist_temp = historic[historic.year.apply(lambda x: (x >= MAX_YEAR - bars_lookback_years) and (x % int(
                     bars_lookback_years / show_bars) == 0))]
                 output['display']['bars'] = list(hist_temp.ratio_bars)
-                output['display']['bars'].insert(0, 'Ratio Bars (f <-> m)')
 
         return output
 
