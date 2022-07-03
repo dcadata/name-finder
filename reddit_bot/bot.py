@@ -75,7 +75,7 @@ class Bot(Displayer):
             if data.get('display'):
                 return '\n\n'.join((
                     '**{}**'.format(data['name']),
-                    '  \n'.join((f'{line}' for line in data['display']['info'])),
+                    '  \n'.join((line for line in data['display']['info'])),
                     self.number_bars_header_text,
                     '  \n'.join((f'    {line}' for line in data['display']['number_bars'])),
                     self.ratio_bars_header_text,
