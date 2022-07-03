@@ -13,9 +13,9 @@ class Bot(Displayer):
         self._reddit = reddit
         self._footer = (
             '---',
-            'Search for names based on data from the US Social Security Administration | [How to use]('
-            'https://github.com/dcadata/name-finder/tree/main/reddit_bot#how-to-use-the-reddit-bot-uusnamesbot) |'
-            ' [Data sources](https://github.com/dcadata/name-finder/blob/main/data-sources.md#data-sources--caveats)',
+            'Search for names based on data from the US Social Security Administration |'
+            ' [How to use]() |'
+            ' [Data sources]()',
         )
 
     def create_reddit(self) -> None:
