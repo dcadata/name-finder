@@ -74,9 +74,12 @@ class Bot(Displayer):
             data = self.name(name=query.split(None, 1)[0], show_bars=20)
             if data.get('display'):
                 return '\n\n'.join((
-                    f'> {command}',
+                    '**{}**'.format(data['name']),
                     ''.join((f'{line}  \n' for line in data['display']['info'])),
-                    ''.join((f'{line}  \n' for line in data['display'].get('bars', ()))),
+                    self.number_bars_header_text,
+                    ''.join((f'    {line}  \n' for line in data['display']['number_bars'])),
+                    self.ratio_bars_header_text,
+                    ''.join((f'    {line}  \n' for line in data['display']['ratio_bars'])),
                 ))
             return ''
         elif command_type == 'search':
