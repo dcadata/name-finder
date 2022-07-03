@@ -48,7 +48,7 @@ def name_page(name: str):
         n_bars=30,
     )
     html = open('templates/n.html').read().format(
-        name=name.title(),
+        name=data['name'],
         info=''.join((f'<li>{line}</li>' for line in data['display']['info'])),
         number_bars=''.join((f'{line}<br>' for line in data['display']['number_bars'])),
         ratio_bars=''.join((f'{line}<br>' for line in data['display']['ratio_bars'])),
