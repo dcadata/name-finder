@@ -11,6 +11,7 @@ class Bot(Displayer):
     def __init__(self, reddit: Reddit = None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._reddit = reddit
+        self._base_url = 'http://127.0.0.1:5000'
         self._footer = (
             '---',
             'Search for names based on data from the US Social Security Administration |'
@@ -74,20 +75,20 @@ class Bot(Displayer):
             data = self.name(name=query.split(None, 1)[0], n_bars=20)
             if data.get('display'):
                 return '\n\n'.join((
-                    '**[{name}](http://127.0.0.1:5000/n/{name})**'.format(name=data['name']),
+                    '**[{name}]({base_url}/n/{name})**'.format(name=data['name'], base_url=self._base_url),
                     '  \n'.join((line for line in data['display']['info'])),
                     self.number_bars_header_text,
                     '  \n'.join((f'    {line}' for line in data['display']['number_bars'])),
-                    self.ratio_bars_header_text,
+                    self.ratio_bars_header_text if data['display']['ratio_bars'] else '',
                     '  \n'.join((f'    {line}' for line in data['display']['ratio_bars'])),
                 ))
             return ''
         elif command_type == 'search':
             data = self.search_by_text(query)
             return '\n\n'.join((
-                ', '.join('[{name}](http://127.0.0.1:5000/n/{name}) {display}'.format(**i) for i in data),
-                'More details about your query: [{query}](http://127.0.0.1:5000/q/{query})'.format(query=query),
-            ))
+                ', '.join('[{name}]({{0}}/n/{name}){display}'.format(**i) for i in data),
+                '[Details about your query]({{0}}/q/{query})'.format(query=query),
+            )).format(self._base_url)
         return ''
 
 
