@@ -33,7 +33,6 @@ Must be placed last in a series of conditions.
 
 #### Contains-any (uses OR condition) - single string or comma-separated strings
 
-    !search contains-any:eli
     !search contains-any:lee,leigh
 
 #### NOT start/end/contains - single string or comma-separated strings (uses AND condition)
