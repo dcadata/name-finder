@@ -75,13 +75,13 @@ class Bot(Displayer):
             data = self.name(name=query.split(None, 1)[0], n_bars=20)
             if data.get('display'):
                 return '\n\n'.join((
-                    '**[{name}]({base_url}/n/{name})**'.format(name=data['name'], base_url=self._base_url),
+                    '**[{name}]({{0}}/n/{name})**'.format(name=data['name']),
                     '  \n'.join((line for line in data['display']['info'])),
                     self.number_bars_header_text,
                     '  \n'.join((f'    {line}' for line in data['display']['number_bars'])),
                     self.ratio_bars_header_text if data['display']['ratio_bars'] else '',
                     '  \n'.join((f'    {line}' for line in data['display']['ratio_bars'])),
-                ))
+                )).format(self._base_url)
             return ''
         elif command_type == 'search':
             data = self.search_by_text(query)
