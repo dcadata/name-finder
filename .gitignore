@@ -3,4 +3,3 @@ __pycache__/
 data/*.zip
 data/names/*.pdf
 data/namesbyterritory/*.pdf
-praw.ini
