@@ -75,11 +75,11 @@ class Bot(Displayer):
             if data.get('display'):
                 return '\n\n'.join((
                     '**{}**'.format(data['name']),
-                    ''.join((f'{line}  \n' for line in data['display']['info'])),
+                    '  \n'.join((f'{line}' for line in data['display']['info'])),
                     self.number_bars_header_text,
-                    ''.join((f'    {line}  \n' for line in data['display']['number_bars'])),
+                    '  \n'.join((f'    {line}' for line in data['display']['number_bars'])),
                     self.ratio_bars_header_text,
-                    ''.join((f'    {line}  \n' for line in data['display']['ratio_bars'])),
+                    '  \n'.join((f'    {line}' for line in data['display']['ratio_bars'])),
                 ))
             return ''
         elif command_type == 'search':
