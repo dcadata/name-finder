@@ -1,6 +1,108 @@
-# Name API: predict age and gender based on first name, and search for names
+# USNamesBot: Web-based tool and bot that allows users to search for names and predict age/gender based on name
 
-## Feature Overview
+## Bot Overview: how to use the reddit bot /u/USNamesBot
+
+### Get info about a name
+
+    !name marcus
+    !name natalie
+
+### Search for names based on their features/characteristics
+
+You can mix-and-match the below conditions:
+
+#### Regex pattern (Python)
+
+Must be placed last in a series of conditions.
+
+    !search pattern:^a[iyeo]+dh?[eiyoa]n$
+    !search gender:f pattern:^al[ei](x|j|ss?|ks|k?z)an
+
+#### Start & end - single string or comma-separated strings
+
+    !search start:ash
+    !search start:ma,na
+    !search end:der
+    !search end:a,ah gender:m
+    !search start:g end:y
+
+#### Contains (uses AND condition) - single string or comma-separated strings
+
+    !search contains:nn
+    !search start:c contains:i,e
+
+#### Contains-any (uses OR condition) - single string or comma-separated strings
+
+    !search contains-any:eli
+    !search contains-any:lee,leigh
+
+#### NOT start/end/contains - single string or comma-separated strings (uses AND condition)
+
+    !search ~start:r,s,t
+    !search ~contains:a,e,i,o,u
+    !search start:s ~end:n,m
+
+#### Order - comma-separated strings
+
+    !search order:j,n gender:x
+    !search gender:f order:d,l,n
+
+#### Length - hyphen-separated integers
+
+    !search length:3-5 ~contains:s,z,x
+
+#### Gender
+
+Filter on the aggregate gender lean of the name. Options are `m` (masculine), `f` (feminine), and `x` (gender-neutral or unisex).
+
+    !search length:4-7 gender:x start:q
+    !search gender:m,x contains:rose
+
+#### Years
+
+Range (inclusive)
+
+    !search gender:m start:k years:1970-1990
+
+Single year
+
+    !search gender:m start:k year:1955
+
+After/before years (inclusive)
+
+    !search gender:m start:k after:1990
+    !search gender:m start:k before:1976
+
+
+## Tool Overview
+
+### Get info about a name
+
+#### Params
+
+* `name` - string, required: the name for which you want information
+* `after` - integer, optional: year of birth after which to filter (inclusive)
+* `before` - integer, optional: year of birth before which to filter (inclusive)
+* `year` - integer, optional: year of birth on which to filter
+
+#### Examples
+
+    /n/darren
+    /n/helen?after=1960
+    /n/zachary?after=1975&before=2000
+    /n/salma?year=2020
+
+### Search for names based on their features/characteristics
+
+#### Params
+
+* `query` - string, required
+
+#### Examples
+
+See bot section
+
+## API Overview
 
 ### AGE PREDICTION
 
@@ -18,11 +120,7 @@
 
 * Search for first names based on their characteristics
 
-### NAME
-
-* Get info and history for specified first name
-
-## API Documentation & Examples
+## API Examples
 
 ### Using `predict_age`
 
@@ -117,20 +215,3 @@ Variations of a name, using regex pattern (Python)
     search?pattern=^v[iy][ck]{1,2}tor[iye]{1,2}a$  # Victoria
     search?pattern=^ja[yie]?d[eiyao]n$  # Ja(y)den
     search?pattern=^gabriell?[ea]?$  # variations of Gabriel
-
-### Using `name`
-
-#### Params
-
-* `name` - string, required: the name for which you want information
-* `after` - integer, optional: year of birth after which to filter (inclusive)
-* `before` - integer, optional: year of birth before which to filter (inclusive)
-* `year` - integer, optional: year of birth on which to filter
-* `show_historic` - integer, optional: pass 1 if you want to show historic data; defaults to 0
-
-#### Examples
-
-    name/darren?show_historic=1
-    name/helen?after=1960
-    name/zachary?after=1975&before=2000
-    name/salma?year=2020
