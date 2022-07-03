@@ -102,7 +102,7 @@ class Displayer(Loader):
             before: int = None,
             year: int = None,
             show_historic: bool = None,
-            show_bars: (bool, int) = None,
+            show_bars: int = None,
     ) -> dict:
         # set up
         if year:
@@ -181,8 +181,6 @@ class Displayer(Loader):
                 essentially_single_gender = output['ratios']['f'] >= 0.99 or output['ratios']['m'] >= 0.99
                 number_bars_mult = 100 / peak.number
                 bars_lookback_years = 100
-                if show_bars is True:
-                    show_bars = bars_lookback_years
                 historic['number_bars'] = (
                         historic.year.apply(str).apply(lambda x: f'{x} ') +
                         historic.number.apply(lambda x: int(round(x * number_bars_mult)) * self._blocks[2] + f' {x:,}')
