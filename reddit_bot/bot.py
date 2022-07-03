@@ -74,7 +74,7 @@ class Bot(Displayer):
             data = self.name(name=query.split(None, 1)[0], show_bars=20)
             if data.get('display'):
                 return '\n\n'.join((
-                    '**{}**'.format(data['name']),
+                    '**[{name}](http://127.0.0.1:5000/n/{name})**'.format(name=data['name']),
                     '  \n'.join((line for line in data['display']['info'])),
                     self.number_bars_header_text,
                     '  \n'.join((f'    {line}' for line in data['display']['number_bars'])),
@@ -84,7 +84,8 @@ class Bot(Displayer):
             return ''
         elif command_type == 'search':
             data = self.search_by_text(query)
-            return ', '.join('[{name}](http://127.0.0.1:5000/n/{name}) {display}'.format(**i) for i in data)
+            output = ', '.join('[{name}](http://127.0.0.1:5000/n/{name}) {display}'.format(**i) for i in data)
+            return '\n\n'.join((output, 'More details about your query: [{query}](http://127.0.0.1:5000/q/{query}')))
         return ''
 
 
