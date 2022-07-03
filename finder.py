@@ -90,7 +90,8 @@ class Displayer(Loader):
         super().__init__(*args, **kwargs)
         self._after = None
         self._before = None
-        self.ratio_bars_header_text = 'Gender Ratio Bars (f <-> m)'
+        self.number_bars_header_text = 'Number of Usages (scaled)'
+        self.ratio_bars_header_text = 'Gender Ratio (f <-> m)'
         self._blocks = '▓', '▒', '░'
         self._delta_cutoff = 0.0000000000000000000000000000000000000000000000000000000000000000000000000000000001
 
