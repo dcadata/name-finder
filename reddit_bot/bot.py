@@ -86,7 +86,7 @@ class Bot(Displayer):
             data = self.search_by_text(query)
             return '\n\n'.join((
                 ', '.join('[{name}](http://127.0.0.1:5000/n/{name}) {display}'.format(**i) for i in data),
-                'More details about your query: [{query}](http://127.0.0.1:5000/q/{query})]'.format(query=query),
+                'More details about your query: [{query}](http://127.0.0.1:5000/q/{query})'.format(query=query),
             ))
         return ''
 
