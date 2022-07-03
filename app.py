@@ -38,7 +38,7 @@ def _escape_optional_string_into_list_of_ints(arg_name: str):
 
 
 @app.route('/name/<string:name>')
-def name_endpoint(name: str):
+def name_page(name: str):
     data = displayer.name(
         name=escape(name),
         after=request.args.get('after', default=None, type=int),
