@@ -53,7 +53,7 @@ def name_page(name: str):
         number_bars=''.join((f'{line}<br>' for line in data['display']['number_bars'])),
         ratio_bars=''.join((f'{line}<br>' for line in data['display']['ratio_bars'])),
         number_bars_header_text=displayer.number_bars_header_text,
-        ratio_bars_header_text=displayer.ratio_bars_header_text,
+        ratio_bars_header_text=displayer.ratio_bars_header_text if data['display']['ratio_bars'] else '',
     )
     return html
 
