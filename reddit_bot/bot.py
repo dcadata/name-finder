@@ -84,8 +84,10 @@ class Bot(Displayer):
             return ''
         elif command_type == 'search':
             data = self.search_by_text(query)
-            output = ', '.join('[{name}](http://127.0.0.1:5000/n/{name}) {display}'.format(**i) for i in data)
-            return '\n\n'.join((output, 'More details about your query: [{query}](http://127.0.0.1:5000/q/{query}')))
+            return '\n\n'.join((
+                ', '.join('[{name}](http://127.0.0.1:5000/n/{name}) {display}'.format(**i) for i in data),
+                'More details about your query: [{query}](http://127.0.0.1:5000/q/{query}'.format(query=query),
+            ))
         return ''
 
 
