@@ -28,8 +28,8 @@ class Bot(Displayer):
         self._monitor_multireddit()
 
     def _create_multireddit(self) -> None:
-        subreddits = {i for i in open('reddit_bot/subreddits.txt').read().splitlines() if not i.startswith('#')}
-        self._multireddit = self._reddit.subreddit('+'.join(subreddits))
+        self._multireddit = self._reddit.subreddit('+'.join((
+            'test', 'lgbt', 'transnames', 'transtryouts', 'agender', 'nonbinary', 'nonbinarytalk', 'genderqueer')))
 
     def _monitor_multireddit(self) -> None:
         for comment in self._multireddit.stream.comments():
