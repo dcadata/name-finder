@@ -51,6 +51,7 @@ def name_page(name: str):
         name=name.title(),
         info=''.join((f'<li>{line}</li>' for line in data['display']['info'])),
         bars=''.join((f'{line}<br>' for line in data['display'].get('bars', ()))),
+        ratio_bars_header_text=displayer.ratio_bars_header_text,
     )
     return html
 
