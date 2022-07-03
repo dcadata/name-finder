@@ -109,7 +109,6 @@ class Displayer(Loader):
             before = year
         self._after = after
         self._before = before
-        bars_lookback_years = 100
         df = self._calcd.copy()
 
         # filter on name
@@ -183,6 +182,7 @@ class Displayer(Loader):
                         historic.ratio_m.apply(lambda x: int(round(x * 50)) * self._blocks[1] + ' m') +
                         historic.year.apply(str).apply(lambda x: f' {x}')
                 )
+                bars_lookback_years = 100
                 if show_bars is True:
                     show_bars = bars_lookback_years
                 hist_temp = historic[historic.year.apply(lambda x: (x >= MAX_YEAR - bars_lookback_years) and (x % int(
