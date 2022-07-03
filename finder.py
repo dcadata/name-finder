@@ -308,7 +308,7 @@ class Displayer(Loader):
             data = dict(data=df, display=', '.join(df.display))
         return data
 
-    def search_by_text(self, query: str) -> dict:
+    def search_by_text(self, query: str, *args, **kwargs) -> dict:
         query = query.lower()
         delta_sections = re.split('trend:', query, 1)
         if len(delta_sections) > 1:
@@ -365,6 +365,8 @@ class Displayer(Loader):
             year=int(year_ind) if year_ind else None,
             delta_pct=dict(down=False, up=True).get(_safely_check_regex_delta_section('(down|up)')),
             delta_fem=dict(fem=True, masc=False).get(_safely_check_regex_delta_section('(fem|masc)')),
+            *args,
+            **kwargs,
         )
         return data
 
