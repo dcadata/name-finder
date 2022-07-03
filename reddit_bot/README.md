@@ -1,18 +1,15 @@
 # How to use the reddit bot /u/USNamesBot
 
-## Get data about name(s)
+## Get data about a name
 
 ### Syntax
 
     !name [name]
-    !name [name1/name2/name3]
 
 ### Examples
 
     !name marcus
     !name natalie
-    !name louis/lewis
-    !name ashley/ashton/ashling
 
 ## Search for names based on their features/characteristics
 
