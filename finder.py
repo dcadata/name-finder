@@ -177,8 +177,12 @@ class Displayer(Loader):
             if show_historic:
                 output['historic'] = list(historic.to_dict('records')) if OUTPUT_RECORDS else historic
 
-            if show_bars and not (output['ratios']['f'] >= 0.99 or output['ratios']['m'] >= 0.99):
+            if show_bars:
+                essentially_single_gender = output['ratios']['f'] >= 0.99 or output['ratios']['m'] >= 0.99
                 number_bars_mult = 100 / peak.number
+                bars_lookback_years = 100
+                if show_bars is True:
+                    show_bars = bars_lookback_years
                 historic['number_bars'] = (
                         historic.year.apply(str).apply(lambda x: f'{x} ') +
                         historic.number.apply(lambda x: int(round(x * number_bars_mult)) * self._blocks[2] + f' {x:,}')
@@ -188,13 +192,10 @@ class Displayer(Loader):
                         historic.ratio_m.apply(lambda x: int(round(x * 50)) * self._blocks[1] + ' m') +
                         historic.year.apply(str).apply(lambda x: f' {x}')
                 )
-                bars_lookback_years = 100
-                if show_bars is True:
-                    show_bars = bars_lookback_years
                 hist_temp = historic[historic.year.apply(lambda x: (x >= MAX_YEAR - bars_lookback_years) and (x % int(
                     bars_lookback_years / show_bars) == 0))]
                 output['display']['number_bars'] = list(hist_temp.number_bars)
-                output['display']['ratio_bars'] = list(hist_temp.ratio_bars)
+                output['display']['ratio_bars'] = [] if essentially_single_gender else list(hist_temp.ratio_bars)
 
         return output
 
