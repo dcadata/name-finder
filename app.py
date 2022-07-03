@@ -45,7 +45,7 @@ def name_page(name: str):
         before=request.args.get('before', default=None, type=int),
         year=request.args.get('year', default=None, type=int),
         show_historic=True,
-        show_bars=50,
+        n_bars=30,
     )
     html = open('templates/n.html').read().format(
         name=name.title(),

@@ -71,7 +71,7 @@ class Bot(Displayer):
         if not query:
             pass
         elif command_type == 'name':
-            data = self.name(name=query.split(None, 1)[0], show_bars=20)
+            data = self.name(name=query.split(None, 1)[0], n_bars=20)
             if data.get('display'):
                 return '\n\n'.join((
                     '**[{name}](http://127.0.0.1:5000/n/{name})**'.format(name=data['name']),
