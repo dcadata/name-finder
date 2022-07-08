@@ -47,14 +47,24 @@ def name_page(name: str):
         show_historic=True,
         n_bars=30,
     )
-    html = open('templates/n.html').read().format(
-        name=data['name'],
-        info=''.join((f'<li>{line}</li>' for line in data['display']['info'])),
-        number_bars=''.join((f'{line}<br>' for line in data['display']['number_bars'])),
-        ratio_bars=''.join((f'{line}<br>' for line in data['display']['ratio_bars'])),
-        number_bars_header_text=displayer.number_bars_header_text,
-        ratio_bars_header_text=displayer.ratio_bars_header_text if data['display']['ratio_bars'] else '',
-    )
+    if data.get('name'):
+        html = open('templates/n.html').read().format(
+            name=data['name'],
+            info=''.join((f'<li>{line}</li>' for line in data['display']['info'])),
+            number_bars=''.join((f'{line}<br>' for line in data['display']['number_bars'])),
+            ratio_bars=''.join((f'{line}<br>' for line in data['display']['ratio_bars'])),
+            number_bars_header_text=displayer.number_bars_header_text,
+            ratio_bars_header_text=displayer.ratio_bars_header_text if data['display']['ratio_bars'] else '',
+        )
+    else:
+        html = open('templates/n.html').read().format(
+            name=name.title(),
+            info='This name was not found.',
+            number_bars='',
+            ratio_bars='',
+            number_bars_header_text='',
+            ratio_bars_header_text='',
+        )
     return html
 
 
