@@ -518,7 +518,7 @@ def _calculate_gender_delta(df: pd.DataFrame, after: int, fem_ratio: float) -> p
     return df
 
 
-def _create_display_ratio(ratio_f: float, ratio_m: float, ignore_ones: bool = True) -> str:
+def _create_display_ratio(ratio_f: float, ratio_m: float, ignore_ones: bool = False) -> str:
     if ignore_ones and (ratio_f == 1 or ratio_m == 1):
         return ''
     elif ratio_f > ratio_m:
@@ -544,7 +544,7 @@ def _create_display_for_name(
     numbers_fm = f'f={number_f:,}, m={number_m:,}' if number_f >= number_m else f'm={number_m:,}, f={number_f:,}'
     sections = [
         f'Total Usages: n={number:,} ({numbers_fm})',
-        f'Ratio: {_create_display_ratio(ratio_f, ratio_m, ignore_ones=False)}',
+        f'Ratio: {_create_display_ratio(ratio_f, ratio_m)}',
         f'Peak({peak_year}): n={peak_number:,}',
         f'Latest({latest_year}): n={latest_number:,}',
         f'Earliest({first_appearance})',
