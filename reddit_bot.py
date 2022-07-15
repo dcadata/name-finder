@@ -43,12 +43,14 @@ class Bot(Displayer):
             return '\n\n'.join(reply_lines)
         return ''
 
-    def _query_per_request_body(self, body: str) -> list:
+    def _get_raw_commands(self, body: str) -> list:
         raw_commands = [line for line in body.splitlines() if line.startswith(('!name', '!search'))]
+        return raw_commands
 
+    def _query_per_request_body(self, body: str) -> list:
         not_found = False
         reply_lines = []
-        for raw_command in raw_commands:
+        for raw_command in self._get_raw_commands(body):
             if result := self._query_per_command(raw_command):
                 reply_lines.extend((f'> {raw_command}', result.format(self._base_url)))
             else:
@@ -66,24 +68,30 @@ class Bot(Displayer):
         if not query:
             pass
         elif command_type == 'name':
-            data = self.name(name=query.split(None, 1)[0], n_bars=20)
-            if data.get('display'):
-                return '\n\n'.join((
-                    '**[{name}]({{0}}/n/{name})**'.format(name=data['name']),
-                    '  \n'.join((line for line in data['display']['info'])),
-                    self.number_bars_header_text,
-                    '  \n'.join((f'    {line}' for line in data['display']['number_bars'])),
-                    self.ratio_bars_header_text if data['display']['ratio_bars'] else '',
-                    '  \n'.join((f'    {line}' for line in data['display']['ratio_bars'])),
-                ))
-            return ''
+            return self._name_query_per_command(query)
         elif command_type == 'search':
-            data = self.search_by_text(query)
+            return self._search_query_per_command(query)
+        return ''
+
+    def _name_query_per_command(self, query: str) -> str:
+        data = self.name(name=query.split(None, 1)[0], n_bars=20)
+        if data.get('display'):
             return '\n\n'.join((
-                ', '.join('[{name}]({{0}}/n/{name}){display}'.format(**i) for i in data),
-                '[Details about your query]({{0}}/q/{query})'.format(query=query),
+                '**[{name}]({{0}}/n/{name})**'.format(name=data['name']),
+                '  \n'.join((line for line in data['display']['info'])),
+                self.number_bars_header_text,
+                '  \n'.join((f'    {line}' for line in data['display']['number_bars'])),
+                self.ratio_bars_header_text if data['display']['ratio_bars'] else '',
+                '  \n'.join((f'    {line}' for line in data['display']['ratio_bars'])),
             ))
         return ''
+
+    def _search_query_per_command(self, query: str) -> str:
+        data = self.search_by_text(query)
+        return '\n\n'.join((
+            ', '.join('[{name}]({{0}}/n/{name}){display}'.format(**i) for i in data),
+            '[Details about your query]({{0}}/q/{query})'.format(query=query),
+        ))
 
 
 def main():
