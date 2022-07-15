@@ -19,11 +19,8 @@ class Bot(Displayer):
             ' [Data sources]()',
         )
 
-    def create_reddit(self) -> None:
-        self._reddit = Reddit('USNamesBot', user_agent='Search tool for US name data')
-        self._reddit.validate_on_submit = True
-
     def run_bot(self) -> None:
+        self._reddit.validate_on_submit = True
         multireddit = self._reddit.subreddit('+'.join((
             'test', 'lgbt', 'transnames', 'transtryouts', 'agender', 'nonbinary', 'nonbinarytalk', 'genderqueer')))
         for comment in multireddit.stream.comments():
