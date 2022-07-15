@@ -92,14 +92,3 @@ class Bot(Displayer):
             ', '.join('[{name}]({{0}}/n/{name}){display}'.format(**i) for i in data),
             '[Details about your query]({{0}}/q/{query})'.format(query=query),
         ))
-
-
-def main():
-    bot = Bot()
-    bot.load()
-    bot.create_reddit()
-    bot.run_bot()
-
-
-if __name__ == '__main__':
-    main()
