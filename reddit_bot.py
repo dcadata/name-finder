@@ -40,7 +40,8 @@ class Bot(Displayer):
             return '\n\n'.join(reply_lines)
         return ''
 
-    def _get_raw_commands(self, body: str) -> list:
+    @staticmethod
+    def _get_raw_commands(body: str) -> list:
         raw_commands = [line for line in body.splitlines() if line.startswith(('!name', '!search'))]
         return raw_commands
 
