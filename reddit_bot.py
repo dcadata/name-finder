@@ -81,8 +81,10 @@ class Bot(Displayer):
                 '  \n'.join((f'    {line}' for line in data['display']['number_bars'])),
             ]
             if data['display']['ratio_bars']:
-                sections.append(self.ratio_bars_header_text)
-                sections.append('  \n'.join((f'    {line}' for line in data['display']['ratio_bars'])))
+                sections.extend([
+                    self.ratio_bars_header_text,
+                    '  \n'.join((f'    {line}' for line in data['display']['ratio_bars'])),
+                ])
             return '\n\n'.join(sections)
         return ''
 
