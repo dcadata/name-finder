@@ -48,7 +48,7 @@ def name_page(name: str):
         n_bars=30,
     )
     n = data.get('name')
-    html = open('templates/n.html').read().format(
+    html = open('templates/name_page.html').read().format(
         name=data['name'] if n else name.title(),
         info=''.join((f'<li>{line}</li>' for line in data['display']['info'])) if n else 'This name was not found.',
         number_bars=''.join((f'{line}<br>' for line in data['display']['number_bars'])) if n else '',
@@ -62,10 +62,22 @@ def name_page(name: str):
 @app.route('/q/<string:query>')
 def search_by_text_page(query: str):
     escaped_query = escape(query)
-    data = displayer.search_by_text(escaped_query, top=200)
-    html = open('templates/q.html').read().format(query=escaped_query, top=200, info=''.join(
-        '<li><a href="/n/{name}">{name}</a> {display}</li>'.format(**i) for i in data))
+    top = request.args.get('top', type=int)
+    data = displayer.search_by_text(escaped_query, top=top)
+    html = open('templates/query_page.html').read().format(query=escaped_query, top=top, info=''.join(
+        '<li><a href="/?n={name}">{name}</a> {display}</li>'.format(**i) for i in data))
     return html
+
+
+@app.route('/')
+def query_page():
+    if name_query := request.args.get('n', type=str):
+        return name_page(name_query)
+    elif search_by_text_query := request.args.get('q', type=str):
+        return search_by_text_page(search_by_text_query)
+    else:
+        html = open('templates/query_page.html').read()
+        return html
 
 
 @app.route('/search')

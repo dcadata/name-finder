@@ -1,0 +1,28 @@
+<html>
+<head><title>Name Search | {query} - USNamesBot</title></head>
+<body>
+<h1>USNamesBot</h1>
+<form action="" method="get" class="name-form">
+    <div class="name-form">
+        <label for="n"><b>Enter name: </b></label>
+        <input type="text" name="n" id="n" size="26" minlength="3" maxlength="26">
+        <input type="submit" value="Search">
+    </div>
+</form>
+<form action="" method="get" class="name-form">
+    <div class="name-form">
+        <label for="q"><b>Enter query: </b></label>
+        <input type="text" name="q" id="q" size="50" minlength="3">
+        <label for="top">Display more/fewer results: </label>
+        <input type="range" name="top" id="top" min="10" max="200" value="50" step="10">
+        <input type="submit" value="Search"><br>
+        <a href="#">Query Help</a>
+    </div>
+</form>
+<h1>Your Query</h1>
+<blockquote>{query}</blockquote>
+<h1>Your Results</h1>
+<ol>{info}</ol>
+<p>Results show at most the top {top} names by number of usages.</p>
+</body>
+</html>
