@@ -13,15 +13,15 @@ class Scraper:
     Scrape current list of Michigan State Representatives
     """
 
-    def scrape(self):
+    def scrape(self) -> None:
         self._scrape()
         self._clean()
         self._save()
 
-    def _scrape(self):
+    def _scrape(self) -> None:
         response = requests.get('https://www.house.mi.gov/AllRepresentatives')
-        soup = BeautifulSoup(response.text, 'lxml')
-        representative_elems = soup.find('ul', attrs=dict(id='allrepslist')).find_all('li')[1:]
+        page = BeautifulSoup(response.text, 'lxml')
+        representative_elems = page.find('ul', attrs=dict(id='allrepslist')).find_all('li')[1:]
         representative_data = [(
             rep.select_one('a.page-search-target'),
             rep.select_one('div.col-md-4'),
@@ -30,7 +30,7 @@ class Scraper:
         ) for rep in representative_elems]
         self._reps = pd.DataFrame(representative_data, columns=['rep', 'office', 'phone', 'email'])
 
-    def _clean(self):
+    def _clean(self) -> None:
         self._reps = self._reps.dropna()
 
         self._reps.rep = self._reps.rep.apply(lambda x: x.text.strip())
@@ -44,7 +44,7 @@ class Scraper:
         self._reps[['rep', 'district']] = self._reps.rep.str.split('-', 1, expand=True)
         self._reps = self._reps.drop(columns='rep')
 
-    def _save(self):
+    def _save(self) -> None:
         self._reps.to_csv('representatives.csv', index=False)
 
 
@@ -53,15 +53,15 @@ class GenderPredictor:
     Predict genders of legislators based on first name
     """
 
-    def predict(self):
+    def predict(self) -> None:
         self._read_scraped_data()
         self._get_gender_predictions()
         self._save()
 
-    def _read_scraped_data(self):
+    def _read_scraped_data(self) -> None:
         self._reps = pd.read_csv('representatives.csv').drop_duplicates()
 
-    def _get_gender_predictions(self):
+    def _get_gender_predictions(self) -> None:
         self._predictions = []
         session = requests.Session()
         for name in self._reps.first_name.unique():
@@ -76,13 +76,13 @@ class GenderPredictor:
             sleep(1)
         session.close()
 
-    def _save(self):
+    def _save(self) -> None:
         predictions = pd.DataFrame(self._predictions)
         predictions.to_csv('predictions.csv', index=False)
         self._reps.merge(predictions, on='first_name').to_csv('representatives_with_predictions.csv', index=False)
 
 
-def summarize_example(data: pd.DataFrame):
+def summarize_example(data: pd.DataFrame) -> None:
     data = data.dropna()
     data = data[(data.gender_confidence >= 0.8) & (data.gender_number >= 25)].copy()  # drop low-confidence predictions
     grouped_by_gender = data.groupby('gender').first_name.count()
