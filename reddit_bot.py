@@ -13,10 +13,11 @@ class Bot(Displayer):
         self._reddit = reddit
         self._base_url = 'http://127.0.0.1:5000'
         self._footer = (
-            '---',
-            'Search for names based on data from the US Social Security Administration |'
-            ' [How to use]() |'
-            ' [Data sources]()',
+            ' | '.join((
+                'Search for names based on data from the US Social Security Administration',
+                '[How to use]()',
+                '[Data sources]()',
+            )),
         )
 
     def run_bot(self) -> None:
