@@ -92,5 +92,5 @@ class Bot(Displayer):
         data = self.search_by_text(query)
         return '\n\n'.join((
             ', '.join('[{name}]({{0}}/?n={name}){display}'.format(**i) for i in data),
-            '[Details about your query]({{0}}/q/{query})'.format(query=query),
+            '[Details about your query]({{0}}/?q={query})'.format(query=query),
         ))
