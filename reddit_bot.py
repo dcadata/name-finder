@@ -75,7 +75,7 @@ class Bot(Displayer):
         data = self.name(name=query.split(None, 1)[0], n_bars=20)
         if data.get('display'):
             sections = [
-                '**[{name}]({{0}}/n/{name})**'.format(name=data['name']),
+                '**[{name}]({{0}}/?n={name})**'.format(name=data['name']),
                 '  \n'.join(data['display']['info']),
                 self.number_bars_header_text,
                 '\n'.join((f'    {line}' for line in data['display']['number_bars'])),
@@ -91,6 +91,6 @@ class Bot(Displayer):
     def _search_query_per_command(self, query: str) -> str:
         data = self.search_by_text(query)
         return '\n\n'.join((
-            ', '.join('[{name}]({{0}}/n/{name}){display}'.format(**i) for i in data),
+            ', '.join('[{name}]({{0}}/?n={name}){display}'.format(**i) for i in data),
             '[Details about your query]({{0}}/q/{query})'.format(query=query),
         ))
