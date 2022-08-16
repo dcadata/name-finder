@@ -22,8 +22,7 @@ class Bot(Displayer):
 
     def run_bot(self) -> None:
         self._reddit.validate_on_submit = True
-        multireddit = self._reddit.subreddit('+'.join((
-            'test', 'lgbt', 'transnames', 'transtryouts', 'agender', 'nonbinary', 'nonbinarytalk', 'genderqueer')))
+        multireddit = self._reddit.subreddit('+'.join(i.display_name for i in self._reddit.user.subreddits()))
         for comment in multireddit.stream.comments():
             self._process_request(comment)
 
