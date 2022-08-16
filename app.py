@@ -37,8 +37,7 @@ def _escape_optional_string_into_list_of_ints(arg_name: str):
     return list(map(int, values))
 
 
-@app.route('/n/<string:name>')
-def name_page(name: str):
+def _get_name(name: str):
     data = displayer.name(
         name=escape(name),
         after=request.args.get('after', default=None, type=int),
@@ -59,8 +58,7 @@ def name_page(name: str):
     return html
 
 
-@app.route('/q/<string:query>')
-def search_by_text_page(query: str):
+def _get_search_by_text(query: str):
     escaped_query = escape(query)
     top = request.args.get('top', type=int)
     data = displayer.search_by_text(escaped_query, top=top)
@@ -72,9 +70,9 @@ def search_by_text_page(query: str):
 @app.route('/')
 def query_page():
     if name_query := request.args.get('n', type=str):
-        return name_page(name_query)
+        return _get_name(name_query)
     elif search_by_text_query := request.args.get('q', type=str):
-        return search_by_text_page(search_by_text_query)
+        return _get_search_by_text(search_by_text_query)
     else:
         html = open('templates/query_page.html').read()
         return html
