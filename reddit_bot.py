@@ -12,6 +12,9 @@ class Bot(Displayer):
         super().__init__(*args, **kwargs)
         self._reddit = reddit
         self._base_url = 'http://127.0.0.1:5000'
+        self._subreddits = (
+            'test', 'lgbt', 'transnames', 'transtryouts', 'agender', 'nonbinary', 'nonbinarytalk', 'genderqueer',
+        )
         self._footer = (
             ' | '.join((
                 'Search for names based on data from the US Social Security Administration',
@@ -22,8 +25,7 @@ class Bot(Displayer):
 
     def run_bot(self) -> None:
         self._reddit.validate_on_submit = True
-        multireddit = self._reddit.subreddit('+'.join((
-            'test', 'lgbt', 'transnames', 'transtryouts', 'agender', 'nonbinary', 'nonbinarytalk', 'genderqueer')))
+        multireddit = self._reddit.subreddit('+'.join(self._subreddits))
         for comment in multireddit.stream.comments():
             self._process_request(comment)
 
