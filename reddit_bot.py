@@ -76,14 +76,14 @@ class Bot(Displayer):
         if data.get('display'):
             sections = [
                 '**[{name}]({{0}}/n/{name})**'.format(name=data['name']),
-                '  \n'.join((line for line in data['display']['info'])),
+                '  \n'.join(data['display']['info']),
                 self.number_bars_header_text,
-                '  \n'.join((f'    {line}' for line in data['display']['number_bars'])),
+                '\n'.join((f'    {line}' for line in data['display']['number_bars'])),
             ]
             if data['display']['ratio_bars']:
                 sections.extend([
                     self.ratio_bars_header_text,
-                    '  \n'.join((f'    {line}' for line in data['display']['ratio_bars'])),
+                    '\n'.join((f'    {line}' for line in data['display']['ratio_bars'])),
                 ])
             return '\n\n'.join(sections)
         return ''
