@@ -1,14 +1,12 @@
-from time import sleep
-
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
 from scipy import stats
 
-_API_BASE_URL = 'http://127.0.0.1:5000'
+from prediction_getter_base import PredictionGetterBase
 
 
-class Scraper:
+class StateRepsScraper:
     """
     Scrape current list of Michigan State Representatives
     """
@@ -45,48 +43,24 @@ class Scraper:
         self._reps = self._reps.drop(columns='rep')
 
     def _save(self) -> None:
-        self._reps.to_csv('representatives.csv', index=False)
+        self._reps.drop_duplicates().to_csv('representatives.csv', index=False)
 
 
-class GenderPredictor:
-    """
-    Predict genders of legislators based on first name
-    """
+class GenderPredictionGetter(PredictionGetterBase):
+    def __init__(self):
+        super().__init__(first_name_field='first_name', data_fp='representatives.csv')
 
-    def predict(self) -> None:
-        self._read_scraped_data()
-        self._get_gender_predictions()
-        self._save()
-
-    def _read_scraped_data(self) -> None:
-        self._reps = pd.read_csv('representatives.csv').drop_duplicates()
-
-    def _get_gender_predictions(self) -> None:
-        self._predictions = []
-        session = requests.Session()
-        for name in self._reps.first_name.unique():
-            if response := session.get(f'{_API_BASE_URL}/predict/gender/{name}', params=dict(
-                    before=2001, living=1)).json():  # age limit of 21+
-                self._predictions.append(dict(
-                    first_name=name,
-                    gender=response['prediction'],
-                    gender_confidence=response['confidence'],
-                    gender_number=response['number'],
-                ))
-            sleep(1)
-        session.close()
-
-    def _save(self) -> None:
-        predictions = pd.DataFrame(self._predictions)
-        predictions.to_csv('predictions.csv', index=False)
-        self._reps.merge(predictions, on='first_name').to_csv('representatives_with_predictions.csv', index=False)
+    def get(self) -> None:
+        self.get_predictions()
+        self._predictions.to_csv('predictions.csv', index=False)
+        self._data.merge(self._predictions, on=self._first_name_field).to_csv(
+            'representatives_with_predictions.csv', index=False)
 
 
-def summarize_example(data: pd.DataFrame) -> None:
-    data = data.dropna()
-    data = data[(data.gender_confidence >= 0.8) & (data.gender_number >= 25)].copy()  # drop low-confidence predictions
-    grouped_by_gender = data.groupby('gender').first_name.count()
-    grouped_by_gender_and_party = data.groupby(['party', 'gender']).first_name.count()
+def summarize() -> None:
+    data = pd.read_csv('representatives_with_predictions.csv')
+    grouped_by_gender = data.groupby('prediction').first_name.count()
+    grouped_by_gender_and_party = data.groupby(['party', 'prediction']).first_name.count()
 
     lines = [
         '# Gender Prediction Example - Michigan State Representatives',
@@ -110,4 +84,4 @@ def summarize_example(data: pd.DataFrame) -> None:
 
 
 if __name__ == '__main__':
-    summarize_example(pd.read_csv('representatives_with_predictions.csv'))
+    summarize()
