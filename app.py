@@ -74,8 +74,7 @@ def query_page():
     elif search_by_text_query := request.args.get('q', type=str):
         return _get_search_by_text(search_by_text_query)
     else:
-        html = open('templates/query_page.html').read()
-        return html
+        return open('templates/query_page.html').read()
 
 
 @app.route('/search')
