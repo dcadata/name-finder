@@ -1,9 +1,9 @@
 from flask import Flask, request, jsonify
 from markupsafe import escape
 
-import finder
+import core
 
-displayer = finder.Displayer()
+displayer = core.Displayer()
 displayer.load()
 
 app = Flask(__name__)
