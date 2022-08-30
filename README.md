@@ -86,10 +86,10 @@ After/before years (inclusive)
 
 #### Examples
 
-    /n/darren
-    /n/helen?after=1960
-    /n/zachary?after=1975&before=2000
-    /n/salma?year=2020
+    /?n=darren
+    /?n=helen&after=1960
+    /?n=zachary&after=1975&before=2000
+    /?n=salma&year=2020
 
 ### Search for names based on their features/characteristics
 
