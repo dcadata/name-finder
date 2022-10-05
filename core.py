@@ -558,13 +558,23 @@ def _create_display_for_search(number: int, ratio_f: float, ratio_m: float) -> s
     return f'(n={number:,}{display_ratio})'
 
 
-def _create_predict_gender_reference(calcd: pd.DataFrame, ages: tuple, conf_min: float, n_min: int) -> pd.DataFrame:
+def _create_predict_gender_reference(ages: tuple = (25, 100), conf_min: float = 0.25, n_min: int = 25) -> pd.DataFrame:
+    displayer = Displayer()
+    displayer.load()
+    calcd = displayer._calcd.copy()
+
     calcd = calcd[calcd.year.apply(lambda x: MAX_YEAR - ages[1] <= x <= MAX_YEAR - ages[0])].copy()
+
     calcd = calcd.groupby('name', as_index=False).agg(dict(number=sum, number_f=sum, number_m=sum))
-    calcd = calcd[calcd.number >= n_min].copy()
+
     for s in ('f', 'm'):
         calcd[f'ratio_{s}'] = calcd[f'number_{s}'] / calcd.number
-    calcd = calcd[(calcd.ratio_f >= conf_min) | (calcd.ratio_m >= conf_min)].copy()
+
+    calcd.loc[(calcd.number < n_min) | (
+            (calcd.ratio_f < conf_min) & (calcd.ratio_m < conf_min)), 'gender_prediction'] = 'unk'
     calcd.loc[calcd.ratio_f > calcd.ratio_m, 'gender_prediction'] = 'f'
     calcd.loc[calcd.ratio_f < calcd.ratio_m, 'gender_prediction'] = 'm'
-    return calcd[['name', 'gender_prediction']]
+
+    calcd = calcd[['name', 'gender_prediction']].copy()
+    calcd.to_csv('gender_prediction_reference.csv', index=False)
+    return calcd
