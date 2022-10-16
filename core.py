@@ -558,7 +558,7 @@ def _create_display_for_search(number: int, ratio_f: float, ratio_m: float) -> s
     return f'(n={number:,}{display_ratio})'
 
 
-def create_predict_gender_reference(ages: tuple = (22, 90), conf_min: float = 0.6, n_min: int = 20) -> pd.DataFrame:
+def create_predict_gender_reference(ages: tuple = (18, 80), conf_min: float = None, n_min: int = None) -> pd.DataFrame:
     displayer = Displayer()
     displayer.load()
     df = displayer._calcd.copy()
@@ -567,13 +567,17 @@ def create_predict_gender_reference(ages: tuple = (22, 90), conf_min: float = 0.
 
     df = df.groupby('name', as_index=False).agg(dict(number=sum, number_f=sum, number_m=sum))
 
-    for s in ('f', 'm'):
-        df[f'ratio_{s}'] = df[f'number_{s}'] / df.number
-
     df.loc[df.number_f > df.number_m, 'gender_prediction'] = 'f'
     df.loc[df.number_f < df.number_m, 'gender_prediction'] = 'm'
-    df.loc[df.number < n_min, 'gender_prediction'] = 'unk'
-    df.loc[(df.ratio_f < conf_min) & (df.ratio_m < conf_min), 'gender_prediction'] = 'unk'
+    df.loc[df.number_f == df.number_m, 'gender_prediction'] = 'unk'
+
+    if n_min:
+        df.loc[df.number < n_min, 'gender_prediction'] = 'unk'
+
+    if conf_min:
+        ratio_f = df.number_f / df.number
+        ratio_m = df.number_m / df.number
+        df.loc[(ratio_f < conf_min) & (ratio_m < conf_min), 'gender_prediction'] = 'unk'
 
     df.gender_prediction = df.gender_prediction.fillna('unk')
 
