@@ -569,15 +569,15 @@ def create_predict_gender_reference(ages: tuple = (18, 80), conf_min: float = No
 
     df.loc[df.number_f > df.number_m, 'gender_prediction'] = 'f'
     df.loc[df.number_f < df.number_m, 'gender_prediction'] = 'm'
-    df.loc[df.number_f == df.number_m, 'gender_prediction'] = 'unk'
-
-    if n_min:
-        df.loc[df.number < n_min, 'gender_prediction'] = 'unk'
+    df.loc[df.number_f == df.number_m, 'gender_prediction'] = 'x'
 
     if conf_min:
         ratio_f = df.number_f / df.number
         ratio_m = df.number_m / df.number
-        df.loc[(ratio_f < conf_min) & (ratio_m < conf_min), 'gender_prediction'] = 'unk'
+        df.loc[(ratio_f < conf_min) & (ratio_m < conf_min), 'gender_prediction'] = 'x'
+
+    if n_min:
+        df.loc[df.number < n_min, 'gender_prediction'] = 'rare'
 
     df.gender_prediction = df.gender_prediction.fillna('unk')
 
