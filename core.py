@@ -558,7 +558,7 @@ def _create_display_for_search(number: int, ratio_f: float, ratio_m: float) -> s
     return f'(n={number:,}{display_ratio})'
 
 
-def create_predict_gender_reference(ages: tuple = (18, 80), conf_min: float = None, n_min: int = None) -> pd.DataFrame:
+def create_predict_gender_reference(ages: tuple = (18, 80), conf_min: float = 0.7, n_min: int = 10) -> pd.DataFrame:
     displayer = Displayer()
     displayer.load()
     df = displayer._calcd.copy()
