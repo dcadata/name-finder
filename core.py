@@ -584,3 +584,14 @@ def create_predict_gender_reference(ages: tuple = (18, 80), conf_min: float = 0.
     df = df[['name', 'gender_prediction']].copy()
     df.to_csv('gender_prediction_reference.csv', index=False)
     return df
+
+
+def normalize_name_for_merge(x: str) -> str:
+    if not x or pd.isna(x):
+        return ''
+    x = x.replace("'", '')
+    x = re.sub('^[A-Z](. | )', '', x, flags=re.I)
+    x = re.match('^[a-z\-]*', x, re.I).group()
+    x = re.match('^([a-z]*)[\- ]?', x, re.I).group(1)
+    x = x.title().strip()
+    return x
