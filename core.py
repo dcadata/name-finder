@@ -105,6 +105,7 @@ class Displayer(Loader):
             n_bars: int = None,
     ) -> dict:
         # set up
+        name = normalize_name_for_merge(name)
         if year:
             after = year
             before = year
@@ -589,7 +590,7 @@ def create_predict_gender_reference(ages: tuple = (18, 80), conf_min: float = 0.
 def normalize_name_for_merge(x: str) -> str:
     if not x or pd.isna(x):
         return ''
-    x = x.replace("'", '')
+    x = x.strip().replace("'", '')
     x = re.sub('^[A-Z](. | )', '', x, flags=re.I)
     x = re.match('^[a-z\-]*', x, re.I).group()
     x = re.match('^([a-z]*)[\- ]?', x, re.I).group(1)
