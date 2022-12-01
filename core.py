@@ -105,7 +105,6 @@ class Displayer(Loader):
             n_bars: int = None,
     ) -> dict:
         # set up
-        name = _normalize_name_input(name)
         if year:
             after = year
             before = year
@@ -114,6 +113,7 @@ class Displayer(Loader):
         df = self._calcd.copy()
 
         # filter on name
+        name = ''.join(re.findall('[a-z]', name, re.I))
         df = df[df['name'].str.lower() == name.lower()]
         if not len(df):
             return {}
@@ -492,17 +492,6 @@ def _safe_regex_search(pattern: str, text: str):
         return re.search(pattern, text).groups()[-1]
     except (AttributeError, IndexError):
         return
-
-
-def _normalize_name_input(name: str) -> str:
-    if not name or pd.isna(name):
-        return ''
-    name = name.strip().replace("'", '')
-    name = re.sub('^[A-Z](. | )', '', name, flags=re.I)
-    name = re.match('^[a-z\-]*', name, re.I).group()
-    name = re.match('^([a-z]*)[\- ]?', name, re.I).group(1)
-    name = name.title().strip()
-    return name
 
 
 def _calculate_number_delta(df: pd.DataFrame, after: int, pct: float) -> pd.DataFrame:
