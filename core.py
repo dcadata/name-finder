@@ -105,7 +105,7 @@ class Displayer(Loader):
             n_bars: int = None,
     ) -> dict:
         # set up
-        name = normalize_name_for_merge(name)
+        name = _normalize_name_input(name)
         if year:
             after = year
             before = year
@@ -494,6 +494,17 @@ def _safe_regex_search(pattern: str, text: str):
         return
 
 
+def _normalize_name_input(name: str) -> str:
+    if not name or pd.isna(name):
+        return ''
+    name = name.strip().replace("'", '')
+    name = re.sub('^[A-Z](. | )', '', name, flags=re.I)
+    name = re.match('^[a-z\-]*', name, re.I).group()
+    name = re.match('^([a-z]*)[\- ]?', name, re.I).group(1)
+    name = name.title().strip()
+    return name
+
+
 def _calculate_number_delta(df: pd.DataFrame, after: int, pct: float) -> pd.DataFrame:
     chg = df[df.year == after].merge(df[df.year == MAX_YEAR], on=['name'], suffixes=('_y1', '_y2'))
     if pct > 0:  # trended up
@@ -585,14 +596,3 @@ def create_predict_gender_reference(ages: tuple = (18, 80), conf_min: float = 0.
     df = df[['name', 'gender_prediction']].copy()
     df.to_csv('gender_prediction_reference.csv', index=False)
     return df
-
-
-def normalize_name_for_merge(x: str) -> str:
-    if not x or pd.isna(x):
-        return ''
-    x = x.strip().replace("'", '')
-    x = re.sub('^[A-Z](. | )', '', x, flags=re.I)
-    x = re.match('^[a-z\-]*', x, re.I).group()
-    x = re.match('^([a-z]*)[\- ]?', x, re.I).group(1)
-    x = x.title().strip()
-    return x
