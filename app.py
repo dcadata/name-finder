@@ -68,7 +68,7 @@ def _get_search_by_text(query: str):
 
 
 @app.route('/')
-def query_page():
+def home():
     if name_query := request.args.get('n', type=str):
         return _get_name(name_query)
     elif search_by_text_query := request.args.get('q', type=str):
