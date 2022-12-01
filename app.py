@@ -43,7 +43,6 @@ def _get_name(name: str):
         after=request.args.get('after', default=None, type=int),
         before=request.args.get('before', default=None, type=int),
         year=request.args.get('year', default=None, type=int),
-        show_historic=True,
         n_bars=30,
     )
     n = data.get('name')

@@ -101,7 +101,6 @@ class Displayer(Loader):
             after: int = None,
             before: int = None,
             year: int = None,
-            show_historic: bool = None,
             n_bars: int = None,
     ) -> dict:
         # set up
@@ -170,13 +169,10 @@ class Displayer(Loader):
             output['first_appearance'],
         ))
 
-        if show_historic or n_bars:
+        if n_bars:
             historic = df[['year', 'number', 'number_f', 'number_m', 'ratio_f', 'ratio_m']].copy()
             for s in ('f', 'm'):
                 historic[f'ratio_{s}'] = historic[f'ratio_{s}'].apply(lambda x: round(x, 2))
-
-            if show_historic:
-                output['historic'] = list(historic.to_dict('records')) if OUTPUT_RECORDS else historic
 
             if n_bars:
                 essentially_single_gender = output['ratios']['f'] >= 0.99 or output['ratios']['m'] >= 0.99
