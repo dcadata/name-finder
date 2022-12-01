@@ -4,7 +4,7 @@ from markupsafe import escape
 from praw import Reddit
 from praw.models import Comment
 
-from finder import Displayer
+from core import Displayer
 
 
 class Bot(Displayer):
