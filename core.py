@@ -156,7 +156,7 @@ class Displayer(Loader):
             },
             'first_appearance': int(self._first_appearance[grouped['name']]),
         }
-        output['display'] = dict(info=_create_display_for_name(
+        output['display'] = _create_display_for_name(
             output['numbers']['total'],
             output['numbers']['f'],
             output['numbers']['m'],
@@ -167,7 +167,7 @@ class Displayer(Loader):
             output['latest']['year'],
             output['latest']['number'],
             output['first_appearance'],
-        ))
+        )
 
         if n_bars:
             historic = df[['year', 'number', 'number_f', 'number_m', 'ratio_f', 'ratio_m']].copy()
@@ -537,16 +537,19 @@ def _create_display_for_name(
         latest_year: int,
         latest_number: int,
         first_appearance: int,
-) -> list:
+) -> dict:
     numbers_fm = f'f={number_f:,}, m={number_m:,}' if number_f >= number_m else f'm={number_m:,}, f={number_f:,}'
-    sections = [
-        f'Total Usages: n={number:,} ({numbers_fm})',
-        f'Ratio: {_create_display_ratio(ratio_f, ratio_m)}',
-        f'Peak({peak_year}): n={peak_number:,}',
-        f'Latest({latest_year}): n={latest_number:,}',
-        f'Earliest({first_appearance})',
-    ]
-    return sections
+    display_ratio = _create_display_ratio(ratio_f, ratio_m)
+    return dict(
+        short=f'n={number:,}, {display_ratio}',
+        info=[
+            f'Total Usages: n={number:,} ({numbers_fm})',
+            f'Ratio: {display_ratio}',
+            f'Peak({peak_year}): n={peak_number:,}',
+            f'Latest({latest_year}): n={latest_number:,}',
+            f'Earliest({first_appearance})',
+        ],
+    )
 
 
 def _create_display_for_search(number: int, ratio_f: float, ratio_m: float) -> str:
