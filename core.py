@@ -13,6 +13,7 @@ class Loader:
     def __init__(self, *args, **kwargs):
         self._national_data_directory = 'data/names/'
         self._territories_data_directory = 'data/namesbyterritory/'
+        self._sexes = ('f', 'm')
 
     def load(self) -> None:
         self._read_data()
@@ -37,24 +38,24 @@ class Loader:
 
         # name by year
         self._name_by_year = self._concatenated.groupby(['name', 'year'], as_index=False).number.sum().merge(
-            self._number_per_year, on=['year'], suffixes=('', '_total'))
+            self._number_per_year, on='year', suffixes=('', '_total'))
         self._name_by_year['pct_year'] = self._name_by_year.number / self._name_by_year.number_total
-        self._name_by_year = self._name_by_year.drop(columns=['number_total'])
+        self._name_by_year = self._name_by_year.drop(columns='number_total')
 
         # first appearance
         self._first_appearance = self._raw.groupby('name').year.min()
 
         # add ratios
-        _separate = lambda x: self._raw[self._raw.sex == x].drop(columns=['sex'])
+        _separate = lambda x: self._raw[self._raw.sex == x].drop(columns='sex')
         self._calcd = _separate('F').merge(_separate('M'), on=['name', 'year'], suffixes=(
             '_f', '_m'), how='outer').merge(self._name_by_year, on=['name', 'year'])
-        for s in ('f', 'm'):
+        for s in self._sexes:
             self._calcd[f'number_{s}'] = self._calcd[f'number_{s}'].fillna(0).apply(int)
-            self._calcd[f'ratio_{s}'] = self._calcd[f'number_{s}'] / self._calcd['number']
+            self._calcd[f'ratio_{s}'] = self._calcd[f'number_{s}'] / self._calcd.number
 
         # add actuarial - loses years before 1900
-        self._raw_with_actuarial = pd.concat(self._raw[self._raw.sex == s.upper()].merge(self._load_actuarial(s), on=[
-            'year']) for s in ('f', 'm'))
+        self._raw_with_actuarial = pd.concat(
+            self._raw[self._raw.sex == s.upper()].merge(self._load_actuarial(s), on='year') for s in self._sexes)
         self._raw_with_actuarial['number_living'] = (
                 self._raw_with_actuarial.number * self._raw_with_actuarial.survival_prob)
 
@@ -129,7 +130,7 @@ class Displayer(Loader):
 
         # aggregate
         grouped = df.groupby('name', as_index=False).agg({'number': sum, 'number_f': sum, 'number_m': sum})
-        for s in ('f', 'm'):
+        for s in self._sexes:
             grouped[f'ratio_{s}'] = (grouped[f'number_{s}'] / grouped.number).apply(lambda x: round(x, 2))
 
         # create output
@@ -170,7 +171,7 @@ class Displayer(Loader):
 
         if n_bars:
             historic = df[['year', 'number', 'number_f', 'number_m', 'ratio_f', 'ratio_m']].copy()
-            for s in ('f', 'm'):
+            for s in self._sexes:
                 historic[f'ratio_{s}'] = historic[f'ratio_{s}'].apply(lambda x: round(x, 2))
 
             if n_bars:
@@ -250,7 +251,7 @@ class Displayer(Loader):
 
         # aggregate
         df = df.groupby('name', as_index=False).agg({'number': sum, 'number_f': sum, 'number_m': sum})
-        for s in ('f', 'm'):
+        for s in self._sexes:
             df[f'ratio_{s}'] = df[f'number_{s}'] / df.number
 
         # add lowercase name for filtering
@@ -296,7 +297,7 @@ class Displayer(Loader):
             return {}
 
         df = df.sort_values('number', ascending=False).drop(columns=['name_lower'])
-        for s in ('f', 'm'):
+        for s in self._sexes:
             df[f'ratio_{s}'] = df[f'ratio_{s}'].apply(lambda x: round(x, 2))
         df['display'] = [_create_display_for_search(*i) for i in df[['number', 'ratio_f', 'ratio_m']].to_records(
             index=False)]
