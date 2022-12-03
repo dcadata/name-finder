@@ -50,7 +50,7 @@ class Loader:
             '_f', '_m'), how='outer').merge(self._name_by_year, on=['name', 'year'])
         for s in self._sexes:
             self._calcd[f'number_{s}'] = self._calcd[f'number_{s}'].fillna(0).apply(int)
-            # self._calcd[f'ratio_{s}'] = self._calcd[f'number_{s}'] / self._calcd.number
+            self._calcd[f'ratio_{s}'] = self._calcd[f'number_{s}'] / self._calcd.number
 
         # add actuarial - loses years before 1900
         self._raw_with_actuarial = self._raw.merge(self._read_actuarial_data(), on=['sex', 'year'])
