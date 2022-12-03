@@ -63,15 +63,16 @@ class Loader:
         return df
 
     def _read_one_file_national(self, filename: str) -> pd.DataFrame:
-        df = pd.read_csv(self._national_data_directory + filename, names=['name', 'sex', 'number'], dtype={
-            'name': str, 'sex': str, 'number': int}).assign(year=filename)
+        dtypes = {'name': str, 'sex': str, 'number': int}
+        df = pd.read_csv(self._national_data_directory + filename, names=list(dtypes.keys()), dtype=dtypes).assign(
+            year=filename)
         df.year = df.year.apply(lambda x: x.rsplit('.', 1)[0].replace('yob', '')).apply(int)
         return df
 
     def _read_one_file_territory(self, filename: str) -> pd.DataFrame:
-        df = pd.read_csv(self._territories_data_directory + filename, names=[
-            'territory', 'sex', 'year', 'name', 'number'], dtype={
-            'territory': str, 'name': str, 'sex': str, 'number': int, 'year': int}).drop(columns=['territory'])
+        dtypes = {'territory': str, 'sex': str, 'year': int, 'name': str, 'number': int}
+        df = pd.read_csv(self._territories_data_directory + filename, names=list(dtypes.keys()), dtype=dtypes).drop(
+            columns='territory')
         return df
 
     def _read_actuarial_data(self) -> pd.DataFrame:
