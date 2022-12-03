@@ -54,8 +54,7 @@ class Loader:
             self._calcd[f'ratio_{s}'] = self._calcd[f'number_{s}'] / self._calcd.number
 
         # add actuarial - loses years before 1900
-        self._raw_with_actuarial = pd.concat(
-            self._raw[self._raw.sex == s.upper()].merge(self._load_actuarial(s), on='year') for s in self._sexes)
+        self._raw_with_actuarial = self._raw.merge(self._read_actuarial_data(), on=['sex', 'year'])
         self._raw_with_actuarial['number_living'] = (
                 self._raw_with_actuarial.number * self._raw_with_actuarial.survival_prob)
 
@@ -75,9 +74,9 @@ class Loader:
             'territory': str, 'name': str, 'sex': str, 'number': int, 'year': int}).drop(columns=['territory'])
         return df
 
-    @staticmethod
-    def _load_actuarial(sex: str) -> pd.DataFrame:
-        actuarial = pd.read_csv(f'data/actuarial/{sex}.csv', usecols=['year', 'age', 'survivors'], dtype=int)
+    def _read_actuarial_data(self) -> pd.DataFrame:
+        actuarial = pd.concat(pd.read_csv(f'data/actuarial/{s}.csv', usecols=[
+            'year', 'age', 'survivors'], dtype=int).assign(sex=s.upper()) for s in self._sexes)
         actuarial = actuarial[actuarial.year == MAX_YEAR].copy()
         actuarial['birth_year'] = actuarial.year - actuarial.age
         actuarial['survival_prob'] = actuarial.survivors.apply(lambda x: x / 100_000)
