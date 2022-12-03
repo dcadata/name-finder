@@ -189,8 +189,8 @@ class Displayer(Loader):
             )
             hist_temp = historic[historic.year.apply(lambda x: (x >= MAX_YEAR - bars_lookback_years) and (x % int(
                 bars_lookback_years / n_bars) == 0))]
-            output['display']['number_bars'] = list(hist_temp.number_bars)
-            output['display']['ratio_bars'] = [] if essentially_single_gender else list(hist_temp.ratio_bars)
+            output['display']['number_bars'] = hist_temp.number_bars.to_list()
+            output['display']['ratio_bars'] = [] if essentially_single_gender else hist_temp.ratio_bars.to_list()
 
         return output
 
