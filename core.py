@@ -131,7 +131,7 @@ class Displayer(Loader):
         # aggregate
         grouped = df.groupby('name', as_index=False).agg({'number': sum, 'number_f': sum, 'number_m': sum})
         for s in self._sexes:
-            grouped[f'ratio_{s}'] = (grouped[f'number_{s}'] / grouped.number).apply(lambda x: round(x, 2))
+            grouped[f'ratio_{s}'] = (grouped[f'number_{s}'] / grouped.number).round(2)
 
         # create output
         grouped = grouped.iloc[0].to_dict()
@@ -172,7 +172,7 @@ class Displayer(Loader):
         if n_bars:
             historic = df[['year', 'number', 'number_f', 'number_m', 'ratio_f', 'ratio_m']].copy()
             for s in self._sexes:
-                historic[f'ratio_{s}'] = historic[f'ratio_{s}'].apply(lambda x: round(x, 2))
+                historic[f'ratio_{s}'] = historic[f'ratio_{s}'].round(2)
 
             if n_bars:
                 essentially_single_gender = output['ratios']['f'] >= 0.99 or output['ratios']['m'] >= 0.99
@@ -298,7 +298,7 @@ class Displayer(Loader):
 
         df = df.sort_values('number', ascending=False).drop(columns=['name_lower'])
         for s in self._sexes:
-            df[f'ratio_{s}'] = df[f'ratio_{s}'].apply(lambda x: round(x, 2))
+            df[f'ratio_{s}'] = df[f'ratio_{s}'].round(2)
         df['display'] = [_create_display_for_search(*i) for i in df[['number', 'ratio_f', 'ratio_m']].to_records(
             index=False)]
 
