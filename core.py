@@ -112,7 +112,6 @@ class Displayer(Loader):
         df = self._calcd.copy()
 
         # filter on name
-        name = ''.join(re.findall('[a-z]', name, re.I))
         df = df[df['name'].str.lower() == name.lower()]
         if not len(df):
             return {}
