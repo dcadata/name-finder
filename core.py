@@ -187,7 +187,7 @@ class Displayer(Loader):
                     historic.year.apply(str).apply(lambda x: f' {x}')
             )
             if n_bars == -1:
-                hist_temp = historic
+                hist_temp = historic  # show one bar per year
             else:
                 bars_lookback_years = 100
                 hist_temp = historic[historic.year.apply(lambda x: (x >= MAX_YEAR - bars_lookback_years) and (x % int(
