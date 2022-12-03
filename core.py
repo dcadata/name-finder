@@ -169,27 +169,26 @@ class Displayer(Loader):
         )
 
         if n_bars:
-            historic = df[['year', 'number', 'number_f', 'number_m', 'ratio_f', 'ratio_m']].copy()
+            historic = df[['year', 'number', 'number_f', 'number_m']].copy()
             for s in self._sexes:
-                historic[f'ratio_{s}'] = historic[f'ratio_{s}'].round(2)
+                historic[f'ratio_{s}'] = (historic[f'number_{s}'] / historic.number).round(2)
 
-            if n_bars:
-                essentially_single_gender = output['ratios']['f'] >= 0.99 or output['ratios']['m'] >= 0.99
-                number_bars_mult = 100 / peak.number
-                bars_lookback_years = 100
-                historic['number_bars'] = (
-                        historic.year.apply(str).apply(lambda x: f'{x} ') +
-                        historic.number.apply(lambda x: int(round(x * number_bars_mult)) * self._blocks[2] + f' {x:,}')
-                )
-                historic['ratio_bars'] = (
-                        historic.ratio_f.apply(lambda x: 'f ' + int(round(x * 50)) * self._blocks[0]) +
-                        historic.ratio_m.apply(lambda x: int(round(x * 50)) * self._blocks[1] + ' m') +
-                        historic.year.apply(str).apply(lambda x: f' {x}')
-                )
-                hist_temp = historic[historic.year.apply(lambda x: (x >= MAX_YEAR - bars_lookback_years) and (x % int(
-                    bars_lookback_years / n_bars) == 0))]
-                output['display']['number_bars'] = list(hist_temp.number_bars)
-                output['display']['ratio_bars'] = [] if essentially_single_gender else list(hist_temp.ratio_bars)
+            essentially_single_gender = output['ratios']['f'] >= 0.99 or output['ratios']['m'] >= 0.99
+            number_bars_mult = 100 / peak.number
+            bars_lookback_years = 100
+            historic['number_bars'] = (
+                    historic.year.apply(str).apply(lambda x: f'{x} ') +
+                    historic.number.apply(lambda x: int(round(x * number_bars_mult)) * self._blocks[2] + f' {x:,}')
+            )
+            historic['ratio_bars'] = (
+                    historic.ratio_f.apply(lambda x: 'f ' + int(round(x * 50)) * self._blocks[0]) +
+                    historic.ratio_m.apply(lambda x: int(round(x * 50)) * self._blocks[1] + ' m') +
+                    historic.year.apply(str).apply(lambda x: f' {x}')
+            )
+            hist_temp = historic[historic.year.apply(lambda x: (x >= MAX_YEAR - bars_lookback_years) and (x % int(
+                bars_lookback_years / n_bars) == 0))]
+            output['display']['number_bars'] = list(hist_temp.number_bars)
+            output['display']['ratio_bars'] = [] if essentially_single_gender else list(hist_temp.ratio_bars)
 
         return output
 
