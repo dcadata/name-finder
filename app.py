@@ -60,7 +60,7 @@ def _get_name(name: str):
 def _get_search_by_text(query: str):
     escaped_query = escape(query)
     top = request.args.get('top', type=int)
-    data = displayer.search_by_text(escaped_query, top=top)
+    data = displayer.search_by_text(escaped_query, top=top, as_records=True)
     html = open('templates/query_page.html').read().format(query=escaped_query, top=top, info=''.join(
         '<li><a href="/?n={name}">{name}</a> {display}</li>'.format(**i) for i in data))
     return html
@@ -98,6 +98,7 @@ def search_endpoint():
         delta_after=request.args.get('delta_after', default=None, type=int),
         delta_pct=request.args.get('delta_pct', default=None, type=float),
         delta_fem=request.args.get('delta_fem', default=None, type=float),
+        as_records=True,
     )
     return jsonify(data)
 
