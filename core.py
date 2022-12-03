@@ -133,7 +133,7 @@ class Displayer(Loader):
             grouped[f'ratio_{s}'] = (grouped[f'number_{s}'] / grouped.number).apply(lambda x: round(x, 2))
 
         # create output
-        grouped = grouped.to_dict('records')[0]
+        grouped = grouped.iloc[0].to_dict()
         output = {
             'name': grouped['name'],
             'numbers': {
