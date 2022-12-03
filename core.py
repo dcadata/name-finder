@@ -7,7 +7,6 @@ import pandas as pd
 # years as currently available in dataset
 _MIN_YEAR = 1880
 MAX_YEAR = int(re.search('^yob([0-9]{4}).txt$', os.listdir('data/names/')[-1]).group(1))
-OUTPUT_RECORDS = True
 
 
 class Loader:
@@ -216,6 +215,7 @@ class Displayer(Loader):
             delta_pct: (float, bool) = None,
             delta_fem: (float, bool) = None,
             top: int = 30,
+            as_records: bool = False,
     ) -> dict:
         # set up
         if year:
@@ -304,7 +304,7 @@ class Displayer(Loader):
         if top:
             df = df.head(top)
 
-        data = df.to_dict('records') if OUTPUT_RECORDS else df
+        data = df.to_dict('records') if as_records else df
         return data
 
     def search_by_text(self, query: str, *args, **kwargs) -> dict:
