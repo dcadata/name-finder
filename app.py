@@ -95,9 +95,6 @@ def search_endpoint():
         after=request.args.get('after', default=None, type=int),
         before=request.args.get('before', default=None, type=int),
         year=request.args.get('year', default=None, type=int),
-        delta_after=request.args.get('delta_after', default=None, type=int),
-        delta_pct=request.args.get('delta_pct', default=None, type=float),
-        delta_fem=request.args.get('delta_fem', default=None, type=float),
         as_records=True,
     )
     return jsonify(data)

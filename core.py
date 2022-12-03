@@ -39,9 +39,7 @@ class Loader:
 
         # name by year
         self._name_by_year = self._concatenated.groupby(['name', 'year'], as_index=False).number.sum().merge(
-            self._number_per_year, on='year', suffixes=('', '_total'))
-        self._name_by_year['pct_year'] = self._name_by_year.number / self._name_by_year.number_total
-        self._name_by_year = self._name_by_year.drop(columns='number_total')
+            self._number_per_year, on='year', suffixes=('', '_total')).drop(columns='number_total')
 
         # first appearance
         self._first_appearance = self._raw.groupby('name').year.min()
@@ -94,7 +92,6 @@ class Displayer(Loader):
         self.number_bars_header_text = 'Number of Usages (scaled)'
         self.ratio_bars_header_text = 'Gender Ratio (f <-> m)'
         self._blocks = '▓', '▒', '░'
-        self._delta_cutoff = 0.0000000000000000000000000000000000000000000000000000000000000000000000000000000001
 
     def name(
             self,
@@ -215,9 +212,6 @@ class Displayer(Loader):
             after: int = None,
             before: int = None,
             year: int = None,
-            delta_after: int = None,
-            delta_pct: (float, bool) = None,
-            delta_fem: (float, bool) = None,
             top: int = 30,
             as_records: bool = False,
     ) -> dict:
@@ -228,26 +222,6 @@ class Displayer(Loader):
         self._after = after
         self._before = before
         df = self._calcd.copy()
-
-        # calculate number/gender delta
-        if not delta_after and (delta_pct is not None or delta_fem is not None):  # then use default delta_after
-            delta_after = MAX_YEAR - 30
-
-        if delta_after:
-            if delta_pct is True:
-                delta_pct = self._delta_cutoff
-            elif delta_pct is False:
-                delta_pct = -self._delta_cutoff
-
-            if delta_fem is True:
-                delta_fem = self._delta_cutoff
-            elif delta_fem is False:
-                delta_fem = -self._delta_cutoff
-
-            if delta_pct is not None:
-                df = _calculate_number_delta(df, delta_after, delta_pct)
-            if delta_fem is not None:
-                df = _calculate_gender_delta(df, delta_after, delta_fem)
 
         # filter on years
         df = df[df.year.isin(self._years_to_select)].copy()
@@ -299,7 +273,7 @@ class Displayer(Loader):
         if not len(df):
             return {}
 
-        df = df.sort_values('number', ascending=False).drop(columns=['name_lower'])
+        df = df.sort_values('number', ascending=False).drop(columns='name_lower')
         for s in self._sexes:
             df[f'ratio_{s}'] = df[f'ratio_{s}'].round(2)
         df['display'] = [_create_display_for_search(*i) for i in df[['number', 'ratio_f', 'ratio_m']].to_records(
@@ -313,11 +287,6 @@ class Displayer(Loader):
 
     def search_by_text(self, query: str, *args, **kwargs) -> dict:
         query = query.lower()
-        delta_sections = re.split('trend:', query, 1)
-        if len(delta_sections) > 1:
-            query, delta_section = delta_sections[0], delta_sections[-1]
-        else:
-            delta_section = ''
 
         def _safely_check_regex(pattern: str):
             return _safe_regex_search(pattern, query)
@@ -325,12 +294,6 @@ class Displayer(Loader):
         def _safely_check_regex_and_split_into_tuple(pattern: str):
             result = _safely_check_regex(pattern)
             return tuple(result.split(',')) if result else None
-
-        def _safely_check_regex_delta_section(pattern: str):
-            try:
-                return re.search(pattern, delta_section).groups()[-1]
-            except (AttributeError, IndexError):
-                return
 
         length_ind = _safely_check_regex('length:([0-9]+-[0-9]+)')
         year_ind = _safely_check_regex('year:([0-9]{4})')
@@ -366,8 +329,6 @@ class Displayer(Loader):
             after=after_ind,
             before=before_ind,
             year=int(year_ind) if year_ind else None,
-            delta_pct=dict(down=False, up=True).get(_safely_check_regex_delta_section('(down|up)')),
-            delta_fem=dict(fem=True, masc=False).get(_safely_check_regex_delta_section('(fem|masc)')),
             *args,
             **kwargs,
         )
@@ -492,31 +453,6 @@ def _safe_regex_search(pattern: str, text: str):
         return re.search(pattern, text).groups()[-1]
     except (AttributeError, IndexError):
         return
-
-
-def _calculate_number_delta(df: pd.DataFrame, after: int, pct: float) -> pd.DataFrame:
-    chg = df[df.year == after].merge(df[df.year == MAX_YEAR], on=['name'], suffixes=('_y1', '_y2'))
-    if pct > 0:  # trended up
-        chg['delta'] = chg.pct_year_y2 >= chg.pct_year_y1 * (1 + pct)
-    elif pct < 0:  # trended down
-        chg['delta'] = chg.pct_year_y1 >= chg.pct_year_y2 * (1 - pct)
-    else:  # no meaningful trend - less than 1% diff
-        chg['delta'] = (chg.pct_year_y1 / chg.pct_year_y2).apply(lambda x: 0.99 <= x <= 1.01)
-    df = df[df.name.isin(chg[chg.delta].name)].copy()
-    return df
-
-
-def _calculate_gender_delta(df: pd.DataFrame, after: int, fem_ratio: float) -> pd.DataFrame:
-    chg = df.copy()
-    chg = chg[chg.year == after].merge(chg[chg.year == MAX_YEAR], on=['name'], suffixes=('_y1', '_y2'))
-    if fem_ratio > 0:  # trended fem
-        chg['delta'] = chg.ratio_f_y2 >= chg.ratio_f_y1 + fem_ratio
-    elif fem_ratio < 0:  # trended masc
-        chg['delta'] = chg.ratio_m_y2 >= chg.ratio_m_y1 - fem_ratio
-    else:  # no meaningful trend - less than 1% diff
-        chg['delta'] = (chg.ratio_f_y1 - chg.ratio_f_y2).apply(abs).apply(lambda x: x <= 0.01)
-    df = df[df.name.isin(chg[chg.delta].name)].copy()
-    return df
 
 
 def _create_display_ratio(ratio_f: float, ratio_m: float, ignore_ones: bool = False) -> str:
