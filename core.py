@@ -171,9 +171,13 @@ class Displayer(Loader):
             for s in self._sexes:
                 historic[f'ratio_{s}'] = (historic[f'number_{s}'] / historic.number).round(2)
 
-            linreg = stats.linregress(historic.year, historic.ratio_f.apply(lambda x: x * 100))
-            if linreg.pvalue < 0.05:
-                output['ratio_f_trend'] = round(linreg.slope, 2)
+            number_linreg = stats.linregress(historic.year, historic.number.apply(lambda x: x * 100))
+            if number_linreg.pvalue < 0.05:
+                output['number_trend'] = round(number_linreg.slope, 2)
+
+            ratio_f_linreg = stats.linregress(historic.year, historic.ratio_f.apply(lambda x: x * 100))
+            if ratio_f_linreg.pvalue < 0.05:
+                output['ratio_f_trend'] = round(ratio_f_linreg.slope, 2)
 
             essentially_single_gender = output['ratios']['f'] >= 0.99 or output['ratios']['m'] >= 0.99
             number_bars_mult = 100 / peak.number
@@ -215,7 +219,7 @@ class Displayer(Loader):
             year: int = None,
             top: int = 30,
             as_records: bool = False,
-    ) -> dict:
+    ) -> (list, pd.DataFrame):
         # set up
         if year:
             after = year
@@ -286,7 +290,7 @@ class Displayer(Loader):
         data = df.to_dict('records') if as_records else df
         return data
 
-    def search_by_text(self, query: str, *args, **kwargs) -> dict:
+    def search_by_text(self, query: str, *args, **kwargs) -> (list, pd.DataFrame):
         query = query.lower()
 
         def _safely_check_regex(pattern: str):
