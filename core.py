@@ -486,12 +486,11 @@ def _create_display_for_name(
     numbers_fm = f'f={number_f:,}, m={number_m:,}' if number_f >= number_m else f'm={number_m:,}, f={number_f:,}'
     display_ratio = _create_display_ratio(ratio_f, ratio_m)
     return dict(
-        short=f'n={number:,}, {display_ratio}',
         info=[
-            f'Total Usages: n={number:,} ({numbers_fm})',
+            f'Total Usages: {number:,} ({numbers_fm})',
             f'Ratio: {display_ratio}',
-            f'Peak({peak_year}): n={peak_number:,}',
-            f'Latest({latest_year}): n={latest_number:,}',
+            f'Peak({peak_year}): {peak_number:,}',
+            f'Latest({latest_year}): {latest_number:,}',
             f'Earliest({first_appearance})',
         ],
     )
@@ -500,7 +499,7 @@ def _create_display_for_name(
 def _create_display_for_search(number: int, ratio_f: float, ratio_m: float) -> str:
     if display_ratio := _create_display_ratio(ratio_f, ratio_m):
         display_ratio = ', ' + display_ratio
-    return f'(n={number:,}{display_ratio})'
+    return f'({number:,}{display_ratio})'
 
 
 def create_predict_gender_reference(ages: tuple = (18, 80), conf_min: float = 0.7, n_min: int = 10) -> pd.DataFrame:
