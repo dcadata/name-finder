@@ -4,7 +4,7 @@ from time import sleep
 import pandas as pd
 import requests
 
-from finder import MAX_YEAR
+from core import MAX_YEAR
 
 
 def _refresh_babynames(session: requests.Session) -> bool:
