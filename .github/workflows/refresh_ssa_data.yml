@@ -13,7 +13,7 @@ jobs:
       - uses: actions/setup-python@v3
         with:
           python-version: '3.10'
-      - run: pip3 install pandas requests lxml
+      - run: pip3 install numpy pandas requests lxml scipy
       - run: python refresh_ssa_data.py
       - name: Commit and push if changed
         run: |-
