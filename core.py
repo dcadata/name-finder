@@ -11,7 +11,7 @@ MAX_YEAR = int(re.search('^yob([0-9]{4}).txt$', os.listdir('data/names/')[-1]).g
 
 
 class Loader:
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         self._national_data_directory = 'data/names/'
         self._territories_data_directory = 'data/namesbyterritory/'
         self._sexes = ('f', 'm')
@@ -85,7 +85,7 @@ class Loader:
 
 
 class Displayer(Loader):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self._after = None
         self._before = None
