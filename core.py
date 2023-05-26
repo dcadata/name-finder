@@ -217,7 +217,7 @@ class Displayer(Loader):
             after: int = None,
             before: int = None,
             year: int = None,
-            top: int = 30,
+            top: int = 20,
             as_records: bool = False,
     ) -> (list, pd.DataFrame):
         # set up
