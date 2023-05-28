@@ -24,7 +24,7 @@ class Loader:
         data = []
         for data_directory, is_territory in [
             (self._national_data_directory, False),
-            (self._territories_data_directory, True),
+            # (self._territories_data_directory, True),
         ]:
             for filename in os.listdir(data_directory):
                 if not filename.lower().endswith('.txt'):
