@@ -2,6 +2,8 @@ import pandas as pd
 import seaborn as sns
 from matplotlib import pyplot as mpl
 
+from extras import PLACEHOLDER_NAMES
+
 
 def create_fem_and_back_analysis(calcd: pd.DataFrame) -> pd.DataFrame:
     number_min_total_cutoff = 10_000
@@ -29,7 +31,7 @@ def create_fem_and_back_analysis(calcd: pd.DataFrame) -> pd.DataFrame:
         (df.ratio_f_latest < (1 - ratio_f_cutoff)) &
         (df.ratio_f_latest > 0.01) &
         (df.swing_back < swing_back_cutoff) &
-        ~df.name.isin(('Unknown', 'Baby'))
+        ~df.name.isin(PLACEHOLDER_NAMES)
         ]
     df = df.sort_values('number', ascending=False)
     return df
