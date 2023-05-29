@@ -1,7 +1,7 @@
 import pandas as pd
 
 from core import Displayer
-from extras import PLACEHOLDER_NAMES
+from extras import PLACEHOLDER_NAMES, NEUTRAL_RATIO_RANGE
 
 
 def top_neutral_of_2022(displayer: Displayer) -> pd.DataFrame:
@@ -16,9 +16,8 @@ def top_neutral_of_2022(displayer: Displayer) -> pd.DataFrame:
     target_year = 2022
     after_year = target_year - 20
     top = 100
-    gender_ratio_range = (.2, .8)
 
-    target_year_data = _transform(displayer.search(year=target_year, gender=gender_ratio_range, top=top))
+    target_year_data = _transform(displayer.search(year=target_year, gender=NEUTRAL_RATIO_RANGE, top=top))
     target_year_data = target_year_data[~target_year_data.name.isin(PLACEHOLDER_NAMES)].copy()
     after_year_data = _transform(displayer.search(year=after_year, top=25_000))
     interval_data = _transform(displayer.search(after=after_year, top=25_000)).drop(columns=['ratio_f', 'ratio_m'])
