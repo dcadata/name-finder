@@ -34,7 +34,7 @@ class Loader:
 
     def _transform(self) -> None:
         # combine territories w/ national
-        self._raw = self._concatenated.groupby(['name', 'sex', 'year'], as_index=False).number.sum()
+        self._raw = self._concatenated.groupby(['name', 'sex', 'year', 'rank_'], as_index=False).number.sum()
         self._number_per_year = self._concatenated.groupby('year', as_index=False).number.sum()
 
         # name by year
@@ -45,12 +45,13 @@ class Loader:
         self._first_appearance = self._raw.groupby('name').year.min()
 
         # add ratios
-        _separate = lambda x: self._raw[self._raw.sex == x].drop(columns='sex')
-        self._calcd = _separate('F').merge(_separate('M'), on=['name', 'year'], suffixes=(
+        _separate_data = lambda s: self._raw[self._raw.sex == s].drop(columns='sex').rename(columns=dict(rank_='rank'))
+        self._calcd = _separate_data('F').merge(_separate_data('M'), on=['name', 'year'], suffixes=(
             '_f', '_m'), how='outer').merge(self._name_by_year, on=['name', 'year'])
         for s in self._sexes:
             self._calcd[f'number_{s}'] = self._calcd[f'number_{s}'].fillna(0).apply(int)
             self._calcd[f'ratio_{s}'] = self._calcd[f'number_{s}'] / self._calcd.number
+            self._calcd[f'rank_{s}'] = self._calcd[f'rank_{s}'].fillna(-1).map(int)
 
         # add actuarial - loses years before 1900
         self._raw_with_actuarial = self._raw.merge(self._read_actuarial_data(), on=['sex', 'year'])
@@ -59,6 +60,13 @@ class Loader:
 
     def _read_one_file(self, filename: str, is_territory: bool = None) -> pd.DataFrame:
         df = self._read_one_file_territory(filename) if is_territory else self._read_one_file_national(filename)
+
+        def _add_rank_by_sex(data: pd.DataFrame, sex: str) -> pd.DataFrame:
+            data = data[data.sex == sex.upper()].copy()
+            data['rank_'] = data.number.rank(method='min', ascending=False)
+            return data
+
+        df = pd.concat((_add_rank_by_sex(df, 'f'), _add_rank_by_sex(df, 'm')))
         return df
 
     def _read_one_file_national(self, filename: str) -> pd.DataFrame:
