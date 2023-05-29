@@ -42,9 +42,6 @@ class Loader:
         self._name_by_year = self._concatenated.groupby(['name', 'year'], as_index=False).number.sum().merge(
             self._number_per_year, on='year', suffixes=('', '_total')).drop(columns='number_total')
 
-        # first appearance
-        self._first_appearance = self._raw.groupby('name').year.min()
-
         # add ratios
         _separate_data = lambda x: self._raw[self._raw.sex == x].drop(columns='sex').rename(columns=dict(rank_='rank'))
         self._calcd = _separate_data('F').merge(_separate_data('M'), on=['name', 'year'], suffixes=(
@@ -140,6 +137,7 @@ class Displayer(Loader):
         # create metadata dfs
         peak = df.loc[df.number.idxmax()].copy()
         latest = df.loc[df.year.idxmax()].copy()
+        earliest = df.loc[df.year.idxmin()].copy()
 
         # filter on years
         df = df[df.year.isin(self._years_to_select)]
@@ -166,15 +164,9 @@ class Displayer(Loader):
                 'f': grouped['ratio_f'],
                 'm': grouped['ratio_m'],
             },
-            'peak': {
-                'year': int(peak.year),
-                'number': int(peak.number),
-            },
-            'latest': {
-                'year': int(latest.year),
-                'number': int(latest.number),
-            },
-            'first_appearance': int(self._first_appearance[grouped['name']]),
+            'peak': _decompose_peak_or_latest(peak),
+            'latest': _decompose_peak_or_latest(latest),
+            'earliest': _decompose_peak_or_latest(earliest),
         }
         output['display'] = _create_display_for_name(
             output['numbers']['total'],
@@ -183,10 +175,9 @@ class Displayer(Loader):
             output['ratios']['f'],
             output['ratios']['m'],
             output['peak']['year'],
-            output['peak']['number'],
+            output['peak']['numbers']['total'],
             output['latest']['year'],
-            output['latest']['number'],
-            output['first_appearance'],
+            output['latest']['numbers']['total'],
         )
 
         if n_bars:
@@ -506,7 +497,6 @@ def _create_display_for_name(
         peak_number: int,
         latest_year: int,
         latest_number: int,
-        first_appearance: int,
 ) -> dict:
     numbers_fm = f'f={number_f:,}, m={number_m:,}' if number_f >= number_m else f'm={number_m:,}, f={number_f:,}'
     display_ratio = _create_display_ratio(ratio_f, ratio_m)
@@ -516,7 +506,6 @@ def _create_display_for_name(
             f'Ratio: {display_ratio}',
             f'Peak({peak_year}): {peak_number:,}',
             f'Latest({latest_year}): {latest_number:,}',
-            f'Earliest({first_appearance})',
         ],
     )
 
@@ -525,6 +514,21 @@ def _create_display_for_search(number: int, ratio_f: float, ratio_m: float) -> s
     if display_ratio := _create_display_ratio(ratio_f, ratio_m):
         display_ratio = ', ' + display_ratio
     return f'({number:,}{display_ratio})'
+
+
+def _decompose_peak_or_latest(peak_or_latest: pd.DataFrame) -> dict:
+    return dict(
+        year=int(peak_or_latest.year),
+        numbers=dict(
+            total=int(peak_or_latest.number),
+            f=int(peak_or_latest.number_f),
+            m=int(peak_or_latest.number_m),
+        ),
+        rank=dict(
+            f=int(peak_or_latest.rank_f),
+            m=int(peak_or_latest.rank_m)
+        ),
+    )
 
 
 def create_predict_gender_reference(ages: tuple = (18, 80), conf_min: float = 0.7, n_min: int = 10) -> pd.DataFrame:
