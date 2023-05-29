@@ -281,8 +281,10 @@ class Displayer(Loader):
         df = df.sort_values('number', ascending=False).drop(columns='name_lower')
         for s in self._sexes:
             df[f'ratio_{s}'] = df[f'ratio_{s}'].round(2)
-        df['display'] = [_create_display_for_search(*i) for i in df[['number', 'ratio_f', 'ratio_m']].to_records(
-            index=False)]
+
+        if as_records:
+            df['display'] = [_create_display_for_search(*i) for i in df[[
+                'number', 'ratio_f', 'ratio_m']].to_records(index=False)]
 
         if top:
             df = df.head(top)
