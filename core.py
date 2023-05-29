@@ -46,7 +46,7 @@ class Loader:
         self._first_appearance = self._raw.groupby('name').year.min()
 
         # add ratios
-        _separate_data = lambda s: self._raw[self._raw.sex == s].drop(columns='sex').rename(columns=dict(rank_='rank'))
+        _separate_data = lambda x: self._raw[self._raw.sex == x].drop(columns='sex').rename(columns=dict(rank_='rank'))
         self._calcd = _separate_data('F').merge(_separate_data('M'), on=['name', 'year'], suffixes=(
             '_f', '_m'), how='outer').merge(self._name_by_year, on=['name', 'year'])
         for s in self._sexes:
