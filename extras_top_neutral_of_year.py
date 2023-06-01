@@ -10,7 +10,6 @@ def top_neutral_of_2022(displayer: Displayer) -> pd.DataFrame:
             df[col] = df[col].apply(lambda x: f'{x:,}')
         for col in 'fm':
             df[f'percent_{col}'] = df[f'ratio_{col}'].apply(lambda x: f'{int(x * 100)}%')
-        df = df.drop(columns='display')
         return df
 
     target_year = 2022
