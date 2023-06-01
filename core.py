@@ -252,7 +252,7 @@ class Displayer(Loader):
             df[f'ratio_{s}'] = df[f'number_{s}'] / df.number
 
         # add lowercase name for filtering
-        df['name_lower'] = df.name.apply(lambda x: x.lower())
+        df['name_lower'] = df.name.str.lower()
 
         # filter on numbers
         if number_min:
@@ -262,7 +262,7 @@ class Displayer(Loader):
 
         # filter on length
         if length:
-            df = df[df.name.apply(len).apply(lambda x: length[0] <= x <= length[1])]
+            df = df[df.name.map(len).apply(lambda x: length[0] <= x <= length[1])]
 
         # filter on ratio
         if gender:
