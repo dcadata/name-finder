@@ -9,7 +9,7 @@ def top_neutral_of_2022(displayer: Displayer) -> pd.DataFrame:
         for col in ('number', 'number_f', 'number_m'):
             df[col] = df[col].apply(lambda x: f'{x:,}')
         for col in 'fm':
-            df[f'percent_{col}'] = df[f'ratio_{col}'].apply(lambda x: f'{int(x * 100)}%')
+            df[f'percent_{col}'] = (df[f'ratio_{col}'] * 100).map(int).map(str) + '%'
         return df
 
     target_year = 2022
@@ -27,7 +27,7 @@ def top_neutral_of_2022(displayer: Displayer) -> pd.DataFrame:
         .merge(interval_data, on='name', suffixes=('', f'_after{after_year}'))
     )
 
-    merged.name = merged.name.apply(lambda x: f"'{x}")
+    merged.name = "'" + merged.name
     merged['percent_change'] = (merged.ratio_f - merged[f'ratio_f_{after_year}']).apply(lambda x: (
             ('f' if x > 0 else 'm') + f'+{int(abs(x) * 100)}%'
     ))
