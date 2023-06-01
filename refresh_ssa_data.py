@@ -19,6 +19,7 @@ def _refresh_babynames(session: requests.Session) -> bool:
     for url in (
             'https://www.ssa.gov/oact/babynames/names.zip',
             'https://www.ssa.gov/oact/babynames/territory/namesbyterritory.zip',
+            'https://www.ssa.gov/oact/babynames/territory/namesbystate.zip',
     ):
         filepath = 'data/' + url.rsplit('/', 1)[1]
         open(filepath, 'wb').write(session.get(url).content)
