@@ -40,7 +40,7 @@ def _refresh_actuarial(session: requests.Session) -> None:
         df = pd.DataFrame(lines[6:], columns=lines[5])
         df = df[list(columns.keys())].rename(columns=columns)
         for col in df.columns:
-            df[col] = df[col].apply(int)
+            df[col] = df[col].map(int)
         df.to_csv(f'data/actuarial/{s.lower()}.csv', index=False)
 
 
