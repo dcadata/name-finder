@@ -47,7 +47,7 @@ class Loader:
         self._calcd = _separate_data('F').merge(_separate_data('M'), on=['name', 'year'], suffixes=(
             '_f', '_m'), how='outer').merge(self._name_by_year, on=['name', 'year'])
         for s in self._sexes:
-            self._calcd[f'number_{s}'] = self._calcd[f'number_{s}'].fillna(0).apply(int)
+            self._calcd[f'number_{s}'] = self._calcd[f'number_{s}'].fillna(0).map(int)
             self._calcd[f'ratio_{s}'] = self._calcd[f'number_{s}'] / self._calcd.number
             self._calcd[f'rank_{s}'] = self._calcd[f'rank_{s}'].fillna(-1).map(int)
 
@@ -71,7 +71,7 @@ class Loader:
         dtypes = {'name': str, 'sex': str, 'number': int}
         df = pd.read_csv(self._national_data_directory + filename, names=list(dtypes.keys()), dtype=dtypes).assign(
             year=filename)
-        df.year = df.year.apply(lambda x: x.rsplit('.', 1)[0].replace('yob', '')).apply(int)
+        df.year = df.year.apply(lambda x: x.rsplit('.', 1)[0].replace('yob', '')).map(int)
         return df
 
     def _read_one_file_territory(self, filename: str) -> pd.DataFrame:
@@ -85,7 +85,7 @@ class Loader:
             'year', 'age', 'survivors'], dtype=int).assign(sex=s.upper()) for s in self._sexes)
         actuarial = actuarial[actuarial.year == MAX_YEAR].copy()
         actuarial['birth_year'] = actuarial.year - actuarial.age
-        actuarial['survival_prob'] = actuarial.survivors.apply(lambda x: x / 100_000)
+        actuarial['survival_prob'] = actuarial.survivors / 100_000
         actuarial = actuarial.drop(columns=['year', 'survivors']).rename(columns={'birth_year': 'year'})
         return actuarial
 
@@ -186,23 +186,24 @@ class Displayer(Loader):
                 historic[f'ratio_{s}'] = (historic[f'number_{s}'] / historic.number).round(2)
 
             if len(historic) > 1:
-                number_linreg = stats.linregress(historic.year, historic.number.apply(lambda x: x * 100))
+                number_linreg = stats.linregress(historic.year, historic.number * 100)
                 if number_linreg.pvalue < 0.05:
                     output['number_trend'] = round(number_linreg.slope, 2)
-                ratio_f_linreg = stats.linregress(historic.year, historic.ratio_f.apply(lambda x: x * 100))
+                ratio_f_linreg = stats.linregress(historic.year, historic.ratio_f * 100)
                 if ratio_f_linreg.pvalue < 0.05:
                     output['ratio_f_trend'] = round(ratio_f_linreg.slope, 2)
 
             essentially_single_gender = output['ratios']['f'] >= 0.99 or output['ratios']['m'] >= 0.99
             number_bars_mult = 100 / peak.number
             historic['number_bars'] = (
-                    historic.year.apply(str).apply(lambda x: f'{x} ') +
+                    historic.year.map(str) + ' ' +
                     historic.number.apply(lambda x: int(round(x * number_bars_mult)) * self._blocks[2] + f' {x:,}')
             )
             historic['ratio_bars'] = (
-                    historic.ratio_f.apply(lambda x: 'f ' + int(round(x * 50)) * self._blocks[0]) +
-                    historic.ratio_m.apply(lambda x: int(round(x * 50)) * self._blocks[1] + ' m') +
-                    historic.year.apply(str).apply(lambda x: f' {x}')
+                    'f ' +
+                    historic.ratio_f.apply(lambda x: int(round(x * 50)) * self._blocks[0]) +
+                    historic.ratio_m.apply(lambda x: int(round(x * 50)) * self._blocks[1]) +
+                    ' m ' + historic.year.map(str)
             )
             if n_bars == -1:
                 hist_temp = historic  # show one bar per year
@@ -269,7 +270,7 @@ class Displayer(Loader):
 
         # apply text filters
         if pattern:
-            df = df[df.name.apply(lambda x: re.search(pattern, x, re.I)).apply(bool)]
+            df = df[df.name.apply(lambda x: re.search(pattern, x, re.I)).map(bool)]
         if start:
             df = df[df.name_lower.str.startswith(tuple(i.lower() for i in start))]
         if end:
@@ -279,7 +280,7 @@ class Displayer(Loader):
         if contains_any:
             df = df[df.name_lower.apply(lambda x: any((i.lower() in x for i in contains_any)))]
         if order:
-            df = df[df.name_lower.apply(lambda x: re.search('.*'.join(order), x, re.I)).apply(bool)]
+            df = df[df.name_lower.apply(lambda x: re.search('.*'.join(order), x, re.I)).map(bool)]
 
         # apply text not-filters
         if not_start:
@@ -385,7 +386,7 @@ class Displayer(Loader):
             return {}
 
         prob = df.groupby('age', as_index=False).number.sum()
-        prob['pct'] = prob.number.apply(lambda x: x / number)
+        prob['pct'] = prob.number / number
         prob = prob.sort_values('pct', ascending=False)
         prob['cumulative'] = prob.pct.cumsum()
         prediction = {
