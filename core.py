@@ -10,18 +10,18 @@ _MIN_YEAR = 1880
 MAX_YEAR = int(re.search('^yob([0-9]{4}).txt$', os.listdir('data/names/')[-1]).group(1))
 
 
-class Loader:
+class Builder:
     def __init__(self, *args, **kwargs) -> None:
         self._national_data_directory = 'data/names/'
         self._territories_data_directory = 'data/namesbyterritory/'
         self._states_data_directory = 'data/namesbystate/'
         self._sexes = ('f', 'm')
 
-    def load(self) -> None:
-        self._read_data()
-        self._transform()
+    def build_base(self) -> None:
+        self._load_data()
+        self._transform_data()
 
-    def _read_data(self) -> None:
+    def _load_data(self) -> None:
         data = []
         for data_directory, is_territory in [
             (self._national_data_directory, False),
@@ -30,10 +30,10 @@ class Loader:
             for filename in os.listdir(data_directory):
                 if not filename.lower().endswith('.txt'):
                     continue
-                data.append(self._read_one_file(filename, is_territory))
+                data.append(self._load_one_file(filename, is_territory))
         self._concatenated = pd.concat(data)
 
-    def _transform(self) -> None:
+    def _transform_data(self) -> None:
         # combine territories w/ national
         self._raw = self._concatenated.groupby(['name', 'sex', 'year', 'rank_'], as_index=False).number.sum()
         self._number_per_year = self._concatenated.groupby('year', as_index=False).number.sum()
@@ -52,12 +52,12 @@ class Loader:
             self._calcd[f'rank_{s}'] = self._calcd[f'rank_{s}'].fillna(-1).map(int)
 
         # add actuarial - loses years before 1900
-        self._raw_with_actuarial = self._raw.merge(self._read_actuarial_data(), on=['sex', 'year'])
+        self._raw_with_actuarial = self._raw.merge(self._load_actuarial_data(), on=['sex', 'year'])
         self._raw_with_actuarial['number_living'] = (
                 self._raw_with_actuarial.number * self._raw_with_actuarial.survival_prob)
 
-    def _read_one_file(self, filename: str, is_territory: bool = None) -> pd.DataFrame:
-        df = self._read_one_file_territory(filename) if is_territory else self._read_one_file_national(filename)
+    def _load_one_file(self, filename: str, is_territory: bool = None) -> pd.DataFrame:
+        df = self._load_one_file_territory(filename) if is_territory else self._load_one_file_national(filename)
 
         def _add_rank_by_sex(data: pd.DataFrame, sex: str) -> pd.DataFrame:
             data = data[data.sex == sex.upper()].copy()
@@ -67,20 +67,20 @@ class Loader:
         df = pd.concat((_add_rank_by_sex(df, 'f'), _add_rank_by_sex(df, 'm')))
         return df
 
-    def _read_one_file_national(self, filename: str) -> pd.DataFrame:
+    def _load_one_file_national(self, filename: str) -> pd.DataFrame:
         dtypes = {'name': str, 'sex': str, 'number': int}
         df = pd.read_csv(self._national_data_directory + filename, names=list(dtypes.keys()), dtype=dtypes).assign(
             year=filename)
         df.year = df.year.apply(lambda x: x.rsplit('.', 1)[0].replace('yob', '')).map(int)
         return df
 
-    def _read_one_file_territory(self, filename: str) -> pd.DataFrame:
+    def _load_one_file_territory(self, filename: str) -> pd.DataFrame:
         dtypes = {'territory': str, 'sex': str, 'year': int, 'name': str, 'number': int}
         df = pd.read_csv(self._territories_data_directory + filename, names=list(dtypes.keys()), dtype=dtypes).drop(
             columns='territory')
         return df
 
-    def _read_actuarial_data(self) -> pd.DataFrame:
+    def _load_actuarial_data(self) -> pd.DataFrame:
         actuarial = pd.concat(pd.read_csv(f'data/actuarial/{s}.csv', usecols=[
             'year', 'age', 'survivors'], dtype=int).assign(sex=s.upper()) for s in self._sexes)
         actuarial = actuarial[actuarial.year == MAX_YEAR].copy()
@@ -104,7 +104,7 @@ class Loader:
         return data
 
 
-class Displayer(Loader):
+class Displayer(Builder):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self._after = None
@@ -534,7 +534,7 @@ def _decompose_peak_or_latest(peak_or_latest: pd.DataFrame) -> dict:
 
 def create_predict_gender_reference(ages: tuple = (18, 80), conf_min: float = 0.7, n_min: int = 10) -> pd.DataFrame:
     displayer = Displayer()
-    displayer.load()
+    displayer.build_base()
     df = displayer._calcd.copy()
 
     df = df[df.year.apply(lambda x: MAX_YEAR - ages[1] <= x <= MAX_YEAR - ages[0])].copy()

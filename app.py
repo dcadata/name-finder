@@ -4,7 +4,7 @@ from markupsafe import escape
 import core
 
 displayer = core.Displayer()
-displayer.load()
+displayer.build_base()
 
 app = Flask(__name__)
 
