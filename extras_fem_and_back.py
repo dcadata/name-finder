@@ -51,3 +51,5 @@ def create_fem_and_back_visualization(fem_and_back: pd.DataFrame) -> None:
     ax.set(xlim=(0, 1), ylabel='', xlabel='ratio_f')
     ax.tick_params(labelsize=10, axis='y')
     sns.despine(left=True, bottom=True)
+
+    ax.figure.savefig('extras_outputs/fem_and_back.png')
