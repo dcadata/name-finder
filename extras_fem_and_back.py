@@ -6,7 +6,7 @@ from extras import PLACEHOLDER_NAMES
 
 
 def create_fem_and_back_analysis(calcd: pd.DataFrame) -> pd.DataFrame:
-    number_min_total_cutoff = 10_000
+    number_min_total_cutoff = 1_000
     number_min_per_decade = 25
     ratio_f_cutoff = 0.2
     swing_back_cutoff = -0.1
@@ -35,7 +35,7 @@ def create_fem_and_back_analysis(calcd: pd.DataFrame) -> pd.DataFrame:
         ~df.name.isin(PLACEHOLDER_NAMES)
         ]
     df = df.sort_values('number', ascending=False)
-    return df
+    return df.iloc[:150]
 
 
 def create_fem_and_back_visualization(fem_and_back: pd.DataFrame) -> None:
