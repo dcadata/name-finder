@@ -35,7 +35,7 @@ def create_fem_and_back_analysis(calcd: pd.DataFrame) -> pd.DataFrame:
         ~df.name.isin(PLACEHOLDER_NAMES)
         ]
     df = df.sort_values('number', ascending=False)
-    return df.iloc[:150]
+    return df.iloc[:125]
 
 
 def create_fem_and_back_visualization(fem_and_back: pd.DataFrame) -> None:
