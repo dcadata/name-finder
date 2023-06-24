@@ -33,7 +33,7 @@ def create_fem_and_back_analysis(calcd: pd.DataFrame) -> pd.DataFrame:
         (df.swing_back < swing_back_cutoff) &
         ~df.name.isin(PLACEHOLDER_NAMES)
         ]
-    df = df.sort_values('number', ascending=False)
+    df = df.sort_values('number', ascending=False)[['name', 'ratio_f_max', 'ratio_f_latest', 'swing_back']]
     return df.iloc[:125]
 
 
