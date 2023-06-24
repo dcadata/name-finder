@@ -8,7 +8,7 @@ from extras import PLACEHOLDER_NAMES
 def create_fem_and_back_analysis(calcd: pd.DataFrame) -> pd.DataFrame:
     number_min_total_cutoff = 1_000
     number_min_per_decade = 25
-    ratio_f_cutoff = 0.2
+    ratio_f_cutoff = 0.25
     swing_back_cutoff = -0.1
     year_cutoff = 1950
 
@@ -30,7 +30,6 @@ def create_fem_and_back_analysis(calcd: pd.DataFrame) -> pd.DataFrame:
     df = df[
         (df.ratio_f_max > ratio_f_cutoff) &
         (df.ratio_f_latest < (1 - ratio_f_cutoff)) &
-        (df.ratio_f_latest > 0.01) &
         (df.swing_back < swing_back_cutoff) &
         ~df.name.isin(PLACEHOLDER_NAMES)
         ]
