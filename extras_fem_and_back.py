@@ -10,12 +10,13 @@ def create_fem_and_back_analysis(calcd: pd.DataFrame) -> pd.DataFrame:
     number_min_per_half_decade = 25
     ratio_f_cutoff = 0.25
     swing_back_cutoff = -0.1
-    year_cutoff = 1950
+    start_year_cutoff = 1950
+    end_year_cutoff = 2020
 
-    totals = calcd[calcd.year >= year_cutoff].groupby('name', as_index=False).number.sum()
+    totals = calcd[calcd.year >= start_year_cutoff].groupby('name', as_index=False).number.sum()
     totals = totals[totals.number > number_min_total_cutoff]
 
-    df = calcd[(calcd.year >= year_cutoff) & (calcd.year < 2020) & calcd.name.isin(totals.name)].copy()
+    df = calcd[(calcd.year >= start_year_cutoff) & (calcd.year < end_year_cutoff) & calcd.name.isin(totals.name)].copy()
     df['half_decade'] = df.year.apply(lambda x: f'{str(x)[:3]}0_' + ('1' if int(str(x)[-1]) >= 5 else '0'))
     df = df.groupby(['name', 'half_decade'], as_index=False)[['number', 'number_f']].sum()
     df = df[df.number >= number_min_per_half_decade].copy()
