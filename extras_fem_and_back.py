@@ -54,7 +54,7 @@ def create_fem_and_back_analysis(calcd: pd.DataFrame) -> pd.DataFrame:
 
 
 def create_fem_and_back_visualization(fem_and_back: pd.DataFrame) -> None:
-    figsize = (5, 24)
+    figsize = (6, 26)
     sns.set_theme(style='whitegrid')
 
     f, ax = mpl.subplots(figsize=figsize)
@@ -70,7 +70,7 @@ def create_fem_and_back_visualization(fem_and_back: pd.DataFrame) -> None:
     ax.set(xlim=(0, 100), ylabel='', xlabel='fem %')
     ax.tick_params(top=True, labeltop=True, bottom=False, labelbottom=False)
     ax.tick_params(axis='y', labelsize=10)
-    ax.legend(loc='upper left')
+    ax.legend(loc='upper right')
     sns.despine(left=True, bottom=True)
 
     ax.figure.set_size_inches(*figsize)
