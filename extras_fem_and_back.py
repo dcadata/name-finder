@@ -2,7 +2,7 @@ import pandas as pd
 import seaborn as sns
 from matplotlib import pyplot as mpl
 
-from extras import PLACEHOLDER_NAMES
+from extras import PLACEHOLDER_NAMES, _get_half_decade_from_year
 
 
 def create_fem_and_back_analysis(calcd: pd.DataFrame) -> pd.DataFrame:
@@ -17,7 +17,7 @@ def create_fem_and_back_analysis(calcd: pd.DataFrame) -> pd.DataFrame:
     totals = totals[totals.number > number_min_total_cutoff]
 
     df = calcd[(calcd.year >= start_year_cutoff) & (calcd.year < end_year_cutoff) & calcd.name.isin(totals.name)].copy()
-    df['half_decade'] = df.year.apply(lambda x: f'{str(x)[:3]}0_' + ('1' if int(str(x)[-1]) >= 5 else '0'))
+    df['half_decade'] = df.year.apply(_get_half_decade_from_year)
     df = df.groupby(['name', 'half_decade'], as_index=False)[['number', 'number_f']].sum()
     df = df[df.number >= number_min_per_half_decade].copy()
     df['ratio_f'] = df.number_f / df.number
