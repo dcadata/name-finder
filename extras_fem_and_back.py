@@ -34,7 +34,12 @@ def create_fem_and_back_analysis(calcd: pd.DataFrame) -> pd.DataFrame:
         ~df.name.isin(PLACEHOLDER_NAMES)
         ]
     df = df.sort_values('number', ascending=False)[['name', 'ratio_f_max', 'ratio_f_latest', 'swing_back']]
-    return df.iloc[:150]
+
+    df = df.iloc[:150].copy()
+    for col in ('ratio_f_max', 'ratio_f_latest', 'swing_back'):
+        df[col] = (df[col].round(2) * 100).map(int)
+
+    return df
 
 
 def create_fem_and_back_visualization(fem_and_back: pd.DataFrame) -> None:
