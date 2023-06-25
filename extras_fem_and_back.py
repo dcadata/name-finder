@@ -40,6 +40,9 @@ def create_fem_and_back_analysis(calcd: pd.DataFrame) -> pd.DataFrame:
     for col in ('ratio_f_max', 'ratio_f_latest', 'swing_back'):
         df[col] = (df[col].round(2) * 100).map(int)
 
+    with open('extras_outputs/fem_and_back.txt', 'w') as file:
+        file.write(df.to_markdown(index=False))
+
     return df
 
 
