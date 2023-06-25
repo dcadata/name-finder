@@ -38,9 +38,10 @@ def create_fem_and_back_analysis(calcd: pd.DataFrame) -> pd.DataFrame:
 
 
 def create_fem_and_back_visualization(fem_and_back: pd.DataFrame) -> None:
+    figsize = (5, 28)
     sns.set_theme(style='whitegrid')
 
-    f, ax = mpl.subplots(figsize=(2, 20))
+    f, ax = mpl.subplots(figsize=figsize)
 
     sns.barplot(data=fem_and_back, x='ratio_f_max', y='name', label='max', color='orange')
     sns.barplot(data=fem_and_back, x='ratio_f_latest', y='name', label='latest', color='purple')
@@ -51,7 +52,7 @@ def create_fem_and_back_visualization(fem_and_back: pd.DataFrame) -> None:
     ax.tick_params(labelsize=10, axis='y')
     sns.despine(left=True, bottom=True)
 
-    ax.figure.set_size_inches(5, 24)
+    ax.figure.set_size_inches(*figsize)
     ax.figure.tight_layout()
 
     ax.figure.savefig('extras_outputs/fem_and_back.png')
