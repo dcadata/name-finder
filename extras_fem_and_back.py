@@ -25,7 +25,13 @@ def create_fem_and_back_analysis(calcd: pd.DataFrame) -> pd.DataFrame:
     latests = df.drop_duplicates(subset=['name'], keep='last')
 
     grouped = df.groupby('name', as_index=False).agg(dict(ratio_f=max, number=sum))
-    df = grouped.merge(latests[['name', 'ratio_f']], on='name', suffixes=('_max', '_latest'))
+
+    # preserve half-decade of ratio_f_max
+    is_max = df.merge(grouped[['name', 'ratio_f']].assign(is_ratio_f_max=True), on=['name', 'ratio_f'], how='left')
+    is_max.is_ratio_f_max = is_max.is_ratio_f_max.fillna(False)
+    is_max = is_max.loc[is_max.is_ratio_f_max, ['name', 'half_decade']].drop_duplicates(subset=['name'], keep='last')
+
+    df = grouped.merge(latests[['name', 'ratio_f']], on='name', suffixes=('_max', '_latest')).merge(is_max, on='name')
     df['swing_back'] = df.ratio_f_latest - df.ratio_f_max
 
     df = df[
@@ -34,11 +40,12 @@ def create_fem_and_back_analysis(calcd: pd.DataFrame) -> pd.DataFrame:
         (df.swing_back < swing_back_cutoff) &
         ~df.name.isin(PLACEHOLDER_NAMES)
         ]
-    df = df.sort_values('number', ascending=False)[['name', 'ratio_f_max', 'ratio_f_latest', 'swing_back']]
+    df = df.sort_values('number', ascending=False)
 
-    df = df.iloc[:150].copy()
     for col in ('ratio_f_max', 'ratio_f_latest', 'swing_back'):
         df[col] = (df[col].round(2) * 100).map(int)
+
+    df = df.iloc[:150][['name', 'ratio_f_max', 'half_decade', 'ratio_f_latest', 'swing_back']]
 
     with open('extras_outputs/fem_and_back.txt', 'w') as file:
         file.write(df.to_markdown(index=False))
