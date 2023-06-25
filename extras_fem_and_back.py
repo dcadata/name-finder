@@ -48,14 +48,15 @@ def create_fem_and_back_visualization(fem_and_back: pd.DataFrame) -> None:
 
     f, ax = mpl.subplots(figsize=figsize)
 
-    sns.barplot(data=fem_and_back, x='ratio_f_max', y='name', label='max', color='orange')
-    sns.barplot(data=fem_and_back, x='ratio_f_latest', y='name', label='latest', color='purple')
+    sns.barplot(data=fem_and_back, x='ratio_f_max', y='name', label='most fem %', color='orange')
+    sns.barplot(data=fem_and_back, x='ratio_f_latest', y='name', label='latest fem %', color='purple')
 
     ax.set_title('some names that went fem and went back')
+    ax.set(xlim=(0, 100), ylabel='', xlabel='fem %')
+    ax.tick_params(top=True, labeltop=True, bottom=False, labelbottom=False)
+    ax.tick_params(axis='y', labelsize=10)
     ax.legend(ncol=2, loc='upper right', frameon=True)
-    ax.set(xlim=(0, 1), ylabel='', xlabel='ratio_f')
-    ax.tick_params(labelsize=10, axis='y')
-    sns.despine(left=True, bottom=True)
+    sns.despine(left=True, bottom=False)
 
     ax.figure.set_size_inches(*figsize)
     ax.figure.tight_layout()
