@@ -43,7 +43,7 @@ def create_fem_and_back_analysis(calcd: pd.DataFrame) -> pd.DataFrame:
 
 
 def create_fem_and_back_visualization(fem_and_back: pd.DataFrame) -> None:
-    figsize = (5, 28)
+    figsize = (5, 24)
     sns.set_theme(style='whitegrid')
 
     f, ax = mpl.subplots(figsize=figsize)
