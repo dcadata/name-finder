@@ -70,7 +70,7 @@ def create_fem_and_back_visualization(fem_and_back: pd.DataFrame) -> None:
     ax.set(xlim=(0, 100), ylabel='', xlabel='fem %')
     ax.tick_params(top=True, labeltop=True, bottom=False, labelbottom=False)
     ax.tick_params(axis='y', labelsize=10)
-    ax.legend(ncol=2, loc='upper right', frameon=True)
+    ax.legend(loc='upper left')
     sns.despine(left=True, bottom=True)
 
     ax.figure.set_size_inches(*figsize)
