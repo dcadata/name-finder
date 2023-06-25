@@ -7,7 +7,7 @@ from extras import PLACEHOLDER_NAMES, _get_half_decade_from_year
 
 def create_fem_and_back_analysis(calcd: pd.DataFrame) -> pd.DataFrame:
     number_min_total_cutoff = 1_000
-    number_min_per_half_decade = 25
+    number_min_per_half_decade = 50
     ratio_f_cutoff = 0.25
     swing_back_cutoff = -0.1
     start_year_cutoff = 1950
