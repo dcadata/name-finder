@@ -45,7 +45,7 @@ def create_fem_and_back_analysis(calcd: pd.DataFrame) -> pd.DataFrame:
     for col in ('ratio_f_max', 'ratio_f_latest', 'swing_back'):
         df[col] = (df[col].round(2) * 100).map(int)
 
-    df = df.iloc[:150][['name', 'ratio_f_max', 'half_decade', 'ratio_f_latest', 'swing_back']]
+    df = df.iloc[:100][['name', 'ratio_f_max', 'half_decade', 'ratio_f_latest', 'swing_back']]
 
     with open('extras_outputs/fem_and_back.txt', 'w') as file:
         file.write(df.to_markdown(index=False))
@@ -54,7 +54,7 @@ def create_fem_and_back_analysis(calcd: pd.DataFrame) -> pd.DataFrame:
 
 
 def create_fem_and_back_visualization(fem_and_back: pd.DataFrame) -> None:
-    figsize = (6, 26)
+    figsize = (6, 18)
     sns.set_theme(style='whitegrid')
 
     f, ax = mpl.subplots(figsize=figsize)
