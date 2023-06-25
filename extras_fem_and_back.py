@@ -61,7 +61,7 @@ def create_fem_and_back_visualization(fem_and_back: pd.DataFrame) -> None:
 
     sns.scatterplot(data=fem_and_back, x='ratio_f_max', y='name', label='', color='white', markers='+')
     for x, y, s in fem_and_back[['ratio_f_max', 'name', 'half_decade']].to_records(index=False):
-        ax.text(x, y, s, size=9)
+        ax.text(x, y, s, size=9, verticalalignment='center_baseline')
 
     sns.barplot(data=fem_and_back, x='ratio_f_max', y='name', label='most fem %', color='orange')
     sns.barplot(data=fem_and_back, x='ratio_f_latest', y='name', label='latest fem %', color='purple')
@@ -71,7 +71,7 @@ def create_fem_and_back_visualization(fem_and_back: pd.DataFrame) -> None:
     ax.tick_params(top=True, labeltop=True, bottom=False, labelbottom=False)
     ax.tick_params(axis='y', labelsize=10)
     ax.legend(ncol=2, loc='upper right', frameon=True)
-    sns.despine(left=True, bottom=False)
+    sns.despine(left=True, bottom=True)
 
     ax.figure.set_size_inches(*figsize)
     ax.figure.tight_layout()
