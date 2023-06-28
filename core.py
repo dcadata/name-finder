@@ -233,6 +233,7 @@ class Displayer(Builder):
             before: int = None,
             year: int = None,
             top: int = 20,
+            sort_sex: str = None,
             as_records: bool = False,
     ) -> (list, pd.DataFrame):
         # set up
@@ -293,7 +294,8 @@ class Displayer(Builder):
         if not len(df):
             return {}
 
-        df = df.sort_values('number', ascending=False).drop(columns='name_lower')
+        sort_field = f'number_{sort_sex}' if sort_sex else 'number'
+        df = df.sort_values(sort_field, ascending=False).drop(columns='name_lower')
         for s in self._sexes:
             df[f'ratio_{s}'] = df[f'ratio_{s}'].round(2)
 
