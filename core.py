@@ -233,6 +233,7 @@ class Displayer(Builder):
             before: int = None,
             year: int = None,
             top: int = 20,
+            skip: int = None,
             sort_sex: str = None,
             as_records: bool = False,
     ) -> (list, pd.DataFrame):
@@ -302,6 +303,9 @@ class Displayer(Builder):
         if as_records:
             df['display'] = [_create_display_for_search(*i) for i in df[[
                 'number', 'ratio_f', 'ratio_m']].to_records(index=False)]
+
+        if skip:
+            df = df.iloc[skip:]
 
         if top:
             df = df.head(top)
