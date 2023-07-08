@@ -39,8 +39,7 @@ class Builder:
         self._number_per_year = self._concatenated.groupby('year', as_index=False).number.sum()
 
         # name by year
-        self._name_by_year = self._concatenated.groupby(['name', 'year'], as_index=False).number.sum().merge(
-            self._number_per_year, on='year', suffixes=('', '_total')).drop(columns='number_total')
+        self._name_by_year = self._concatenated.groupby(['name', 'year'], as_index=False).number.sum()
 
         # add ratios
         _separate_data = lambda x: self._raw[self._raw.sex == x].drop(columns='sex').rename(columns=dict(rank_='rank'))
