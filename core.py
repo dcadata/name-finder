@@ -36,7 +36,6 @@ class Builder:
     def _transform_data(self) -> None:
         # combine territories w/ national
         self._raw = self._concatenated.groupby(['name', 'sex', 'year', 'rank_'], as_index=False).number.sum()
-        self._number_per_year = self._concatenated.groupby('year', as_index=False).number.sum()
 
         # name by year
         self._name_by_year = self._concatenated.groupby(['name', 'year'], as_index=False).number.sum()
