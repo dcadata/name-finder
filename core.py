@@ -562,3 +562,20 @@ def create_predict_gender_reference(ages: tuple = (18, 80), conf_min: float = 0.
     df = df[['name', 'gender_prediction']].copy()
     df.to_csv('gender_prediction_reference.csv', index=False)
     return df
+
+
+def create_predict_age_reference(n_min: int = 25) -> pd.DataFrame:
+    ref = pd.read_csv('raw_with_actuarial.csv', usecols=[
+        'name', 'age', 'number_living'], dtype=dict(name=str, age=int, number_living=float))
+    ref = ref.groupby(['name', 'age'], as_index=False).number_living.sum()  # consolidates sexes
+
+    totals = pd.read_csv('raw_with_actuarial.totals.csv', usecols=[
+        'name', 'number_living'], dtype=dict(name=str, number_living=float))
+    ref = ref.merge(totals, on='name', suffixes=('', '_name'))
+    ref = ref[ref.number_living_name >= n_min]
+
+    ref['number_living_pct'] = ref.number_living / ref.number_living_name
+
+    ref = ref[['name', 'age', 'number_living_pct']].sort_values('age', ascending=False)
+    ref.to_csv('age_prediction_reference.csv', index=False)
+    return ref
