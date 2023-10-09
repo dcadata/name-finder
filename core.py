@@ -536,7 +536,7 @@ def _decompose_peak_or_latest(peak_or_latest: pd.DataFrame) -> dict:
     )
 
 
-def create_predict_gender_reference(ages: tuple = (18, 80), conf_min: float = 0.7, n_min: int = 10) -> pd.DataFrame:
+def create_predict_gender_reference(ages: tuple = (18, 90), conf_min: float = .8, n_min: int = 25) -> pd.DataFrame:
     displayer = Displayer()
     displayer.build_base()
     df = displayer._calcd.copy()
@@ -564,10 +564,10 @@ def create_predict_gender_reference(ages: tuple = (18, 80), conf_min: float = 0.
     return df
 
 
-def create_predict_age_reference(n_min: int = 25) -> pd.DataFrame:
+def create_predict_age_reference(age: int = 18, n_min: int = 25) -> pd.DataFrame:
     ref = pd.read_csv('raw_with_actuarial.csv', usecols=[
         'name', 'age', 'number_living'], dtype=dict(name=str, age=int, number_living=float))
-    ref = ref.groupby(['name', 'age'], as_index=False).number_living.sum()  # consolidates sexes
+    ref = ref[ref.age >= age].groupby(['name', 'age'], as_index=False).number_living.sum()  # consolidates sexes
 
     totals = pd.read_csv('raw_with_actuarial.totals.csv', usecols=[
         'name', 'number_living'], dtype=dict(name=str, number_living=float))
