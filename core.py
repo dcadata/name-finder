@@ -1,7 +1,6 @@
 import os
 import re
 
-import numpy as np
 import pandas as pd
 from scipy import stats
 
@@ -20,6 +19,7 @@ class Builder:
     def build_base(self) -> None:
         self._load_data()
         self._transform_data()
+        self._load_predict_age_reference()
 
     def _load_data(self) -> None:
         data = []
@@ -32,6 +32,11 @@ class Builder:
                     continue
                 data.append(self._load_one_file(filename, is_territory))
         self._concatenated = pd.concat(data)
+
+    def _load_predict_age_reference(self) -> None:
+        self._age_reference = pd.read_csv('age_prediction_reference.csv', usecols=[
+            'name', 'year', 'age', 'number_living_pct'], dtype=dict(
+            name=str, year=int, age=int, number_living_pct=float))
 
     def _transform_data(self) -> None:
         # combine territories w/ national
@@ -360,59 +365,32 @@ class Displayer(Builder):
         )
         return data
 
-    def predict_age(
-            self,
-            name: str,
-            gender: str = None,
-            living: bool = False,
-            buckets: int = None,
-    ) -> dict:
-        # set up
-        output = {}
-        df = self._raw_with_actuarial.copy()
-        if living:
-            # noinspection PyArgumentList
-            df = df.drop(columns=['number']).rename(columns={'number_living': 'number'})
-            output['living'] = True
+    def predict_age(self, name: str, lower_percentile_bound: float) -> dict:
+        name = name.title()
+        higher_percentile_bound = 1 - lower_percentile_bound
 
-        # filter dataframe
-        df = df[df['name'].str.lower() == name.lower()].copy()
-        if gender:
-            df = df[df.sex == gender.upper()].copy()
-            output['gender'] = gender.upper()
+        data = self._age_reference[self._age_reference.name == name].copy()
 
-        if not len(df):
-            return {}
+        data.number_living_pct = data.number_living_pct.cumsum()
+        data['lower_bound'] = (lower_percentile_bound - data.number_living_pct).abs()
+        data['upper_bound'] = (higher_percentile_bound - data.number_living_pct).abs()
 
-        # calculate cumulative probabilities
-        number = df.number.sum()
-        if number < 25:
-            return {}
+        data = data[
+            (data.lower_bound == data.lower_bound.min()) |
+            (data.upper_bound == data.upper_bound.min())
+            ].copy()
 
-        prob = df.groupby('age', as_index=False).number.sum()
-        prob['pct'] = prob.number / number
-        prob = prob.sort_values('pct', ascending=False)
-        prob['cumulative'] = prob.pct.cumsum()
-        prediction = {
-            'mean': int(round(df.groupby(df.name).apply(lambda x: np.average(x.age, weights=x.number)).values[0])),
-            'percentiles': {},
-        }
-        percentiles = tuple(round(i / buckets, 2) for i in range(1, buckets + 1)) if buckets else (0.68, 0.95, 0.997)
-        for percentile in percentiles:
-            ages = prob[prob.cumulative <= percentile].age
-            if not len(ages):
-                continue
-            prediction['percentiles'][percentile] = {
-                'min': float(ages.min()),
-                'max': float(ages.max()),
-            }
-
-        # add to output
-        output.update({'name': name.title(), 'number': int(number)})
-        if buckets:
-            output['buckets'] = buckets
-        output['prediction'] = prediction
-        return output
+        year_band = data.year.to_list()
+        year_span = year_band[1] - year_band[0]
+        age_band = data.age.to_list()
+        age_band.reverse()
+        return dict(
+            name=name,
+            percentile_bounds=[lower_percentile_bound, higher_percentile_bound],
+            year_band=year_band,
+            year_span=year_span,
+            age_band=age_band,
+        )
 
     def predict_gender(
             self,
@@ -564,18 +542,22 @@ def create_predict_gender_reference(ages: tuple = (18, 90), conf_min: float = .8
     return df
 
 
-def create_predict_age_reference(min_age: int = 18, n_min: int = 25) -> pd.DataFrame:
-    ref = pd.read_csv('raw_with_actuarial.csv', usecols=[
-        'name', 'age', 'number_living'], dtype=dict(name=str, age=int, number_living=float))
-    ref = ref[ref.age >= min_age].groupby(['name', 'age'], as_index=False).number_living.sum()  # consolidates sexes
+def _create_total_number_living_from_actuarial(raw_with_actuarial: pd.DataFrame) -> None:
+    total_number_living = raw_with_actuarial.groupby('name', as_index=False).number_living.sum()
+    total_number_living.to_csv('raw_with_actuarial.total_number_living.csv', index=False)
 
-    totals = pd.read_csv('raw_with_actuarial.totals.csv', usecols=[
+
+def _read_total_number_living() -> pd.DataFrame:
+    total_number_living = pd.read_csv('raw_with_actuarial.total_number_living.csv', usecols=[
         'name', 'number_living'], dtype=dict(name=str, number_living=float))
-    ref = ref.merge(totals, on='name', suffixes=('', '_name'))
-    ref = ref[ref.number_living_name >= n_min]
+    return total_number_living
 
+
+def create_predict_age_reference(raw_with_actuarial: pd.DataFrame, min_age: int = 0, n_min: int = 0) -> None:
+    ref = raw_with_actuarial[['name', 'year', 'age', 'number_living']].copy()
+    ref = ref[ref.age >= min_age].groupby(['name', 'year', 'age'], as_index=False).number_living.sum()  # consolid sex
+    ref = ref.merge(_read_total_number_living(), on='name', suffixes=('', '_name'))
+    ref = ref[ref.number_living_name >= n_min].copy()
     ref['number_living_pct'] = ref.number_living / ref.number_living_name
-
-    ref = ref[['name', 'age', 'number_living_pct']].sort_values('age', ascending=False)
+    ref = ref.drop(columns=['number_living', 'number_living_name']).sort_values('age', ascending=False)
     ref.to_csv('age_prediction_reference.csv', index=False)
-    return ref
