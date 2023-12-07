@@ -239,7 +239,7 @@ class Displayer(Builder):
             skip: int = None,
             sort_sex: str = None,
             as_records: bool = False,
-    ) -> (list, pd.DataFrame):
+    ) -> pd.DataFrame | list:
         # set up
         if year:
             after = year
@@ -316,7 +316,7 @@ class Displayer(Builder):
         data = df.to_dict('records') if as_records else df
         return data
 
-    def search_by_text(self, query: str, *args, **kwargs) -> (list, pd.DataFrame):
+    def search_by_text(self, query: str, *args, **kwargs) -> pd.DataFrame | list:
         query = query.lower()
 
         def _safely_check_regex(pattern: str):
