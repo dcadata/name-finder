@@ -9,11 +9,21 @@ _MIN_YEAR = 1880
 MAX_YEAR = int(re.search('^yob([0-9]{4}).txt$', os.listdir('data/names/')[-1]).group(1))
 
 
+class Filepaths:
+    NATIONAL_DATA_DIR = 'data/names/'
+    TERRITORIES_DATA_DIR = 'data/namesbyterritory/'
+    STATES_DATA_DIR = 'data/namesbystate/'
+    ACTUARIAL = 'data/actuarial/{sex}.csv'
+    AGE_PREDICTION_REFERENCE = 'age_prediction_reference.csv'
+    GENDER_PREDICTION_REFERENCE = 'gender_prediction_reference.csv'
+    TOTAL_NUMBER_LIVING_REFERENCE = 'raw_with_actuarial.total_number_living.csv'
+
+
 class Builder:
     def __init__(self, *args, **kwargs) -> None:
-        self._national_data_directory = 'data/names/'
-        self._territories_data_directory = 'data/namesbyterritory/'
-        self._states_data_directory = 'data/namesbystate/'
+        self._national_data_directory = Filepaths.NATIONAL_DATA_DIR
+        self._territories_data_directory = Filepaths.TERRITORIES_DATA_DIR
+        self._states_data_directory = Filepaths.STATES_DATA_DIR
         self._sexes = ('f', 'm')
 
     def build_base(self) -> None:
@@ -34,9 +44,10 @@ class Builder:
         self._concatenated = pd.concat(data)
 
     def _load_predict_age_reference(self) -> None:
-        self._age_reference = pd.read_csv('age_prediction_reference.csv', usecols=[
-            'name', 'year', 'age', 'number_living_pct'], dtype=dict(
-            name=str, year=int, age=int, number_living_pct=float))
+        self._age_reference = pd.read_csv(
+            Filepaths.AGE_PREDICTION_REFERENCE, usecols=['name', 'year', 'age', 'number_living_pct'],
+            dtype=dict(name=str, year=int, age=int, number_living_pct=float),
+        )
 
     def _transform_data(self) -> None:
         # combine territories w/ national
@@ -84,7 +95,7 @@ class Builder:
         return df
 
     def _load_actuarial_data(self) -> pd.DataFrame:
-        actuarial = pd.concat(pd.read_csv(f'data/actuarial/{s}.csv', usecols=[
+        actuarial = pd.concat(pd.read_csv(Filepaths.ACTUARIAL.format(sex=s), usecols=[
             'year', 'age', 'survivors'], dtype=int).assign(sex=s.upper()) for s in self._sexes)
         actuarial = actuarial[actuarial.year == MAX_YEAR].copy()
         actuarial['birth_year'] = actuarial.year - actuarial.age
@@ -542,17 +553,17 @@ def create_predict_gender_reference(ages: tuple = (18, 90), conf_min: float = .8
     df.gender_prediction = df.gender_prediction.fillna('unk')
 
     df = df[['name', 'gender_prediction']].copy()
-    df.to_csv('gender_prediction_reference.csv', index=False)
+    df.to_csv(Filepaths.GENDER_PREDICTION_REFERENCE, index=False)
     return df
 
 
 def _create_total_number_living_from_actuarial(raw_with_actuarial: pd.DataFrame) -> None:
     total_number_living = raw_with_actuarial.groupby('name', as_index=False).number_living.sum()
-    total_number_living.to_csv('raw_with_actuarial.total_number_living.csv', index=False)
+    total_number_living.to_csv(Filepaths.TOTAL_NUMBER_LIVING_REFERENCE, index=False)
 
 
 def _read_total_number_living() -> pd.DataFrame:
-    total_number_living = pd.read_csv('raw_with_actuarial.total_number_living.csv', usecols=[
+    total_number_living = pd.read_csv(Filepaths.TOTAL_NUMBER_LIVING_REFERENCE, usecols=[
         'name', 'number_living'], dtype=dict(name=str, number_living=float))
     return total_number_living
 
@@ -564,4 +575,4 @@ def create_predict_age_reference(raw_with_actuarial: pd.DataFrame, min_age: int 
     ref = ref[ref.number_living_name >= n_min].copy()
     ref['number_living_pct'] = ref.number_living / ref.number_living_name
     ref = ref.drop(columns=['number_living', 'number_living_name']).sort_values('age', ascending=False)
-    ref.to_csv('age_prediction_reference.csv', index=False)
+    ref.to_csv(Filepaths.AGE_PREDICTION_REFERENCE, index=False)
