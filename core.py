@@ -451,6 +451,10 @@ class Displayer(Builder):
             years_range = (_MIN_YEAR, MAX_YEAR + 1)
         return tuple(range(*years_range))
 
+    @property
+    def calcd(self) -> pd.DataFrame:
+        return self._calcd
+
 
 def _safe_regex_search(pattern: str, text: str):
     try:
@@ -517,7 +521,7 @@ def _decompose_peak_or_latest(peak_or_latest: pd.DataFrame) -> dict:
 def create_predict_gender_reference(ages: tuple = (18, 90), conf_min: float = .8, n_min: int = 25) -> pd.DataFrame:
     displayer = Displayer()
     displayer.build_base()
-    df = displayer._calcd.copy()
+    df = displayer.calcd.copy()
 
     df = df[df.year.apply(lambda x: MAX_YEAR - ages[1] <= x <= MAX_YEAR - ages[0])].copy()
 
