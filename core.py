@@ -376,31 +376,38 @@ class Displayer(Builder):
         )
         return data
 
-    def predict_age(self, name: str, lower_percentile_bound: float) -> dict:
+    def predict_age(self, name: str, lower_percentile: float) -> dict:
         name = name.title()
-        higher_percentile_bound = 1 - lower_percentile_bound
+        upper_percentile = 1 - lower_percentile
+        median_percentile = .5
 
         data = self._age_reference[self._age_reference.name == name].copy()
 
         data.number_living_pct = data.number_living_pct.cumsum()
-        data['lower_bound'] = (lower_percentile_bound - data.number_living_pct).abs()
-        data['upper_bound'] = (higher_percentile_bound - data.number_living_pct).abs()
+        data['lower'] = (lower_percentile - data.number_living_pct).abs()
+        data['upper'] = (upper_percentile - data.number_living_pct).abs()
+        data['med'] = (median_percentile - data.number_living_pct).abs()
 
-        data = data[
-            (data.lower_bound == data.lower_bound.min()) |
-            (data.upper_bound == data.upper_bound.min())
-            ].copy()
+        data = (
+            data.loc[
+                (data.lower == data.lower.min()) |
+                (data.upper == data.upper.min()) |
+                (data.med == data.med.min()),
+            ]
+            .sort_values('year')
+            .assign(bound=['lower', 'median', 'upper'])
+            .assign(percentile=[lower_percentile, median_percentile, upper_percentile])
+            .set_index('bound')
+        )[['percentile', 'year', 'age']]
 
-        year_band = data.year.to_list()
-        year_span = year_band[1] - year_band[0]
-        age_band = data.age.to_list()
-        age_band.reverse()
         return dict(
             name=name,
-            percentile_bounds=[lower_percentile_bound, higher_percentile_bound],
-            year_band=year_band,
-            year_span=year_span,
-            age_band=age_band,
+            bound=data.to_dict('index'),
+            band=dict(
+                year=[data.year.lower, data.year.upper],
+                age=[data.age.upper, data.age.lower],
+            ),
+            span=data.year.upper - data.year.lower,
         )
 
     def predict_gender(
