@@ -423,40 +423,45 @@ class Displayer(Builder):
             living: bool = False,
     ) -> dict:
         # set up
-        output = {}
         df = self._raw_with_actuarial.copy()
+        output = dict(
+            name=name.title(),
+            after=after,
+            before=before,
+            year=year,
+            year_band=year_band,
+            living=living,
+        )
+
         if living:
             # noinspection PyArgumentList
             df = df.drop(columns=['number']).rename(columns={'number_living': 'number'})
-            output['living'] = True
 
         # filter dataframe
         df = df[df['name'].str.lower() == name.lower()].copy()
         if year:
-            years = list(range(year - year_band, year + year_band)) if year_band else [year]
-            df = df[df.year.isin(years)]
-            output['years'] = years
-            output.update(dict(years=years, year_band=year_band))
+            if year_band:
+                years = list(range(year - year_band, year + year_band))
+                df = df[df.year.isin(years)]
+                output['years'] = years
+            else:
+                df = df[df.year == year]
         else:
             if after:
                 df = df[df.year >= after]
-                output['after'] = after
             if before:
                 df = df[df.year <= before]
-                output['before'] = before
-
-        if not len(df):
-            return {}
 
         # add to output
         number = df.number.sum()
-        numbers = df.groupby('sex').number.sum()
-        output.update({
-            'name': name.title(),
-            'number': int(number),
-            'prediction': 'f' if numbers.get('F', 0) > numbers.get('M', 0) else 'm',
-            'confidence': round(max(numbers.get('F', 0) / number, numbers.get('M', 0) / number), 2),
-        })
+        output['number'] = int(number)
+
+        if number:
+            numbers = df.groupby('sex').number.sum()
+            output.update({
+                'prediction': 'f' if numbers.get('F', 0) > numbers.get('M', 0) else 'm',
+                'confidence': round(max(numbers.get('F', 0) / number, numbers.get('M', 0) / number), 2),
+            })
         return output
 
     @property
