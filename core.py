@@ -5,7 +5,7 @@ import pandas as pd
 from scipy import stats
 
 # years as currently available in dataset
-_MIN_YEAR = 1880
+MIN_YEAR = 1880
 MAX_YEAR = int(re.search('^yob([0-9]{4}).txt$', os.listdir('data/names/')[-1]).group(1))
 PLACEHOLDER_NAMES = ('Unknown', 'Baby', 'Infant')
 
@@ -465,9 +465,9 @@ class Displayer(Builder):
         elif self._after:
             years_range = (self._after, MAX_YEAR + 1)
         elif self._before:
-            years_range = (_MIN_YEAR, self._before + 1)
+            years_range = (MIN_YEAR, self._before + 1)
         else:
-            years_range = (_MIN_YEAR, MAX_YEAR + 1)
+            years_range = (MIN_YEAR, MAX_YEAR + 1)
         return tuple(range(*years_range))
 
     @property
