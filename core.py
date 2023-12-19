@@ -331,12 +331,14 @@ class Displayer(Builder):
     def search_by_text(self, query: str, *args, **kwargs) -> pd.DataFrame | list:
         query = query.lower()
 
-        def _safely_check_regex(pattern: str):
+        def _safely_check_regex(pattern: str) -> str | None:
             return _safe_regex_search(pattern, query)
 
-        def _safely_check_regex_and_split_into_tuple(pattern: str):
+        def _safely_check_regex_and_split_into_tuple(pattern: str) -> tuple | None:
             result = _safely_check_regex(pattern)
-            return tuple(result.split(',')) if result else None
+            if result:
+                return tuple(result.split(','))
+            return
 
         length_ind = _safely_check_regex('length:([0-9]+-[0-9]+)')
         year_ind = _safely_check_regex('year:([0-9]{4})')
@@ -475,7 +477,7 @@ class Displayer(Builder):
         return self._calcd
 
 
-def _safe_regex_search(pattern: str, text: str):
+def _safe_regex_search(pattern: str, text: str) -> str | None:
     try:
         return re.search(pattern, text).groups()[-1]
     except (AttributeError, IndexError):
