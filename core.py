@@ -155,7 +155,7 @@ class Displayer(Builder):
         earliest = df.loc[df.year.idxmin()].copy()
 
         # filter on years
-        df = df[df.year.isin(self._years_to_select)]
+        df = df[df.year.isin(self.years_to_select)]
         if not len(df):
             return {}
 
@@ -261,7 +261,7 @@ class Displayer(Builder):
         df = self._calcd.copy()
 
         # filter on years
-        df = df[df.year.isin(self._years_to_select)].copy()
+        df = df[df.year.isin(self.years_to_select)].copy()
 
         # aggregate
         df = df.groupby('name', as_index=False).agg({'number': sum, 'number_f': sum, 'number_m': sum})
@@ -460,7 +460,7 @@ class Displayer(Builder):
         return output
 
     @property
-    def _years_to_select(self) -> tuple:
+    def years_to_select(self) -> tuple:
         if self._after and self._before:
             years_range = (self._after, self._before + 1)
         elif self._after:
