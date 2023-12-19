@@ -454,7 +454,7 @@ class Displayer(Builder):
         output.update({
             'name': name.title(),
             'number': int(number),
-            'prediction': 'F' if numbers.get('F', 0) > numbers.get('M', 0) else 'M',
+            'prediction': 'f' if numbers.get('F', 0) > numbers.get('M', 0) else 'm',
             'confidence': round(max(numbers.get('F', 0) / number, numbers.get('M', 0) / number), 2),
         })
         return output
