@@ -448,9 +448,6 @@ class Displayer(Builder):
 
         # add to output
         number = df.number.sum()
-        if number < 25:
-            return {}
-
         numbers = df.groupby('sex').number.sum()
         output.update({
             'name': name.title(),
