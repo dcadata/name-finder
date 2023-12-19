@@ -419,6 +419,7 @@ class Displayer(Builder):
             after: int = None,
             before: int = None,
             year: int = None,
+            year_band: int = 0,
             living: bool = False,
     ) -> dict:
         # set up
@@ -432,9 +433,10 @@ class Displayer(Builder):
         # filter dataframe
         df = df[df['name'].str.lower() == name.lower()].copy()
         if year:
-            birth_years = list(range(year - 2, year + 3))
-            df = df[df.year.isin(birth_years)]
-            output['birth_year_range'] = birth_years
+            years = list(range(year - year_band, year + year_band)) if year_band else [year]
+            df = df[df.year.isin(years)]
+            output['years'] = years
+            output.update(dict(years=years, year_band=year_band))
         else:
             if after:
                 df = df[df.year >= after]
