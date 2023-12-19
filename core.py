@@ -15,9 +15,9 @@ class Filepaths:
     TERRITORIES_DATA_DIR = 'data/namesbyterritory/'
     STATES_DATA_DIR = 'data/namesbystate/'
     ACTUARIAL = 'data/actuarial/{sex}.csv'
-    AGE_PREDICTION_REFERENCE = 'age_prediction_reference.csv'
-    GENDER_PREDICTION_REFERENCE = 'gender_prediction_reference.csv'
-    TOTAL_NUMBER_LIVING_REFERENCE = 'raw_with_actuarial.total_number_living.csv'
+    AGE_PREDICTION_REFERENCE = 'data/generated/age_prediction_reference.csv'
+    GENDER_PREDICTION_REFERENCE = 'data/generated/gender_prediction_reference.csv'
+    TOTAL_NUMBER_LIVING_REFERENCE = 'data/generated/raw_with_actuarial.total_number_living.csv'
 
 
 class Builder:
