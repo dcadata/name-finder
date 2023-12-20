@@ -576,7 +576,7 @@ def create_predict_gender_reference(
     return df
 
 
-def _create_total_number_living_from_actuarial(raw_with_actuarial: pd.DataFrame) -> None:
+def create_total_number_living_from_actuarial(raw_with_actuarial: pd.DataFrame) -> None:
     total_number_living = raw_with_actuarial.groupby('name', as_index=False).number_living.sum()
     total_number_living.to_csv(Filepaths.TOTAL_NUMBER_LIVING_REFERENCE, index=False)
 
@@ -595,3 +595,12 @@ def create_predict_age_reference(raw_with_actuarial: pd.DataFrame, min_age: int 
     ref['number_living_pct'] = ref.number_living / ref.number_living_name
     ref = ref.drop(columns=['number_living', 'number_living_name']).sort_values('age', ascending=False)
     ref.to_csv(Filepaths.AGE_PREDICTION_REFERENCE, index=False)
+
+
+def create_all_generated_data() -> None:
+    displayer = Displayer()
+    displayer.build_base()
+
+    create_predict_gender_reference(displayer)
+    create_total_number_living_from_actuarial(displayer.raw_with_actuarial)
+    create_predict_age_reference(displayer.raw_with_actuarial)
