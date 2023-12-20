@@ -434,8 +434,7 @@ class Displayer(Builder):
         )
 
         if living:
-            # noinspection PyArgumentList
-            df = df.drop(columns=['number']).rename(columns={'number_living': 'number'})
+            df = df.drop(columns='number').rename(columns={'number_living': 'number'})
 
         # filter dataframe
         df = df[df['name'].str.lower() == name.lower()].copy()
