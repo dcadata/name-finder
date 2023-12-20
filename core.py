@@ -542,7 +542,7 @@ def _decompose_peak_or_latest(peak_or_latest: pd.DataFrame) -> dict:
     )
 
 
-def create_predict_gender_reference(ages: tuple = (18, 90), conf_min: float = .8, n_min: int = 25) -> pd.DataFrame:
+def create_predict_gender_reference(ages: tuple = (18, 90), conf_min: float = .8, n_min: int = 0) -> pd.DataFrame:
     displayer = Displayer()
     displayer.build_base()
     df = displayer.calcd.copy()
