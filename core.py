@@ -67,9 +67,9 @@ class Builder:
             self._calcd[f'rank_{s}'] = self._calcd[f'rank_{s}'].fillna(-1).map(int)
 
         # add actuarial - loses years before 1900
-        self._raw_with_actuarial = self._raw.merge(self._load_actuarial_data(), on=['sex', 'year'])
-        self._raw_with_actuarial['number_living'] = (
-                self._raw_with_actuarial.number * self._raw_with_actuarial.survival_prob)
+        self.raw_with_actuarial = self._raw.merge(self._load_actuarial_data(), on=['sex', 'year'])
+        self.raw_with_actuarial['number_living'] = (
+                self.raw_with_actuarial.number * self.raw_with_actuarial.survival_prob)
 
     def _load_one_file(self, filename: str, is_territory: bool = None) -> pd.DataFrame:
         df = self._load_one_file_territory(filename) if is_territory else self._load_one_file_national(filename)
@@ -423,7 +423,7 @@ class Displayer(Builder):
             living: bool = False,
     ) -> dict:
         # set up
-        df = self._raw_with_actuarial.copy()
+        df = self.raw_with_actuarial.copy()
         output = dict(
             name=name.title(),
             after=after,
