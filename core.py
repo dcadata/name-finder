@@ -542,12 +542,13 @@ def _decompose_peak_or_latest(peak_or_latest: pd.DataFrame) -> dict:
     )
 
 
-def create_predict_gender_reference(ages: tuple = (18, 90), conf_min: float = .8, n_min: int = 0) -> pd.DataFrame:
+def create_predict_gender_reference(ages: tuple = None, conf_min: float = .8, n_min: int = 0) -> pd.DataFrame:
     displayer = Displayer()
     displayer.build_base()
     df = displayer.calcd.copy()
 
-    df = df[df.year.apply(lambda x: MAX_YEAR - ages[1] <= x <= MAX_YEAR - ages[0])].copy()
+    if ages:
+        df = df[df.year.apply(lambda x: MAX_YEAR - ages[1] <= x <= MAX_YEAR - ages[0])].copy()
 
     df = df.groupby('name', as_index=False).agg(dict(number=sum, number_f=sum, number_m=sum))
 
