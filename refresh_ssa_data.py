@@ -4,13 +4,17 @@ from time import sleep
 import pandas as pd
 import requests
 
-from core import MAX_YEAR, Filepaths
+from core import MAX_YEAR, Filepaths, create_all_generated_data
 
 
 class SsaDataRefresher:
+    def __init__(self) -> None:
+        self.refreshed = False
+
     def refresh(self) -> None:
         self._open_session()
-        if self._refresh_name_data():
+        self.refreshed = self._refresh_name_data()
+        if self.refreshed:
             self._refresh_actuarial_data()
         self._close_session()
 
@@ -56,5 +60,12 @@ class SsaDataRefresher:
             df.to_csv(Filepaths.ACTUARIAL.format(sex=s.lower()), index=False)
 
 
+def main() -> None:
+    refresher = SsaDataRefresher()
+    refresher.refresh()
+    if refresher.refreshed:
+        create_all_generated_data()
+
+
 if __name__ == '__main__':
-    SsaDataRefresher().refresh()
+    main()
