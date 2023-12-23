@@ -405,12 +405,8 @@ class Displayer(Builder):
 
         return dict(
             name=name,
-            bound=data.to_dict('index'),
-            band=dict(
-                year=[data.year.lower, data.year.upper],
-                age=[data.age.upper, data.age.lower],
-            ),
-            span=data.year.upper - data.year.lower,
+            percentile_band=1 - lower_percentile * 2,
+            **data.to_dict('index'),
         )
 
     def predict_gender(
