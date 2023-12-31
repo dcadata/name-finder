@@ -334,10 +334,10 @@ class Displayer(Builder):
         def _safely_check_regex(pattern: str) -> str | None:
             return _safe_regex_search(pattern, query)
 
-        def _safely_check_regex_and_split_into_tuple(pattern: str) -> tuple | None:
+        def _safely_check_regex_and_split_into_tuple(pattern: str, delimiter: str = ',') -> tuple | None:
             result = _safely_check_regex(pattern)
             if result:
-                return tuple(result.split(','))
+                return tuple(result.split(delimiter))
             return
 
         length_ind = _safely_check_regex('length:([0-9]+-[0-9]+)')
@@ -350,14 +350,8 @@ class Displayer(Builder):
             if before_ind := _safely_check_regex('before:([0-9]{4})'):
                 before_ind = int(before_ind)
 
-        if gender_ind := _safely_check_regex_and_split_into_tuple('gender:([fxm,]{1,3})'):
-            gender_ind = set(gender_ind)
-            if gender_ind == {'f', 'x'}:
-                gender_ind = (0, 0.8)
-            elif gender_ind == {'m', 'x'}:
-                gender_ind = (0.2, 1)
-            elif len(gender_ind) == 1:
-                gender_ind = dict(f=(0, 0.2), x=(0.2, 0.8), m=(0.8, 1)).get(gender_ind.pop())
+        if gender_ind := _safely_check_regex_and_split_into_tuple('gender:([0-9]+-[0-9]+)', delimiter='-'):
+            gender_ind = tuple(map(lambda x: int(x) / 100, gender_ind))
 
         data = self.search(
             pattern=_safely_check_regex('pattern:(.*)'),
