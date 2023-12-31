@@ -4,7 +4,7 @@ from time import sleep
 import pandas as pd
 import requests
 
-from core import MAX_YEAR, Filepaths, create_all_generated_data
+from core import MAX_YEAR, Filepath, create_all_generated_data
 
 
 class SsaDataRefresher:
@@ -57,7 +57,7 @@ class SsaDataRefresher:
             df = df[list(columns.keys())].rename(columns=columns)
             for col in df.columns:
                 df[col] = df[col].map(int)
-            df.to_csv(Filepaths.ACTUARIAL.format(sex=s.lower()), index=False)
+            df.to_csv(Filepath.ACTUARIAL.format(sex=s.lower()), index=False)
 
 
 def main() -> None:
