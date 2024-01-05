@@ -8,6 +8,7 @@ from scipy import stats
 MIN_YEAR = 1880
 MAX_YEAR = int(re.search('^yob([0-9]{4}).txt$', os.listdir('data/names/')[-1]).group(1))
 PLACEHOLDER_NAMES = ('Unknown', 'Baby', 'Infant')
+NEUTRAL_RATIO_RANGE = (.2, .8)
 
 
 class Filepath:
@@ -243,7 +244,7 @@ class Displayer(Builder):
             length: tuple[int, int] = None,
             number_min: int = None,
             number_max: int = None,
-            gender: tuple[float, float] = None,
+            gender: tuple[float, float] | str = None,
             after: int = None,
             before: int = None,
             year: int = None,
@@ -282,6 +283,8 @@ class Displayer(Builder):
             df = df[df.name.map(len).apply(lambda x: length[0] <= x <= length[1])]
 
         # filter on ratio
+        if type(gender) == str:
+            gender = dict(f=(0, .1), x=NEUTRAL_RATIO_RANGE, m=(.9, 1)).get(gender)
         if gender:
             df = df[(df.ratio_m >= gender[0]) & (df.ratio_m <= gender[1])]
 
