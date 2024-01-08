@@ -403,6 +403,7 @@ class Displayer(Builder):
         return dict(
             name=name,
             **data.to_dict('index'),
+            most_common=self.get_most_common_year(name),
         )
 
     def predict_gender(
@@ -454,6 +455,18 @@ class Displayer(Builder):
                 'confidence': round(max(numbers.get('F', 0) / number, numbers.get('M', 0) / number), 2),
             })
         return output
+
+    def get_most_common_year(self, name: str) -> dict:
+        df = self._calcd.copy()
+
+        # filter on name
+        df = df[df['name'].str.lower() == name.lower()]
+        if not len(df):
+            return {}
+
+        # create metadata df for peak
+        peak = df.loc[df.number.idxmax()]
+        return dict(year=int(peak.year), number=int(peak.number))
 
     @property
     def years_to_select(self) -> tuple:
