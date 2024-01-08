@@ -402,7 +402,6 @@ class Displayer(Builder):
 
         return dict(
             name=name,
-            percentile_band=1 - lower_percentile * 2,
             **data.to_dict('index'),
         )
 
