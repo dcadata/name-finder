@@ -2,7 +2,6 @@ import os
 import re
 
 import pandas as pd
-from scipy import stats
 
 # years as currently available in dataset
 MIN_YEAR = 1880
@@ -200,14 +199,6 @@ class Displayer(Builder):
             historic = df[['year', 'number', 'number_f', 'number_m']].copy()
             for s in self._sexes:
                 historic[f'ratio_{s}'] = (historic[f'number_{s}'] / historic.number).round(2)
-
-            if len(historic) > 1:
-                number_linreg = stats.linregress(historic.year, historic.number * 100)
-                if number_linreg.pvalue < 0.05:
-                    output['number_trend'] = round(number_linreg.slope, 2)
-                ratio_f_linreg = stats.linregress(historic.year, historic.ratio_f * 100)
-                if ratio_f_linreg.pvalue < 0.05:
-                    output['ratio_f_trend'] = round(ratio_f_linreg.slope, 2)
 
             essentially_single_gender = output['ratios']['f'] >= 0.99 or output['ratios']['m'] >= 0.99
             number_bars_mult = 100 / peak.number
