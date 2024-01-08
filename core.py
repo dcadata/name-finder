@@ -21,8 +21,6 @@ class Filepath:
 
 class Builder:
     def __init__(self, *args, **kwargs) -> None:
-        self._national_data_directory = Filepath.NATIONAL_DATA_DIR
-        self._territories_data_directory = Filepath.TERRITORIES_DATA_DIR
         self._sexes = ('f', 'm')
 
     def build_base(self) -> None:
@@ -33,8 +31,8 @@ class Builder:
     def _load_data(self) -> None:
         data = []
         for data_directory, is_territory in [
-            (self._national_data_directory, False),
-            # (self._territories_data_directory, True),
+            (Filepath.NATIONAL_DATA_DIR, False),
+            # (Filepath.TERRITORIES_DATA_DIR, True),
         ]:
             for filename in os.listdir(data_directory):
                 if not filename.lower().endswith('.txt'):
@@ -80,16 +78,18 @@ class Builder:
         df = pd.concat((_add_rank_by_sex(df, 'f'), _add_rank_by_sex(df, 'm')))
         return df
 
-    def _load_one_file_national(self, filename: str) -> pd.DataFrame:
+    @staticmethod
+    def _load_one_file_national(filename: str) -> pd.DataFrame:
         dtypes = {'name': str, 'sex': str, 'number': int}
-        df = pd.read_csv(self._national_data_directory + filename, names=list(dtypes.keys()), dtype=dtypes).assign(
+        df = pd.read_csv(Filepath.NATIONAL_DATA_DIR + filename, names=list(dtypes.keys()), dtype=dtypes).assign(
             year=filename)
         df.year = df.year.apply(lambda x: x.rsplit('.', 1)[0].replace('yob', '')).map(int)
         return df
 
-    def _load_one_file_territory(self, filename: str) -> pd.DataFrame:
+    @staticmethod
+    def _load_one_file_territory(filename: str) -> pd.DataFrame:
         dtypes = {'territory': str, 'sex': str, 'year': int, 'name': str, 'number': int}
-        df = pd.read_csv(self._territories_data_directory + filename, names=list(dtypes.keys()), dtype=dtypes).drop(
+        df = pd.read_csv(Filepath.TERRITORIES_DATA_DIR + filename, names=list(dtypes.keys()), dtype=dtypes).drop(
             columns='territory')
         return df
 
