@@ -403,37 +403,38 @@ class Displayer(Builder):
             after: int = None,
             before: int = None,
             year: int = None,
-            year_band: int = 0,
+            buffer: int = 0,
             living: bool = False,
     ) -> dict:
         # set up
         df = self.raw_with_actuarial.copy()
-        output = dict(
-            name=name.title(),
-            after=after,
-            before=before,
-            year=year,
-            year_band=year_band,
-            living=living,
-        )
+        output = dict(name=name.title())
 
         if living:
             df = df.drop(columns='number').rename(columns={'number_living': 'number'})
+            output['living'] = True
 
         # filter dataframe
         df = df[df['name'].str.lower() == name.lower()].copy()
-        if year:
-            if year_band:
-                years = list(range(year - year_band, year + year_band))
-                df = df[df.year.isin(years)]
-                output['years'] = years
-            else:
-                df = df[df.year == year]
+        if year and buffer:
+            years = list(range(year - buffer, year + buffer + 1))
+            df = df[df.year.isin(years)]
+            output.update(dict(
+                year=year,
+                buffer=buffer,
+                after=years[0],
+                before=years[-1],
+            ))
+        elif year:
+            df = df[df.year == year]
+            output['year'] = year
         else:
             if after:
                 df = df[df.year >= after]
+                output['after'] = after
             if before:
                 df = df[df.year <= before]
+                output['before'] = before
 
         # add to output
         number = df.number.sum()
