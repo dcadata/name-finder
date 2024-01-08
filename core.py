@@ -13,7 +13,6 @@ NEUTRAL_RATIO_RANGE = (.2, .8)
 class Filepath:
     NATIONAL_DATA_DIR = 'data/names/'
     TERRITORIES_DATA_DIR = 'data/namesbyterritory/'
-    STATES_DATA_DIR = 'data/namesbystate/'
     ACTUARIAL = 'data/actuarial/{sex}.csv'
     AGE_PREDICTION_REFERENCE = 'data/generated/age_prediction_reference.csv'
     GENDER_PREDICTION_REFERENCE = 'data/generated/gender_prediction_reference.csv'
@@ -24,7 +23,6 @@ class Builder:
     def __init__(self, *args, **kwargs) -> None:
         self._national_data_directory = Filepath.NATIONAL_DATA_DIR
         self._territories_data_directory = Filepath.TERRITORIES_DATA_DIR
-        self._states_data_directory = Filepath.STATES_DATA_DIR
         self._sexes = ('f', 'm')
 
     def build_base(self) -> None:
@@ -103,20 +101,6 @@ class Builder:
         actuarial['survival_prob'] = actuarial.survivors / 100_000
         actuarial = actuarial.drop(columns=['year', 'survivors']).rename(columns={'birth_year': 'year'})
         return actuarial
-
-    def _get_state_data(self) -> pd.DataFrame:
-        dtypes = {'state': str, 'sex': str, 'year': int, 'name': str, 'number': int}
-        df = pd.concat(
-            pd.read_csv(self._states_data_directory + filename, names=list(dtypes.keys()), dtype=dtypes)
-            for filename in os.listdir(self._states_data_directory) if filename.endswith('.TXT')
-        )
-
-        by_name = df[df.year >= 1960].groupby(['name', 'state'], as_index=False).number.sum()
-        by_state = df[df.year >= 1960].groupby('state', as_index=False).number.sum()
-        data = by_name.merge(by_state, on='state', suffixes=('', '_total'))
-        data['pct'] = data.number / data.number_total
-        data = data.drop(columns=['number', 'number_total'])
-        return data
 
 
 class Displayer(Builder):
