@@ -21,6 +21,7 @@ class Filepath:
 
 class Builder:
     def __init__(self, *args, **kwargs) -> None:
+        self._include_territories = kwargs.get('include_territories')
         self._sexes = ('f', 'm')
 
     def build_base(self) -> None:
@@ -30,10 +31,7 @@ class Builder:
 
     def _load_data(self) -> None:
         data = []
-        for data_directory, is_territory in [
-            (Filepath.NATIONAL_DATA_DIR, False),
-            # (Filepath.TERRITORIES_DATA_DIR, True),
-        ]:
+        for data_directory, is_territory in self._data_directories.items():
             for filename in os.listdir(data_directory):
                 if not filename.lower().endswith('.txt'):
                     continue
@@ -101,6 +99,13 @@ class Builder:
         actuarial['survival_prob'] = actuarial.survivors / 100_000
         actuarial = actuarial.drop(columns=['year', 'survivors']).rename(columns={'birth_year': 'year'})
         return actuarial
+
+    @property
+    def _data_directories(self) -> dict:
+        data_directories = {Filepath.NATIONAL_DATA_DIR: False}
+        if self._include_territories:
+            data_directories[Filepath.TERRITORIES_DATA_DIR] = True
+        return data_directories
 
 
 class Displayer(Builder):
