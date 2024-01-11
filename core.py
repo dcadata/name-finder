@@ -356,7 +356,7 @@ class Displayer(Builder):
         )
         return data
 
-    def predict_age(self, name: str, lower_percentile: float) -> dict:
+    def predict_age(self, name: str, lower_percentile: float = .25) -> dict:
         name = name.title()
         upper_percentile = 1 - lower_percentile
         median_percentile = .5
