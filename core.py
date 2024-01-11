@@ -7,11 +7,6 @@ PLACEHOLDER_NAMES = ('Unknown', 'Baby', 'Infant')
 NEUTRAL_RATIO_RANGE = (.2, .8)
 
 
-class Year:
-    MIN_YEAR = 1880
-    MAX_YEAR = int(re.search('^yob([0-9]{4}).txt$', os.listdir('data/names/')[-1]).group(1))
-
-
 class Filepath:
     DATA_DIR = 'data/'
     NATIONAL_DATA_DIR = 'data/names/'
@@ -20,6 +15,11 @@ class Filepath:
     AGE_PREDICTION_REFERENCE = 'data/generated/age_prediction_reference.csv'
     GENDER_PREDICTION_REFERENCE = 'data/generated/gender_prediction_reference.csv'
     TOTAL_NUMBER_LIVING_REFERENCE = 'data/generated/raw_with_actuarial.total_number_living.csv'
+
+
+class Year:
+    MIN_YEAR = 1880
+    MAX_YEAR = int(re.search('^yob([0-9]{4}).txt$', os.listdir(Filepath.NATIONAL_DATA_DIR)[-1]).group(1))
 
 
 class Builder:
