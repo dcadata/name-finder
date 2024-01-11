@@ -53,6 +53,10 @@ class Builder:
 
         # name by year
         self._name_by_year = self._concatenated.groupby(['name', 'year'], as_index=False).number.sum()
+        # add peaks
+        peaks = self._name_by_year.groupby('name', as_index=False).agg(dict(number='max')).assign(peak=True)
+        self._name_by_year = self._name_by_year.merge(peaks, on=['name', 'number'], how='left')
+        self._name_by_year.peak = self._name_by_year.peak.fillna(False)
 
         # add ratios
         _separate_data = lambda x: self._raw[self._raw.sex == x].drop(columns='sex').rename(columns=dict(rank_='rank'))
@@ -142,7 +146,7 @@ class Displayer(Builder):
             return {}
 
         # create metadata dfs
-        peak = df.loc[df.number.idxmax()].copy()
+        peak = df[df.peak].copy()
         latest = df.loc[df.year.idxmax()].copy()
         earliest = df.loc[df.year.idxmin()].copy()
 
@@ -384,11 +388,7 @@ class Displayer(Builder):
             .set_index('bound')
         )[['percentile', 'year']]
 
-        return dict(
-            name=name,
-            **data.to_dict('index'),
-            most_common=self.get_most_common_year(name),
-        )
+        return dict(name=name, **data.to_dict('index'))
 
     def predict_gender(
             self,
@@ -440,18 +440,6 @@ class Displayer(Builder):
                 'confidence': round(max(numbers.get('F', 0) / number, numbers.get('M', 0) / number), 2),
             })
         return output
-
-    def get_most_common_year(self, name: str) -> dict:
-        df = self._calcd.copy()
-
-        # filter on name
-        df = df[df['name'].str.lower() == name.lower()]
-        if not len(df):
-            return {}
-
-        # create metadata df for peak
-        peak = df.loc[df.number.idxmax()]
-        return dict(year=int(peak.year), number=int(peak.number))
 
     @property
     def years_to_select(self) -> tuple:
