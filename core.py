@@ -118,6 +118,10 @@ class Builder:
             data_directories[Filepath.TERRITORIES_DATA_DIR] = True
         return data_directories
 
+    @property
+    def calculated(self) -> pd.DataFrame:
+        return self._calcd
+
 
 class Displayer(Builder):
     def __init__(self, *args, **kwargs) -> None:
@@ -457,10 +461,6 @@ class Displayer(Builder):
             years_range = (Year.MIN_YEAR, Year.MAX_YEAR + 1)
         return tuple(range(*years_range))
 
-    @property
-    def calcd(self) -> pd.DataFrame:
-        return self._calcd
-
 
 def _safe_regex_search(pattern: str, text: str) -> str | None:
     try:
@@ -532,7 +532,7 @@ def create_predict_gender_reference(
         built_displayer = Displayer()
         built_displayer.build_base()
 
-    df = built_displayer.calcd.copy()
+    df = built_displayer.calculated.copy()
 
     if ages:
         df = df[df.year.apply(lambda x: Year.MAX_YEAR - ages[1] <= x <= Year.MAX_YEAR - ages[0])].copy()
