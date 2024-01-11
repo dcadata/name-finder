@@ -3,11 +3,13 @@ import re
 
 import pandas as pd
 
-# years as currently available in dataset
-MIN_YEAR = 1880
-MAX_YEAR = int(re.search('^yob([0-9]{4}).txt$', os.listdir('data/names/')[-1]).group(1))
 PLACEHOLDER_NAMES = ('Unknown', 'Baby', 'Infant')
 NEUTRAL_RATIO_RANGE = (.2, .8)
+
+
+class Year:
+    MIN_YEAR = 1880
+    MAX_YEAR = int(re.search('^yob([0-9]{4}).txt$', os.listdir('data/names/')[-1]).group(1))
 
 
 class Filepath:
@@ -94,7 +96,7 @@ class Builder:
     def _load_actuarial_data(self) -> pd.DataFrame:
         actuarial = pd.concat(pd.read_csv(Filepath.ACTUARIAL.format(sex=s), usecols=[
             'year', 'age', 'survivors'], dtype=int).assign(sex=s.upper()) for s in self._sexes)
-        actuarial = actuarial[actuarial.year == MAX_YEAR].copy()
+        actuarial = actuarial[actuarial.year == Year.MAX_YEAR].copy()
         actuarial['birth_year'] = actuarial.year - actuarial.age
         actuarial['survival_prob'] = actuarial.survivors / 100_000
         actuarial = actuarial.drop(columns=['year', 'survivors']).rename(columns={'birth_year': 'year'})
@@ -454,11 +456,11 @@ class Displayer(Builder):
         if self._after and self._before:
             years_range = (self._after, self._before + 1)
         elif self._after:
-            years_range = (self._after, MAX_YEAR + 1)
+            years_range = (self._after, Year.MAX_YEAR + 1)
         elif self._before:
-            years_range = (MIN_YEAR, self._before + 1)
+            years_range = (Year.MIN_YEAR, self._before + 1)
         else:
-            years_range = (MIN_YEAR, MAX_YEAR + 1)
+            years_range = (Year.MIN_YEAR, Year.MAX_YEAR + 1)
         return tuple(range(*years_range))
 
     @property
@@ -539,7 +541,7 @@ def create_predict_gender_reference(
     df = built_displayer.calcd.copy()
 
     if ages:
-        df = df[df.year.apply(lambda x: MAX_YEAR - ages[1] <= x <= MAX_YEAR - ages[0])].copy()
+        df = df[df.year.apply(lambda x: Year.MAX_YEAR - ages[1] <= x <= Year.MAX_YEAR - ages[0])].copy()
 
     df = df.groupby('name', as_index=False).agg(dict(number=sum, number_f=sum, number_m=sum))
 

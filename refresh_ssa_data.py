@@ -4,7 +4,7 @@ from time import sleep
 import pandas as pd
 import requests
 
-from core import MAX_YEAR, Filepath, create_all_generated_data
+from core import Year, Filepath, create_all_generated_data
 
 
 class SsaDataRefresher:
@@ -27,7 +27,7 @@ class SsaDataRefresher:
     def _refresh_name_data(self) -> bool:
         # compare to website
         table = pd.read_html(self._session.get('https://www.ssa.gov/oact/babynames/limits.html').text)[0]
-        if MAX_YEAR >= int(table.iloc[0, 0]):
+        if Year.MAX_YEAR >= int(table.iloc[0, 0]):
             return False
 
         sleep(3)
@@ -48,7 +48,7 @@ class SsaDataRefresher:
         url = 'https://www.ssa.gov/oact/HistEst/CohLifeTables/{0}/CohLifeTables_{1}_Alt2_TR{0}.txt'
         columns = {'Year': 'year', 'x': 'age', 'l(x)': 'survivors'}
         for s in ('F', 'M'):
-            response = self._session.get(url.format(MAX_YEAR + 1, s))
+            response = self._session.get(url.format(Year.MAX_YEAR + 1, s))
             if not response.ok:
                 return
             sleep(3)
