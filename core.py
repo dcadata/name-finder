@@ -32,6 +32,9 @@ class Builder:
         self._transform_data()
         self._load_predict_age_reference()
 
+    def ingest_alternate_calcd(self, calcd: pd.DataFrame) -> None:
+        self._calcd = calcd.copy()
+
     def _load_data(self) -> None:
         data = []
         for data_directory, is_territory in self._data_directories.items():
