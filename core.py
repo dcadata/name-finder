@@ -302,7 +302,7 @@ class Displayer(Builder):
 
         if as_records:
             df['display'] = [_create_display_for_search(*i) for i in df[[
-                'number', 'ratio_f', 'ratio_m']].to_records(index=False)]
+                'name', 'number', 'ratio_f', 'ratio_m']].to_records(index=False)]
 
         if skip:
             df = df.iloc[skip:]
@@ -310,8 +310,9 @@ class Displayer(Builder):
         if top:
             df = df.head(top)
 
-        data = df.to_dict('records') if as_records else df
-        return data
+        if as_records:
+            return df.to_dict('records')
+        return df
 
     def search_by_text(self, query: str, *args, **kwargs) -> pd.DataFrame | list:
         query = query.lower()
@@ -509,10 +510,10 @@ def _create_display_for_name(
     )
 
 
-def _create_display_for_search(number: int, ratio_f: float, ratio_m: float) -> str:
+def _create_display_for_search(name: str, number: int, ratio_f: float, ratio_m: float) -> str:
     if display_ratio := _create_display_ratio(ratio_f, ratio_m):
         display_ratio = ', ' + display_ratio
-    return f'({number:,}{display_ratio})'
+    return f'{name} ({number:,}{display_ratio})'
 
 
 def _decompose_peak_or_latest(peak_or_latest: pd.DataFrame) -> dict:
