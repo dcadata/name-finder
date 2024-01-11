@@ -36,7 +36,7 @@ class SsaDataRefresher:
                 'https://www.ssa.gov/oact/babynames/names.zip',
                 'https://www.ssa.gov/oact/babynames/territory/namesbyterritory.zip',
         ):
-            filepath = 'data/' + url.rsplit('/', 1)[1]
+            filepath = Filepath.DATA_DIR + url.rsplit('/', 1)[1]
             with open(filepath, 'wb') as f:
                 f.write(self._session.get(url).content)
             sleep(3)

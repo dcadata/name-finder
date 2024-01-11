@@ -13,6 +13,7 @@ class Year:
 
 
 class Filepath:
+    DATA_DIR = 'data/'
     NATIONAL_DATA_DIR = 'data/names/'
     TERRITORIES_DATA_DIR = 'data/namesbyterritory/'
     ACTUARIAL = 'data/actuarial/{sex}.csv'
