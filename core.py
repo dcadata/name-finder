@@ -26,6 +26,7 @@ class Builder:
     def __init__(self, *args, **kwargs) -> None:
         self._include_territories = kwargs.get('include_territories')
         self._sexes = ('f', 'm')
+        self._calcd = None
 
     def build_base(self) -> None:
         self._load_data()
