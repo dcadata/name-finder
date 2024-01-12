@@ -65,7 +65,7 @@ class Builder:
         # add ratios
         _separate_data = lambda x: self._raw[self._raw.sex == x].drop(columns='sex').rename(columns=dict(rank_='rank'))
         self._calcd = _separate_data('F').merge(_separate_data('M'), on=['name', 'year'], suffixes=(
-            '_f', '_m'), how='outer').merge(self._name_by_year, on=['name', 'year'])
+            '_f', '_m'), how='outer').merge(self._name_by_year, on=['name', 'year']).sort_values('year')
         for s in self._sexes:
             self._calcd[f'number_{s}'] = self._calcd[f'number_{s}'].fillna(0).map(int)
             self._calcd[f'ratio_{s}'] = self._calcd[f'number_{s}'] / self._calcd.number
@@ -155,15 +155,13 @@ class Displayer(Builder):
 
         # create metadata dfs
         peak = df[df.peak].copy()
-        latest = df.loc[df.year.idxmax()].copy()
-        earliest = df.loc[df.year.idxmin()].copy()
+        earliest = df.iloc[0].copy()
+        latest = df.iloc[-1].copy()
 
         # filter on years
         df = df[df.year.isin(self.years_to_select)]
         if not len(df):
             return {}
-
-        df = df.sort_values('year')
 
         # aggregate
         grouped = df.groupby('name', as_index=False).agg({'number': sum, 'number_f': sum, 'number_m': sum})
