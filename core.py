@@ -55,18 +55,19 @@ class Builder:
         # combine territories w/ national
         self._raw = self._concatenated.groupby(['name', 'sex', 'year', 'rank_'], as_index=False).number.sum()
 
+        # add peaks
+        peaks = self._raw.groupby(['name', 'sex'], as_index=False).agg(dict(rank_='min')).assign(peak=True)
+        self._raw = self._raw.merge(peaks, on=['name', 'sex', 'rank_'], how='left')
+
         # name by year
         self._name_by_year = self._concatenated.groupby(['name', 'year'], as_index=False).number.sum()
-        # add peaks
-        peaks = self._name_by_year.groupby('name', as_index=False).agg(dict(number='max')).assign(peak=True)
-        self._name_by_year = self._name_by_year.merge(peaks, on=['name', 'number'], how='left')
-        self._name_by_year.peak = self._name_by_year.peak.fillna(False)
 
         # add ratios
         _separate_data = lambda x: self._raw[self._raw.sex == x].drop(columns='sex').rename(columns=dict(rank_='rank'))
         self._calcd = _separate_data('F').merge(_separate_data('M'), on=['name', 'year'], suffixes=(
             '_f', '_m'), how='outer').merge(self._name_by_year, on=['name', 'year']).sort_values('year')
         for s in self._sexes:
+            self._calcd[f'peak_{s}'] = self._calcd[f'peak_{s}'].fillna(False)
             self._calcd[f'number_{s}'] = self._calcd[f'number_{s}'].fillna(0).map(int)
             self._calcd[f'ratio_{s}'] = self._calcd[f'number_{s}'] / self._calcd.number
             self._calcd[f'rank_{s}'] = self._calcd[f'rank_{s}'].fillna(-1).map(int)
@@ -154,7 +155,8 @@ class Displayer(Builder):
             return {}
 
         # create metadata dfs
-        peak = df[df.peak].copy()
+        peak_f = df[df.peak_f].iloc[0].copy()
+        peak_m = df[df.peak_m].iloc[0].copy()
         earliest = df.iloc[0].copy()
         latest = df.iloc[-1].copy()
 
@@ -181,7 +183,7 @@ class Displayer(Builder):
                 'f': grouped['ratio_f'],
                 'm': grouped['ratio_m'],
             },
-            'peak': _decompose_peak_or_latest(peak),
+            'peak': dict(f=_decompose_peak_or_latest(peak_f), m=_decompose_peak_or_latest(peak_m)),
             'latest': _decompose_peak_or_latest(latest),
             'earliest': _decompose_peak_or_latest(earliest),
         }
@@ -191,8 +193,6 @@ class Displayer(Builder):
             output['numbers']['m'],
             output['ratios']['f'],
             output['ratios']['m'],
-            output['peak']['year'],
-            output['peak']['numbers']['total'],
             output['latest']['year'],
             output['latest']['numbers']['total'],
         )
@@ -203,7 +203,7 @@ class Displayer(Builder):
                 historic[f'ratio_{s}'] = (historic[f'number_{s}'] / historic.number).round(2)
 
             essentially_single_gender = output['ratios']['f'] >= 0.99 or output['ratios']['m'] >= 0.99
-            number_bars_mult = 100 / peak.number
+            number_bars_mult = 100 / max(peak_f.number, peak_m.number)
             historic['number_bars'] = (
                     historic.year.map(str) + ' ' +
                     historic.number.apply(lambda x: int(round(x * number_bars_mult)) * self._blocks[2] + f' {x:,}')
@@ -484,8 +484,6 @@ def _create_display_for_name(
         number_m: int,
         ratio_f: float,
         ratio_m: float,
-        peak_year: int,
-        peak_number: int,
         latest_year: int,
         latest_number: int,
 ) -> dict:
@@ -495,7 +493,6 @@ def _create_display_for_name(
         info=[
             f'Total Usages: {number:,} ({numbers_fm})',
             f'Ratio: {display_ratio}',
-            f'Peak({peak_year}): {peak_number:,}',
             f'Latest({latest_year}): {latest_number:,}',
         ],
     )
