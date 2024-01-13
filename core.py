@@ -2,6 +2,7 @@ import os
 import re
 
 import pandas as pd
+import seaborn as sns
 
 PLACEHOLDER_NAMES = ('Unknown', 'Baby', 'Infant')
 NEUTRAL_RATIO_RANGE = (.2, .8)
@@ -129,9 +130,6 @@ class Displayer(Builder):
         super().__init__(*args, **kwargs)
         self._after = None
         self._before = None
-        self.number_bars_header_text = 'Number of Usages (scaled)'
-        self.ratio_bars_header_text = 'Gender Ratio (f <-> m)'
-        self._blocks = '▓', '▒', '░'
 
     def name(
             self,
@@ -139,7 +137,7 @@ class Displayer(Builder):
             after: int = None,
             before: int = None,
             year: int = None,
-            n_bars: int = None,
+            show_plot: bool = None,
     ) -> dict:
         # set up
         if year:
@@ -197,29 +195,14 @@ class Displayer(Builder):
             output['latest']['numbers']['total'],
         )
 
-        if n_bars:
-            historic = df[['year', 'number', 'number_f', 'number_m']].copy()
-            for s in self._sexes:
-                historic[f'ratio_{s}'] = (historic[f'number_{s}'] / historic.number).round(2)
-
-            essentially_single_gender = output['ratios']['f'] >= 0.99 or output['ratios']['m'] >= 0.99
-            number_bars_mult = 100 / max(peak_f.number, peak_m.number)
-            historic['number_bars'] = (
-                    historic.year.map(str) + ' ' +
-                    historic.number.apply(lambda x: int(round(x * number_bars_mult)) * self._blocks[2] + f' {x:,}')
-            )
-            historic['ratio_bars'] = (
-                    'f ' +
-                    historic.ratio_f.apply(lambda x: int(round(x * 50)) * self._blocks[0]) +
-                    historic.ratio_m.apply(lambda x: int(round(x * 50)) * self._blocks[1]) +
-                    ' m ' + historic.year.map(str)
-            )
-            if n_bars == -1:
-                hist_temp = historic  # show one bar per year
-            else:
-                hist_temp = historic[historic.year.apply(lambda x: x % int(100 / n_bars) == 0)]
-            output['display']['number_bars'] = hist_temp.number_bars.to_list()
-            output['display']['ratio_bars'] = [] if essentially_single_gender else hist_temp.ratio_bars.to_list()
+        if show_plot:
+            historic = df[['year', 'number_f', 'number_m']].melt(['year'], [
+                'number_f', 'number_m'], 'gender', 'number')
+            historic.gender = historic.gender.str.slice(-1)
+            ax = sns.lineplot(historic, x='year', y='number', hue='gender', palette=('red', 'blue'), hue_order=(
+                'f', 'm'))
+            ax.set_title(name.title())
+            ax.figure.tight_layout()
 
         return output
 
