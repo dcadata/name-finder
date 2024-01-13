@@ -185,15 +185,6 @@ class Displayer(Builder):
             'latest': _decompose_peak_or_latest(latest),
             'earliest': _decompose_peak_or_latest(earliest),
         }
-        output['display'] = _create_display_for_name(
-            output['numbers']['total'],
-            output['numbers']['f'],
-            output['numbers']['m'],
-            output['ratios']['f'],
-            output['ratios']['m'],
-            output['latest']['year'],
-            output['latest']['numbers']['total'],
-        )
 
         if show_plot:
             historic = df[['year', 'number_f', 'number_m']].melt(['year'], [
@@ -459,26 +450,6 @@ def _create_display_ratio(ratio_f: float, ratio_m: float, ignore_ones: bool = Fa
         return f'm={ratio_m}'
     else:  # they're equal
         return 'no lean'
-
-
-def _create_display_for_name(
-        number: int,
-        number_f: int,
-        number_m: int,
-        ratio_f: float,
-        ratio_m: float,
-        latest_year: int,
-        latest_number: int,
-) -> dict:
-    numbers_fm = f'f={number_f:,}, m={number_m:,}' if number_f >= number_m else f'm={number_m:,}, f={number_f:,}'
-    display_ratio = _create_display_ratio(ratio_f, ratio_m)
-    return dict(
-        info=[
-            f'Total Usages: {number:,} ({numbers_fm})',
-            f'Ratio: {display_ratio}',
-            f'Latest({latest_year}): {latest_number:,}',
-        ],
-    )
 
 
 def _create_display_for_search(name: str, number: int, ratio_f: float, ratio_m: float) -> str:
