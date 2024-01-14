@@ -23,6 +23,10 @@ class Year:
     MAX_YEAR = int(re.search('^yob([0-9]{4}).txt$', os.listdir(Filepath.NATIONAL_DATA_DIR)[-1]).group(1))
 
 
+class DFAgg:
+    NUMBER_SUM = dict(number='sum', number_f='sum', number_m='sum')
+
+
 class Builder:
     def __init__(self, *args, **kwargs) -> None:
         self._include_territories = kwargs.get('include_territories')
@@ -170,7 +174,7 @@ class Displayer(Builder):
             return {}
 
         # aggregate
-        grouped = df.groupby('name', as_index=False).agg({'number': sum, 'number_f': sum, 'number_m': sum})
+        grouped = df.groupby('name', as_index=False).agg(DFAgg.NUMBER_SUM)
         for s in self._sexes:
             grouped[f'ratio_{s}'] = (grouped[f'number_{s}'] / grouped.number).round(2)
 
@@ -238,7 +242,7 @@ class Displayer(Builder):
         df = df[df.year.isin(self.years_to_select)].copy()
 
         # aggregate
-        df = df.groupby('name', as_index=False).agg({'number': sum, 'number_f': sum, 'number_m': sum})
+        df = df.groupby('name', as_index=False).agg(DFAgg.NUMBER_SUM)
         for s in self._sexes:
             df[f'ratio_{s}'] = df[f'number_{s}'] / df.number
 
@@ -493,7 +497,7 @@ def create_predict_gender_reference(
     if ages:
         df = df[df.year.apply(lambda x: Year.MAX_YEAR - ages[1] <= x <= Year.MAX_YEAR - ages[0])].copy()
 
-    df = df.groupby('name', as_index=False).agg(dict(number=sum, number_f=sum, number_m=sum))
+    df = df.groupby('name', as_index=False).agg(DFAgg.NUMBER_SUM)
 
     df.loc[df.number_f > df.number_m, 'gender_prediction'] = 'f'
     df.loc[df.number_f < df.number_m, 'gender_prediction'] = 'm'
