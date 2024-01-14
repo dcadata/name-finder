@@ -93,10 +93,11 @@ class Builder:
 
     @staticmethod
     def _load_one_file_national(filename: str) -> pd.DataFrame:
+        year = re.search('yob([0-9]+)\.txt', filename).group(1)
         dtypes = {'name': str, 'sex': str, 'number': int}
         df = pd.read_csv(Filepath.NATIONAL_DATA_DIR + filename, names=list(dtypes.keys()), dtype=dtypes).assign(
-            year=filename)
-        df.year = df.year.apply(lambda x: x.rsplit('.', 1)[0].replace('yob', '')).map(int)
+            year=year)
+        df.year = df.year.map(int)
         return df
 
     @staticmethod
