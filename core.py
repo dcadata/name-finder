@@ -218,7 +218,8 @@ class Displayer(Builder):
             not_end: tuple = None,
             not_contains: tuple = None,
             order: tuple = None,
-            length: tuple[int, int] = None,
+            length_min: int = None,
+            length_max: int = None,
             number_min: int = None,
             number_max: int = None,
             gender: tuple[float, float] | str = None,
@@ -256,8 +257,11 @@ class Displayer(Builder):
             df = df[df.number <= number_max]
 
         # filter on length
-        if length:
-            df = df[df.name.map(len).apply(lambda x: length[0] <= x <= length[1])]
+        if length_min or length_max:
+            if length_min:
+                df = df[df.name.map(len) >= length_min]
+            if length_max:
+                df = df[df.name.map(len) <= length_max]
 
         # filter on ratio
         if type(gender) == str:
