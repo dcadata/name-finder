@@ -51,10 +51,8 @@ class Builder:
         self._concatenated = pd.concat(data)
 
     def _load_predict_age_reference(self) -> None:
-        self._age_reference = pd.read_csv(
-            Filepath.AGE_PREDICTION_REFERENCE, usecols=['name', 'year', 'number_living_pct'],
-            dtype=dict(name=str, year=int, number_living_pct=float),
-        )
+        self._age_reference = pd.read_csv(Filepath.AGE_PREDICTION_REFERENCE, usecols=[
+            'name', 'year', 'number_living_pct'], dtype=dict(name=str, year=int, number_living_pct=float))
 
     def _transform_data(self) -> None:
         # combine territories w/ national
