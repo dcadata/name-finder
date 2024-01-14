@@ -141,7 +141,7 @@ class Displayer(Builder):
             after: int = None,
             before: int = None,
             year: int = None,
-            show_plot: bool = None,
+            plot: bool = None,
     ) -> dict:
         # set up
         if year:
@@ -196,7 +196,7 @@ class Displayer(Builder):
             'earliest': _decompose_peak_or_latest(earliest),
         }
 
-        if show_plot:
+        if plot:
             historic = df[['year', 'number_f', 'number_m']].melt(['year'], [
                 'number_f', 'number_m'], 'gender', 'number')
             historic.gender = historic.gender.str.slice(-1)
