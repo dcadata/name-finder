@@ -153,8 +153,14 @@ class Displayer(Builder):
             return {}
 
         # create metadata dfs
-        peak_f = df[df.peak_f].iloc[0].copy()
-        peak_m = df[df.peak_m].iloc[0].copy()
+        try:
+            peak_f = df[df.peak_f].iloc[0].copy()
+        except IndexError:
+            peak_f = None
+        try:
+            peak_m = df[df.peak_m].iloc[0].copy()
+        except IndexError:
+            peak_m = None
         earliest = df.iloc[0].copy()
         latest = df.iloc[-1].copy()
 
@@ -457,7 +463,9 @@ def _create_display_for_search(name: str, number: int, ratio_f: float, ratio_m: 
     return f'{name} ({number:,}{display_ratio})'
 
 
-def _decompose_peak_or_latest(peak_or_latest: pd.DataFrame) -> dict:
+def _decompose_peak_or_latest(peak_or_latest: pd.DataFrame | None) -> dict:
+    if peak_or_latest is None:
+        return {}
     return dict(
         year=int(peak_or_latest.year),
         numbers=dict(
