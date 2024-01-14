@@ -313,51 +313,6 @@ class Displayer(Builder):
             return df.to_dict('records')
         return df
 
-    def search_by_text(self, query: str, *args, **kwargs) -> pd.DataFrame | list:
-        query = query.lower()
-
-        def _safely_check_regex(pattern: str) -> str | None:
-            return _safe_regex_search(pattern, query)
-
-        def _safely_check_regex_and_split_into_tuple(pattern: str, delimiter: str = ',') -> tuple | None:
-            result = _safely_check_regex(pattern)
-            if result:
-                return tuple(result.split(delimiter))
-            return
-
-        length_ind = _safely_check_regex('length:([0-9]+-[0-9]+)')
-        year_ind = _safely_check_regex('year:([0-9]{4})')
-        if years_ind := re.search('years:([0-9]{4})-([0-9]{4})', query, re.I):
-            after_ind, before_ind = map(int, years_ind.groups())
-        else:
-            if after_ind := _safely_check_regex('after:([0-9]{4})'):
-                after_ind = int(after_ind)
-            if before_ind := _safely_check_regex('before:([0-9]{4})'):
-                before_ind = int(before_ind)
-
-        if gender_ind := _safely_check_regex_and_split_into_tuple('gender:([0-9]+-[0-9]+)', delimiter='-'):
-            gender_ind = tuple(map(lambda x: int(x) / 100, gender_ind))
-
-        data = self.search(
-            pattern=_safely_check_regex('pattern:(.*)'),
-            start=_safely_check_regex_and_split_into_tuple('(\s|^)start:([a-z,]+)'),
-            end=_safely_check_regex_and_split_into_tuple('(\s|^)end:([a-z,]+)'),
-            contains=_safely_check_regex_and_split_into_tuple('(\s|^)contains:([a-z,]+)'),
-            contains_any=_safely_check_regex_and_split_into_tuple('(\s|^)contains-any:([a-z,]+)'),
-            not_start=_safely_check_regex_and_split_into_tuple('~start:([a-z,]+)'),
-            not_end=_safely_check_regex_and_split_into_tuple('~end:([a-z,]+)'),
-            not_contains=_safely_check_regex_and_split_into_tuple('~contains:([a-z,]+)'),
-            order=_safely_check_regex_and_split_into_tuple('order:([a-z,]+)'),
-            length=tuple(map(int, length_ind.split('-'))) if length_ind else None,
-            gender=gender_ind,
-            after=after_ind,
-            before=before_ind,
-            year=int(year_ind) if year_ind else None,
-            *args,
-            **kwargs,
-        )
-        return data
-
     def predict_age(self, name: str, lower_percentile: float = .25) -> dict:
         name = name.title()
         upper_percentile = 1 - lower_percentile
@@ -445,13 +400,6 @@ class Displayer(Builder):
         else:
             years_range = (Year.MIN_YEAR, Year.MAX_YEAR + 1)
         return tuple(range(*years_range))
-
-
-def _safe_regex_search(pattern: str, text: str) -> str | None:
-    try:
-        return re.search(pattern, text).groups()[-1]
-    except (AttributeError, IndexError):
-        return
 
 
 def _create_display_ratio(ratio_f: float, ratio_m: float, ignore_ones: bool = False) -> str:
