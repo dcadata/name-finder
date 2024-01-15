@@ -163,6 +163,7 @@ class Displayer(Builder):
 
         # create metadata
         earliest, latest = df.iloc[[0, -1]].to_dict('records')
+        selected_year = df[df.year == year].iloc[0].to_dict() if year else None
 
         # filter on years
         df = df[df.year.isin(self.years_to_select)]
@@ -191,6 +192,8 @@ class Displayer(Builder):
             'latest': _restructure_earliest_or_latest(latest),
             'earliest': _restructure_earliest_or_latest(earliest),
         }
+        if year:
+            output['selected_year'] = _restructure_earliest_or_latest(selected_year)
 
         if plot:
             historic = df[['year', 'number_f', 'number_m']].melt(['year'], [
