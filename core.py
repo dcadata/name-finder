@@ -468,7 +468,7 @@ def create_predict_age_reference(raw_with_actuarial: pd.DataFrame, min_age: int 
     ref = raw_with_actuarial[['name', 'year', 'age', 'number_living']].copy()
     ref = (
         ref[ref.age >= min_age].drop(columns='age')
-        .groupby(['name', 'year'], as_index=False).number_living.sum()  # consolid sex
+        .groupby(['name', 'year'], as_index=False).number_living.sum()
         .merge(_read_total_number_living(), on='name', suffixes=('', '_name'))
     )
     ref = ref[ref.number_living_name >= n_min].copy()
