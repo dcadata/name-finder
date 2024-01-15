@@ -225,6 +225,7 @@ class Displayer(Builder):
             after: int = None,
             before: int = None,
             year: int = None,
+            peaked: bool = False,
             rank: int = None,
             top: int = 20,
             skip: int = None,
@@ -304,6 +305,10 @@ class Displayer(Builder):
         df = df.sort_values(sort_field, ascending=False).drop(columns='name_lower')
         for s in self._sexes:
             df[f'ratio_{s}'] = df[f'ratio_{s}'].round(2)
+
+        if peaked:
+            peaked_within = self._peaks[(self._peaks.year >= after) & (self._peaks.year <= before)]
+            df = df[df.name.isin(peaked_within.name)].copy()
 
         if skip:
             df = df.iloc[skip:].copy()
