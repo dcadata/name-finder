@@ -381,10 +381,12 @@ class Displayer(Builder):
 
         if number:
             numbers = df.groupby('sex').number.sum()
-            output.update({
-                'prediction': 'f' if numbers.get('f', 0) > numbers.get('m', 0) else 'm',
-                'confidence': round(max(numbers.get('f', 0) / number, numbers.get('m', 0) / number), 2),
-            })
+            prediction = 'f' if numbers.f > numbers.m else 'm'
+            output.update(dict(
+                prediction=prediction,
+                confidence=round(numbers[prediction] / number, 2),
+            ))
+
         return output
 
     def _get_peak(self, name: str) -> dict:
