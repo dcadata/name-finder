@@ -225,6 +225,7 @@ class Displayer(Builder):
             after: int = None,
             before: int = None,
             year: int = None,
+            rank: int = None,
             top: int = 20,
             skip: int = None,
             sort_sex: str = None,
@@ -236,6 +237,9 @@ class Displayer(Builder):
             before = year
         self._after = after
         self._before = before
+        if rank:
+            skip = rank - 1
+            top = 1
         df = self._calcd.copy()
 
         # filter on years
