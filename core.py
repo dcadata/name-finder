@@ -241,7 +241,10 @@ class Displayer(Builder):
         df = df[df.year.isin(self.years_to_select)].copy()
 
         # aggregate
-        df = df.groupby('name', as_index=False).agg(DFAgg.NUMBER_SUM)
+        agg_fields = DFAgg.NUMBER_SUM.copy()
+        if len(self.years_to_select) == 1:
+            agg_fields.update(dict(rank_f='min', rank_m='min'))
+        df = df.groupby('name', as_index=False).agg(agg_fields)
         for s in self._sexes:
             df[f'ratio_{s}'] = df[f'number_{s}'] / df.number
 
