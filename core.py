@@ -224,7 +224,7 @@ class Displayer(Builder):
             top: int = 20,
             skip: int = None,
             sort_sex: str = None,
-            as_records: bool = False,
+            display: bool = False,
     ) -> pd.DataFrame | list:
         # set up
         if year:
@@ -297,18 +297,15 @@ class Displayer(Builder):
         for s in self._sexes:
             df[f'ratio_{s}'] = df[f'ratio_{s}'].round(2)
 
-        if as_records:
-            df['display'] = [_create_display_for_search(*i) for i in df[[
-                'name', 'number', 'ratio_f', 'ratio_m']].to_records(index=False)]
-
         if skip:
-            df = df.iloc[skip:]
+            df = df.iloc[skip:].copy()
 
         if top:
-            df = df.head(top)
+            df = df.head(top).copy()
 
-        if as_records:
-            return df.to_dict('records')
+        if display:
+            return [_create_display_for_search(*i) for i in df[['name', 'number', 'ratio_f', 'ratio_m']].to_records(
+                index=False)]
         return df
 
     def predict_age(self, name: str, lower_percentile: float = .25) -> dict:
