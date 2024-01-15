@@ -435,10 +435,6 @@ def create_predict_gender_reference(
         conf_min: float = .8,
         n_min: int = 0,
 ) -> pd.DataFrame:
-    if not displayer:
-        displayer = Displayer()
-        displayer.build_base()
-
     df = displayer.calculated.copy()
 
     if after:
