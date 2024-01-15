@@ -342,12 +342,13 @@ class Displayer(Builder):
             after: int = None,
             before: int = None,
             year: int = None,
-            buffer: int = 0,
+            around: int = None,
             living: bool = False,
     ) -> dict:
         # set up
         df = self.raw_with_actuarial.copy()
         output = dict(name=name.title())
+        buffer_in_years = 5
 
         if living:
             df = df.drop(columns='number').rename(columns={'number_living': 'number'})
@@ -355,18 +356,17 @@ class Displayer(Builder):
 
         # filter dataframe
         df = df[df['name'].str.lower() == name.lower()].copy()
-        if year and buffer:
-            years = list(range(year - buffer, year + buffer + 1))
+        if year:
+            df = df[df.year == year]
+            output['year'] = year
+        elif around:
+            years = list(range(around - buffer_in_years, around + buffer_in_years + 1))
             df = df[df.year.isin(years)]
             output.update(dict(
-                year=year,
-                buffer=buffer,
+                around=around,
                 after=years[0],
                 before=years[-1],
             ))
-        elif year:
-            df = df[df.year == year]
-            output['year'] = year
         else:
             if after:
                 df = df[df.year >= after]
