@@ -205,14 +205,14 @@ class Displayer(Builder):
     def search(
             self,
             pattern: str = None,
-            start: tuple = None,
-            end: tuple = None,
-            contains: tuple = None,
-            contains_any: tuple = None,
-            not_start: tuple = None,
-            not_end: tuple = None,
-            not_contains: tuple = None,
-            order: tuple = None,
+            start: tuple[str, ...] = None,
+            end: tuple[str, ...] = None,
+            contains: tuple[str, ...] = None,
+            contains_any: tuple[str, ...] = None,
+            not_start: tuple[str, ...] = None,
+            not_end: tuple[str, ...] = None,
+            not_contains: tuple[str, ...] = None,
+            order: tuple[str, ...] = None,
             length_min: int = None,
             length_max: int = None,
             number_min: int = None,
@@ -225,7 +225,7 @@ class Displayer(Builder):
             skip: int = None,
             sort_sex: str = None,
             display: bool = False,
-    ) -> pd.DataFrame | list:
+    ) -> pd.DataFrame | list[str, ...]:
         # set up
         if year:
             after = year
@@ -391,7 +391,7 @@ class Displayer(Builder):
             'sex'], keep='last').set_index('sex').to_dict('index')
 
     @property
-    def years_to_select(self) -> tuple:
+    def years_to_select(self) -> tuple[int, ...]:
         if self._after and self._before:
             years_range = (self._after, self._before + 1)
         elif self._after:
@@ -430,7 +430,7 @@ def _restructure_earliest_or_latest(earliest: dict) -> dict:
 
 def create_predict_gender_reference(
         built_displayer: Displayer = None,
-        ages: tuple = None, conf_min: float = .8, n_min: int = 0,
+        ages: tuple[int, int] = None, conf_min: float = .8, n_min: int = 0,
 ) -> pd.DataFrame:
     if not built_displayer:
         built_displayer = Displayer()
