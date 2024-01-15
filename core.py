@@ -312,27 +312,22 @@ class Displayer(Builder):
                 index=False)]
         return df
 
-    def predict_age(self, name: str, lower_percentile: float = .25) -> dict:
+    def predict_age(self, name: str, mid_percentile: float = .68) -> dict:
         name = name.title()
+        lower_percentile = .5 - mid_percentile / 2
         upper_percentile = 1 - lower_percentile
-        median_percentile = .5
 
         df = self._age_reference[self._age_reference.name == name].copy()
 
         df.number_living_pct = df.number_living_pct.cumsum()
         df['lower'] = (lower_percentile - df.number_living_pct).abs()
         df['upper'] = (upper_percentile - df.number_living_pct).abs()
-        df['med'] = (median_percentile - df.number_living_pct).abs()
 
         df = (
-            df.loc[
-                (df.lower == df.lower.min()) |
-                (df.upper == df.upper.min()) |
-                (df.med == df.med.min()),
-            ]
+            df.loc[(df.lower == df.lower.min()) | (df.upper == df.upper.min())]
             .sort_values('year')
-            .assign(bound=['lower', 'median', 'upper'])
-            .assign(percentile=[lower_percentile, median_percentile, upper_percentile])
+            .assign(bound=['lower', 'upper'])
+            .assign(percentile=[lower_percentile, upper_percentile])
             .set_index('bound')
         )[['percentile', 'year']]
 
