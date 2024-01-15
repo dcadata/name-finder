@@ -293,7 +293,7 @@ class Displayer(Builder):
             df = df[~df.name_lower.apply(lambda x: any((i.lower() in x for i in not_contains)))]
 
         if not len(df):
-            return {}
+            return df
 
         sort_field = f'number_{sort_sex}' if sort_sex else 'number'
         df = df.sort_values(sort_field, ascending=False).drop(columns='name_lower')
