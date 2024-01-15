@@ -35,7 +35,10 @@ class Builder:
 
     def build_base(self) -> None:
         self._load_data()
-        self._transform_data()
+        self._create_raw_from_concatenated()
+        self._create_peaks()
+        self._create_calcd_with_ratios()
+        self._create_raw_with_actuarial()
         self._load_predict_age_reference()
 
     def ingest_alternate_calcd(self, calcd: pd.DataFrame) -> None:
@@ -54,28 +57,31 @@ class Builder:
         self._age_reference = pd.read_csv(Filepath.AGE_PREDICTION_REFERENCE, usecols=[
             'name', 'year', 'number_living_pct'], dtype=dict(name=str, year=int, number_living_pct=float))
 
-    def _transform_data(self) -> None:
-        # combine territories w/ national
-        self._raw = self._concatenated.groupby(['name', 'sex', 'year', 'rank_'], as_index=False).number.sum()
+    def _create_raw_from_concatenated(self) -> None:
+        self._concatenated.sex = self._concatenated.sex.str.lower()
+        self._concatenated.rank_ = self._concatenated.rank_.map(int)
+        if self._include_territories:
+            # combine territories w/ national
+            self._raw = self._concatenated.groupby(['name', 'sex', 'year', 'rank_'], as_index=False).number.sum()
+        else:
+            self._raw = self._concatenated.copy()
 
-        # add peaks
-        peaks = self._raw.groupby(['name', 'sex'], as_index=False).agg(dict(rank_='min')).assign(peak=True)
-        self._raw = self._raw.merge(peaks, on=['name', 'sex', 'rank_'], how='left')
+    def _create_peaks(self) -> None:
+        self._peaks = self._raw.groupby(['name', 'sex'], as_index=False).agg(dict(rank_='min')).merge(
+            self._raw, on=['name', 'sex', 'rank_'], how='left').sort_values('year').rename(columns=dict(rank_='rank'))
 
-        # name by year
-        self._name_by_year = self._concatenated.groupby(['name', 'year'], as_index=False).number.sum()
-
-        # add ratios
-        _separate_data = lambda x: self._raw[self._raw.sex == x].drop(columns='sex').rename(columns=dict(rank_='rank'))
-        self._calcd = _separate_data('F').merge(_separate_data('M'), on=['name', 'year'], suffixes=(
-            '_f', '_m'), how='outer').merge(self._name_by_year, on=['name', 'year']).sort_values('year')
+    def _create_calcd_with_ratios(self) -> None:
+        name_by_year = self._raw.groupby(['name', 'year'], as_index=False).number.sum()
+        _separate = lambda x: self._raw[self._raw.sex == x].drop(columns='sex').rename(columns=dict(rank_='rank'))
+        self._calcd = _separate('f').merge(_separate('m'), on=['name', 'year'], suffixes=(
+            '_f', '_m'), how='outer').merge(name_by_year, on=['name', 'year']).sort_values('year')
         for s in self._sexes:
-            self._calcd[f'peak_{s}'] = self._calcd[f'peak_{s}'].fillna(False)
             self._calcd[f'number_{s}'] = self._calcd[f'number_{s}'].fillna(0).map(int)
             self._calcd[f'ratio_{s}'] = self._calcd[f'number_{s}'] / self._calcd.number
             self._calcd[f'rank_{s}'] = self._calcd[f'rank_{s}'].fillna(-1).map(int)
 
-        # add actuarial - loses years before 1900
+    def _create_raw_with_actuarial(self) -> None:
+        # loses years before 1900
         self.raw_with_actuarial = self._raw.merge(self._load_actuarial_data(), on=['sex', 'year'])
         self.raw_with_actuarial['number_living'] = (
                 self.raw_with_actuarial.number * self.raw_with_actuarial.survival_prob)
@@ -108,7 +114,7 @@ class Builder:
 
     def _load_actuarial_data(self) -> pd.DataFrame:
         actuarial = pd.concat(pd.read_csv(Filepath.ACTUARIAL.format(sex=s), usecols=[
-            'year', 'age', 'survivors'], dtype=int).assign(sex=s.upper()) for s in self._sexes)
+            'year', 'age', 'survivors'], dtype=int).assign(sex=s) for s in self._sexes)
         actuarial = actuarial[actuarial.year == Year.MAX_YEAR].copy()
         actuarial['birth_year'] = actuarial.year - actuarial.age
         actuarial['survival_prob'] = actuarial.survivors / 100_000
@@ -154,17 +160,8 @@ class Displayer(Builder):
         if not len(df):
             return {}
 
-        # create metadata dfs
-        try:
-            peak_f = df[df.peak_f].iloc[0].copy()
-        except IndexError:
-            peak_f = None
-        try:
-            peak_m = df[df.peak_m].iloc[0].copy()
-        except IndexError:
-            peak_m = None
-        earliest = df.iloc[0].copy()
-        latest = df.iloc[-1].copy()
+        # create metadata
+        earliest, latest = df.iloc[[0, -1]].to_dict('records')
 
         # filter on years
         df = df[df.year.isin(self.years_to_select)]
@@ -189,9 +186,9 @@ class Displayer(Builder):
                 'f': grouped['ratio_f'],
                 'm': grouped['ratio_m'],
             },
-            'peak': dict(f=_decompose_peak_or_latest(peak_f), m=_decompose_peak_or_latest(peak_m)),
-            'latest': _decompose_peak_or_latest(latest),
-            'earliest': _decompose_peak_or_latest(earliest),
+            'peak': self._get_peak(name),
+            'latest': _restructure_earliest_or_latest(latest),
+            'earliest': _restructure_earliest_or_latest(earliest),
         }
 
         if plot:
@@ -385,10 +382,14 @@ class Displayer(Builder):
         if number:
             numbers = df.groupby('sex').number.sum()
             output.update({
-                'prediction': 'f' if numbers.get('F', 0) > numbers.get('M', 0) else 'm',
-                'confidence': round(max(numbers.get('F', 0) / number, numbers.get('M', 0) / number), 2),
+                'prediction': 'f' if numbers.get('f', 0) > numbers.get('m', 0) else 'm',
+                'confidence': round(max(numbers.get('f', 0) / number, numbers.get('m', 0) / number), 2),
             })
         return output
+
+    def _get_peak(self, name: str) -> dict:
+        return self._peaks[self._peaks.name == name.title()].drop(columns='name').drop_duplicates(subset=[
+            'sex'], keep='last').set_index('sex').to_dict('index')
 
     @property
     def years_to_select(self) -> tuple:
@@ -420,20 +421,11 @@ def _create_display_for_search(name: str, number: int, ratio_f: float, ratio_m: 
     return f'{name} ({number:,}{display_ratio})'
 
 
-def _decompose_peak_or_latest(peak_or_latest: pd.DataFrame | None) -> dict:
-    if peak_or_latest is None:
-        return {}
+def _restructure_earliest_or_latest(earliest: dict) -> dict:
     return dict(
-        year=int(peak_or_latest.year),
-        numbers=dict(
-            total=int(peak_or_latest.number),
-            f=int(peak_or_latest.number_f),
-            m=int(peak_or_latest.number_m),
-        ),
-        rank=dict(
-            f=int(peak_or_latest.rank_f),
-            m=int(peak_or_latest.rank_m)
-        ),
+        year=earliest['year'],
+        number=dict(total=earliest['number'], f=earliest['number_f'], m=earliest['number_m']),
+        rank=dict(f=earliest['rank_f'], m=earliest['rank_m']),
     )
 
 
