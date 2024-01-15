@@ -429,17 +429,22 @@ def _restructure_earliest_or_latest(earliest: dict) -> dict:
 
 
 def create_predict_gender_reference(
-        built_displayer: Displayer = None,
-        ages: tuple[int, int] = None, conf_min: float = .8, n_min: int = 0,
+        displayer: Displayer = None,
+        after: int = None,
+        before: int = None,
+        conf_min: float = .8,
+        n_min: int = 0,
 ) -> pd.DataFrame:
-    if not built_displayer:
-        built_displayer = Displayer()
-        built_displayer.build_base()
+    if not displayer:
+        displayer = Displayer()
+        displayer.build_base()
 
-    df = built_displayer.calculated.copy()
+    df = displayer.calculated.copy()
 
-    if ages:
-        df = df[df.year.apply(lambda x: Year.MAX_YEAR - ages[1] <= x <= Year.MAX_YEAR - ages[0])].copy()
+    if after:
+        df = df[df.year >= after]
+    if before:
+        df = df[df.year <= before]
 
     df = df.groupby('name', as_index=False).agg(DFAgg.NUMBER_SUM)
 
