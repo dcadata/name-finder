@@ -32,6 +32,7 @@ class Builder:
         self._include_territories = kwargs.get('include_territories')
         self._sexes = ('f', 'm')
         self._calcd = None
+        self._include_territories = False  # todo: re-rank accounting for territories
 
     def build_base(self) -> None:
         self._load_data()
