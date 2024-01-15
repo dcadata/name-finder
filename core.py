@@ -309,8 +309,10 @@ class Displayer(Builder):
                 index=False)]
         return df
 
-    def predict_age(self, name: str, lower_percentile: float = .25) -> dict:
+    def predict_age(self, name: str, lower_percentile: float = .25, n_stdev: int = None) -> dict:
         name = name.title()
+        if n_stdev:
+            lower_percentile = {1: .5 - .68 / 2, 2: .5 - .95 / 2}[n_stdev]
         upper_percentile = 1 - lower_percentile
         median_percentile = .5
 
