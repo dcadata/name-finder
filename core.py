@@ -69,7 +69,7 @@ class Builder:
 
     def _create_peaks(self) -> None:
         self._peaks = self._raw.groupby(['name', 'sex'], as_index=False).agg(dict(rank_='min')).merge(
-            self._raw, on=['name', 'sex', 'rank_'], how='left').sort_values('year').rename(columns=dict(rank_='rank'))
+            self._raw, on=['name', 'sex', 'rank_'], how='left').sort_values('year')
 
     def _create_calcd_with_ratios(self) -> None:
         name_by_year = self._raw.groupby(['name', 'year'], as_index=False).number.sum()
@@ -391,8 +391,8 @@ class Displayer(Builder):
         return output
 
     def _get_peak(self, name: str) -> dict:
-        return self._peaks[self._peaks.name == name.title()].drop(columns='name').drop_duplicates(subset=[
-            'sex'], keep='last').set_index('sex').to_dict('index')
+        return self._peaks[self._peaks.name == name.title()].drop_duplicates(subset=['sex'], keep='last').rename(
+            columns=dict(rank_='rank')).set_index('sex')[['year', 'rank', 'number']].to_dict('index')
 
     @property
     def after(self) -> int:
