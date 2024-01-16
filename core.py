@@ -193,13 +193,7 @@ class Displayer(Builder):
         }
 
         if plot:
-            historic = df[['year', 'number_f', 'number_m']].melt(['year'], [
-                'number_f', 'number_m'], 'gender', 'number')
-            historic.gender = historic.gender.str.slice(-1)
-            ax = sns.lineplot(historic, x='year', y='number', hue='gender', palette=('red', 'blue'), hue_order=(
-                'f', 'm'))
-            ax.set_title(name.title())
-            ax.figure.tight_layout()
+            _create_plot_for_name(df, name.title())
 
         return output
 
@@ -410,6 +404,14 @@ class Displayer(Builder):
         else:
             years_range = (Year.MIN_YEAR, Year.MAX_YEAR + 1)
         return tuple(range(*years_range))
+
+
+def _create_plot_for_name(filt_df: pd.DataFrame, name: str) -> None:
+    historic = filt_df[['year', 'number_f', 'number_m']].melt(['year'], ['number_f', 'number_m'], 'gender', 'number')
+    historic.gender = historic.gender.str.slice(-1)
+    ax = sns.lineplot(historic, x='year', y='number', hue='gender', palette=('red', 'blue'), hue_order=('f', 'm'))
+    ax.set_title(name)
+    ax.figure.tight_layout()
 
 
 def _create_display_ratio(ratio_f: float, ratio_m: float, ignore_ones: bool = False) -> str:
