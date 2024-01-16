@@ -36,10 +36,10 @@ class Builder:
 
     def build_base(self) -> None:
         self._load_data()
-        self._create_raw_from_concatenated()
-        self._create_peaks()
-        self._create_calcd_with_ratios()
-        self._create_raw_with_actuarial()
+        self._build_raw_from_concatenated()
+        self._build_peaks()
+        self._build_calcd_with_ratios()
+        self._build_raw_with_actuarial()
         self._load_predict_age_reference()
 
     def ingest_alternate_calcd(self, calcd: pd.DataFrame) -> None:
@@ -58,7 +58,7 @@ class Builder:
         self._age_reference = pd.read_csv(Filepath.AGE_PREDICTION_REFERENCE, usecols=[
             'name', 'year', 'number_living_pct'], dtype=dict(name=str, year=int, number_living_pct=float))
 
-    def _create_raw_from_concatenated(self) -> None:
+    def _build_raw_from_concatenated(self) -> None:
         self._concatenated.sex = self._concatenated.sex.str.lower()
         self._concatenated.rank_ = self._concatenated.rank_.map(int)
         if self._include_territories:
@@ -67,11 +67,11 @@ class Builder:
         else:
             self._raw = self._concatenated.copy()
 
-    def _create_peaks(self) -> None:
+    def _build_peaks(self) -> None:
         self._peaks = self._raw.groupby(['name', 'sex'], as_index=False).agg(dict(rank_='min')).merge(
             self._raw, on=['name', 'sex', 'rank_'], how='left').sort_values('year')
 
-    def _create_calcd_with_ratios(self) -> None:
+    def _build_calcd_with_ratios(self) -> None:
         name_by_year = self._raw.groupby(['name', 'year'], as_index=False).number.sum()
         _separate = lambda x: self._raw[self._raw.sex == x].drop(columns='sex').rename(columns=dict(rank_='rank'))
         self._calcd = _separate('f').merge(_separate('m'), on=['name', 'year'], suffixes=(
@@ -81,7 +81,7 @@ class Builder:
             self._calcd[f'ratio_{s}'] = self._calcd[f'number_{s}'] / self._calcd.number
             self._calcd[f'rank_{s}'] = self._calcd[f'rank_{s}'].fillna(-1).map(int)
 
-    def _create_raw_with_actuarial(self) -> None:
+    def _build_raw_with_actuarial(self) -> None:
         # loses years before 1900
         self.raw_with_actuarial = self._raw.merge(self._load_actuarial_data(), on=['sex', 'year'])
         self.raw_with_actuarial['number_living'] = (
@@ -193,7 +193,7 @@ class Displayer(Builder):
         }
 
         if plot:
-            _create_plot_for_name(df, name.title())
+            _make_plot_for_name(df, name.title())
 
         return output
 
@@ -308,7 +308,7 @@ class Displayer(Builder):
             df = df.head(top).copy()
 
         if display:
-            return [_create_display_for_search(*i) for i in df[['name', 'number', 'ratio_f', 'ratio_m']].to_records(
+            return [_make_search_display_string(*i) for i in df[['name', 'number', 'ratio_f', 'ratio_m']].to_records(
                 index=False)]
         return df
 
@@ -406,7 +406,7 @@ class Displayer(Builder):
         return tuple(range(*years_range))
 
 
-def _create_plot_for_name(filt_df: pd.DataFrame, name: str) -> None:
+def _make_plot_for_name(filt_df: pd.DataFrame, name: str) -> None:
     historic = filt_df[['year', 'number_f', 'number_m']].melt(['year'], ['number_f', 'number_m'], 'gender', 'number')
     historic.gender = historic.gender.str.slice(-1)
     ax = sns.lineplot(historic, x='year', y='number', hue='gender', palette=('red', 'blue'), hue_order=('f', 'm'))
@@ -414,7 +414,7 @@ def _create_plot_for_name(filt_df: pd.DataFrame, name: str) -> None:
     ax.figure.tight_layout()
 
 
-def _create_display_ratio(ratio_f: float, ratio_m: float, ignore_ones: bool = False) -> str:
+def _make_display_ratio(ratio_f: float, ratio_m: float, ignore_ones: bool = False) -> str:
     if ignore_ones and (ratio_f == 1 or ratio_m == 1):
         return ''
     elif ratio_f > ratio_m:
@@ -425,8 +425,8 @@ def _create_display_ratio(ratio_f: float, ratio_m: float, ignore_ones: bool = Fa
         return 'no lean'
 
 
-def _create_display_for_search(name: str, number: int, ratio_f: float, ratio_m: float) -> str:
-    if display_ratio := _create_display_ratio(ratio_f, ratio_m):
+def _make_search_display_string(name: str, number: int, ratio_f: float, ratio_m: float) -> str:
+    if display_ratio := _make_display_ratio(ratio_f, ratio_m):
         display_ratio = ', ' + display_ratio
     return f'{name} ({number:,}{display_ratio})'
 
@@ -439,7 +439,7 @@ def _restructure_earliest_or_latest(earliest: dict) -> dict:
     )
 
 
-def create_predict_gender_reference(
+def build_predict_gender_reference(
         displayer: Displayer = None,
         after: int = None,
         before: int = None,
@@ -474,7 +474,7 @@ def create_predict_gender_reference(
     return df
 
 
-def create_total_number_living_from_actuarial(raw_with_actuarial: pd.DataFrame) -> None:
+def build_total_number_living_from_actuarial(raw_with_actuarial: pd.DataFrame) -> None:
     total_number_living = raw_with_actuarial.groupby('name', as_index=False).number_living.sum()
     total_number_living.to_csv(Filepath.TOTAL_NUMBER_LIVING_REFERENCE, index=False)
 
@@ -485,7 +485,7 @@ def _read_total_number_living() -> pd.DataFrame:
     return total_number_living
 
 
-def create_predict_age_reference(raw_with_actuarial: pd.DataFrame, min_age: int = 0, n_min: int = 0) -> None:
+def build_predict_age_reference(raw_with_actuarial: pd.DataFrame, min_age: int = 0, n_min: int = 0) -> None:
     ref = raw_with_actuarial[['name', 'year', 'age', 'number_living']].copy()
     ref = (
         ref[ref.age >= min_age].drop(columns='age')
@@ -498,10 +498,10 @@ def create_predict_age_reference(raw_with_actuarial: pd.DataFrame, min_age: int 
     ref.to_csv(Filepath.AGE_PREDICTION_REFERENCE, index=False)
 
 
-def create_all_generated_data() -> None:
+def build_all_generated_data() -> None:
     displayer = Displayer()
     displayer.build_base()
 
-    create_predict_gender_reference(displayer)
-    create_total_number_living_from_actuarial(displayer.raw_with_actuarial)
-    create_predict_age_reference(displayer.raw_with_actuarial)
+    build_predict_gender_reference(displayer)
+    build_total_number_living_from_actuarial(displayer.raw_with_actuarial)
+    build_predict_age_reference(displayer.raw_with_actuarial)
