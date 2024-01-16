@@ -307,7 +307,7 @@ class Displayer(Builder):
             df[f'ratio_{s}'] = df[f'ratio_{s}'].round(2)
 
         if peaked:
-            peaked_within = self._peaks[(self._peaks.year >= after) & (self._peaks.year <= before)]
+            peaked_within = self._peaks[(self._peaks.year >= self.after) & (self._peaks.year <= self.before)]
             df = df[df.name.isin(peaked_within.name)].copy()
 
         if skip:
@@ -393,6 +393,14 @@ class Displayer(Builder):
     def _get_peak(self, name: str) -> dict:
         return self._peaks[self._peaks.name == name.title()].drop(columns='name').drop_duplicates(subset=[
             'sex'], keep='last').set_index('sex').to_dict('index')
+
+    @property
+    def after(self) -> int:
+        return self.years_to_select[0]
+
+    @property
+    def before(self) -> int:
+        return self.years_to_select[-1]
 
     @property
     def years_to_select(self) -> tuple[int, ...]:
