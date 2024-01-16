@@ -161,7 +161,7 @@ class Displayer(Builder):
         if not len(df):
             return {}
 
-        # create metadata
+        # build metadata
         earliest, latest = df.iloc[[0, -1]].to_dict('records')
 
         # filter on years
@@ -174,7 +174,7 @@ class Displayer(Builder):
         for s in self._sexes:
             grouped[f'ratio_{s}'] = (grouped[f'number_{s}'] / grouped.number).round(2)
 
-        # create output
+        # build output
         grouped = grouped.iloc[0].to_dict()
         output = {
             'name': grouped['name'],
