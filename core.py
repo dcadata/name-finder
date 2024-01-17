@@ -312,7 +312,7 @@ class Displayer(Builder):
                 index=False)]
         return df
 
-    def predict_age(self, name: str, mid_percentile: float = .68) -> dict:
+    def predict_age(self, name: str, mid_percentile: float = .68) -> pd.DataFrame:
         name = name.title()
         lower_percentile = .5 - mid_percentile / 2
         upper_percentile = 1 - lower_percentile
@@ -330,13 +330,11 @@ class Displayer(Builder):
             .assign(percentile=[lower_percentile, upper_percentile])
             .set_index('bound')
         )[['percentile', 'year']]
-
-        prediction = dict(name=name, **df.to_dict('index'))
-        percentile_band = int(round((upper_percentile - lower_percentile) * 100))
-        year_band = prediction['upper']['year'] - prediction['lower']['year']
-        prediction['display'] = 'middle {}% of {}s were born {}-{} ({}y)'.format(
-            percentile_band, name, prediction['lower']['year'], prediction['upper']['year'], year_band)
-        return prediction
+        percentile_band = df.percentile.upper - df.percentile.lower
+        year_band = df.year.upper - df.year.lower
+        df = df.T.assign(band=[percentile_band, year_band]).T
+        df.year = df.year.map(int)
+        return df
 
     def predict_gender(
             self,
