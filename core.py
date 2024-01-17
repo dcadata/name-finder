@@ -146,7 +146,7 @@ class Displayer(Builder):
             after: int = None,
             before: int = None,
             year: int = None,
-            plot: bool = None,
+            display: bool = None,
     ) -> dict:
         # set up
         if year:
@@ -192,7 +192,7 @@ class Displayer(Builder):
             'earliest': _restructure_earliest_or_latest(earliest),
         }
 
-        if plot:
+        if display:
             _make_plot_for_name(df, name.title())
 
         return output
