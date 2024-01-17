@@ -416,17 +416,17 @@ def _make_display_ratio(ratio_f: float, ratio_m: float, ignore_ones: bool = Fals
     if ignore_ones and (ratio_f == 1 or ratio_m == 1):
         return ''
     elif ratio_f > ratio_m:
-        return f'f={ratio_f}'
+        return f'f={int(round(ratio_f * 100))}%'
     elif ratio_m > ratio_f:
-        return f'm={ratio_m}'
+        return f'm={int(round(ratio_m * 100))}%'
     else:  # they're equal
         return 'no lean'
 
 
 def _make_search_display_string(name: str, number: int, ratio_f: float, ratio_m: float) -> str:
     if display_ratio := _make_display_ratio(ratio_f, ratio_m):
-        display_ratio = ', ' + display_ratio
-    return f'{name} ({number:,}{display_ratio})'
+        display_ratio = '; ' + display_ratio
+    return f'{name} (n={number:,}{display_ratio})'
 
 
 def _restructure_earliest_or_latest(earliest: dict) -> dict:
