@@ -476,9 +476,8 @@ def build_total_number_living_from_actuarial(raw_with_actuarial: pd.DataFrame) -
 
 
 def _read_total_number_living() -> pd.DataFrame:
-    total_number_living = pd.read_csv(Filepath.TOTAL_NUMBER_LIVING_REFERENCE, usecols=[
-        'name', 'number_living'], dtype=dict(name=str, number_living=float))
-    return total_number_living
+    return pd.read_csv(Filepath.TOTAL_NUMBER_LIVING_REFERENCE, usecols=['name', 'number_living'], dtype=dict(
+        name=str, number_living=float))
 
 
 def build_predict_age_reference(raw_with_actuarial: pd.DataFrame, min_age: int = 0, n_min: int = 0) -> None:
