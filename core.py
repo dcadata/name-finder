@@ -1,5 +1,6 @@
 import os
 import re
+import string
 
 import pandas as pd
 import seaborn as sns
@@ -157,7 +158,8 @@ class Displayer(Builder):
         df = self._calcd.copy()
 
         # filter on name
-        df = df[df['name'].str.lower() == name.lower()]
+        name = _standardize_name(name)
+        df = df[df.name == name]
         if not len(df):
             return {}
 
@@ -193,7 +195,7 @@ class Displayer(Builder):
         }
 
         if display:
-            _make_plot_for_name(df, name.title())
+            _make_plot_for_name(df, name)
 
         return output
 
@@ -313,7 +315,7 @@ class Displayer(Builder):
         return df
 
     def predict_age(self, name: str, mid_percentile: float = .68) -> pd.DataFrame:
-        name = name.title()
+        name = _standardize_name(name)
         lower_percentile = .5 - mid_percentile / 2
         upper_percentile = 1 - lower_percentile
 
@@ -345,15 +347,16 @@ class Displayer(Builder):
             living: bool = False,
     ) -> dict:
         # set up
+        name = _standardize_name(name)
+        output = dict(name=name)
         df = self.raw_with_actuarial.copy()
-        output = dict(name=name.title())
 
         if living:
             df = df.drop(columns='number').rename(columns={'number_living': 'number'})
             output['living'] = True
 
         # filter dataframe
-        df = df[df['name'].str.lower() == name.lower()].copy()
+        df = df[df.name == name].copy()
         if year:
             df = df[df.year == year]
             output['year'] = year
@@ -380,8 +383,8 @@ class Displayer(Builder):
         return output
 
     def _get_peak(self, name: str) -> dict:
-        return self._peaks[self._peaks.name == name.title()].drop_duplicates(subset=['sex'], keep='last').rename(
-            columns=dict(rank_='rank')).set_index('sex')[['year', 'rank', 'number']].to_dict('index')
+        return self._peaks[self._peaks.name == name].drop_duplicates(subset=['sex'], keep='last').rename(columns=dict(
+            rank_='rank')).set_index('sex')[['year', 'rank', 'number']].to_dict('index')
 
     @property
     def after(self) -> int:
@@ -435,6 +438,22 @@ def _restructure_earliest_or_latest(earliest: dict) -> dict:
         number=dict(total=earliest['number'], f=earliest['number_f'], m=earliest['number_m']),
         rank=dict(f=earliest['rank_f'], m=earliest['rank_m']),
     )
+
+
+def _standardize_name(name: str) -> str:
+    reference = {
+        'a': 'à|á',
+        'c': 'ç',
+        'e': 'è|é|ê|ë',
+        'i': 'í|î',
+        'n': 'ñ',
+        'o': 'ó|ô',
+        'u': 'ù|ú|ü',
+    }
+    name = name.lower()
+    for deacc, acc in reference.items():
+        name = re.sub(acc, deacc, name)
+    return ''.join(re.findall(f'[{string.ascii_lowercase}]+', name)).title()
 
 
 def build_predict_gender_reference(
