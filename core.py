@@ -162,6 +162,7 @@ class Displayer(Builder):
         df = df[df.name == name]
         if not len(df):
             return {}
+        selected_year = _restructure_earliest_or_latest(df[df.year == year].iloc[0]) if year else {}
 
         # build metadata
         earliest, latest = df.iloc[[0, -1]].to_dict('records')
@@ -192,6 +193,7 @@ class Displayer(Builder):
             'peak': self._get_peak(name),
             'latest': _restructure_earliest_or_latest(latest),
             'earliest': _restructure_earliest_or_latest(earliest),
+            'selected_year': selected_year,
         }
 
         if display:
