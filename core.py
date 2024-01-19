@@ -37,7 +37,7 @@ class Builder:
 
     def build_base(self) -> None:
         self._load_data()
-        self._build_raw_from_concatenated()
+        self._build_raw_and_name_by_year_from_concatenated()
         self._build_peaks()
         self._build_calcd_with_ratios()
         self._build_raw_with_actuarial()
@@ -59,7 +59,7 @@ class Builder:
         self._age_reference = pd.read_csv(Filepath.AGE_PREDICTION_REFERENCE, usecols=[
             'name', 'year', 'number_living_pct'], dtype=dict(name=str, year=int, number_living_pct=float))
 
-    def _build_raw_from_concatenated(self) -> None:
+    def _build_raw_and_name_by_year_from_concatenated(self) -> None:
         self._concatenated.sex = self._concatenated.sex.str.lower()
         self._concatenated.rank_ = self._concatenated.rank_.map(int)
         if self._include_territories:
@@ -68,15 +68,16 @@ class Builder:
         else:
             self._raw = self._concatenated.copy()
 
+        self._name_by_year = self._raw.groupby(['name', 'year'], as_index=False).number.sum()
+
     def _build_peaks(self) -> None:
         self._peaks = self._raw.groupby(['name', 'sex'], as_index=False).agg(dict(rank_='min')).merge(
             self._raw, on=['name', 'sex', 'rank_'], how='left').sort_values('year')
 
     def _build_calcd_with_ratios(self) -> None:
-        name_by_year = self._raw.groupby(['name', 'year'], as_index=False).number.sum()
         _separate = lambda x: self._raw[self._raw.sex == x].drop(columns='sex').rename(columns=dict(rank_='rank'))
         self._calcd = _separate('f').merge(_separate('m'), on=['name', 'year'], suffixes=(
-            '_f', '_m'), how='outer').merge(name_by_year, on=['name', 'year']).sort_values('year')
+            '_f', '_m'), how='outer').merge(self._name_by_year, on=['name', 'year']).sort_values('year')
         for s in self._sexes:
             self._calcd[f'number_{s}'] = self._calcd[f'number_{s}'].fillna(0).map(int)
             self._calcd[f'ratio_{s}'] = self._calcd[f'number_{s}'] / self._calcd.number
