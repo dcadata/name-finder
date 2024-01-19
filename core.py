@@ -234,8 +234,8 @@ class Displayer(Builder):
             top = 1
         df = self._calcd.copy()
 
-        # filter on years
-        df = df[df.year.isin(self.years_to_select)].copy()
+        # filter on years and exclude placeholder names
+        df = df[df.year.isin(self.years_to_select) & ~df.name.isin(PLACEHOLDER_NAMES)].copy()
 
         # aggregate
         agg_fields = DFAgg.NUMBER_SUM.copy()
