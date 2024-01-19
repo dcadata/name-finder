@@ -90,7 +90,7 @@ class Builder:
 
     def _load_one_file(self, filename: str, is_territory: bool = False) -> pd.DataFrame:
         df = self._load_one_file_territory(filename) if is_territory else self._load_one_file_national(filename)
-        df['rank_'] = df.groupby('sex', as_index=False).number.rank(method='min', ascending=False)
+        df['rank_'] = df.groupby('sex').number.rank(method='min', ascending=False)
         return df
 
     @staticmethod
