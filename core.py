@@ -5,7 +5,7 @@ import string
 import pandas as pd
 import seaborn as sns
 
-PLACEHOLDER_NAMES = ('Unknown', 'Baby', 'Infant')
+PLACEHOLDER_NAMES = ('Unknown', 'Baby', 'Infant', 'Unnamed')
 NEUTRAL_RATIO_RANGE = (.2, .8)
 
 
