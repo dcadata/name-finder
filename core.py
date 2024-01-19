@@ -89,13 +89,8 @@ class Builder:
                 self.raw_with_actuarial.number * self.raw_with_actuarial.survival_prob)
 
     def _load_one_file(self, filename: str, is_territory: bool = False) -> pd.DataFrame:
-        def _add_rank_by_sex(data: pd.DataFrame, sex: str) -> pd.DataFrame:
-            data = data[data.sex == sex.upper()].copy()
-            data['rank_'] = data.number.rank(method='min', ascending=False)
-            return data
-
         df = self._load_one_file_territory(filename) if is_territory else self._load_one_file_national(filename)
-        df = pd.concat((_add_rank_by_sex(df, 'f'), _add_rank_by_sex(df, 'm')))
+        df['rank_'] = df.groupby('sex', as_index=False).number.rank(method='min', ascending=False)
         return df
 
     @staticmethod
