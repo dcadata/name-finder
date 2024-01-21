@@ -216,7 +216,7 @@ class Displayer(Builder):
             after: int = None,
             before: int = None,
             year: int = None,
-            peaked: bool = False,
+            peaked: pd.DataFrame = None,
             rank: int = None,
             top: int = 20,
             skip: int = None,
@@ -297,9 +297,8 @@ class Displayer(Builder):
         for s in self._sexes:
             df[f'ratio_{s}'] = df[f'ratio_{s}'].round(2)
 
-        if peaked:
-            peaked_within = self._peaks[(self._peaks.year >= self.after) & (self._peaks.year <= self.before)]
-            df = df[df.name.isin(peaked_within.name)].copy()
+        if peaked is not None:
+            df = df[df.name.isin(peaked.name)].copy()
 
         if skip:
             df = df.iloc[skip:].copy()
@@ -383,6 +382,22 @@ class Displayer(Builder):
     def _get_peak(self, name: str) -> dict:
         return self._peaks[self._peaks.name == name].drop_duplicates(subset=['sex'], keep='last').rename(columns=dict(
             rank_='rank')).set_index('sex')[['year', 'rank', 'number']].to_dict('index')
+
+    def filter_for_peaked_search(self, **kwargs) -> pd.DataFrame:
+        peaked_within = self._peaks.copy()
+        if after := kwargs.get('after'):
+            peaked_within = peaked_within[peaked_within.year >= after]
+        if before := kwargs.get('before'):
+            peaked_within = peaked_within[peaked_within.year <= before]
+        if year := kwargs.get('year'):
+            peaked_within = peaked_within[peaked_within.year == year]
+        if sex := kwargs.get('sex'):
+            peaked_within = peaked_within[peaked_within.sex == sex]
+        if rank_min := kwargs.get('rank_min'):
+            peaked_within = peaked_within[peaked_within.rank_ >= rank_min]
+        if rank_max := kwargs.get('rank_max'):
+            peaked_within = peaked_within[peaked_within.rank_ <= rank_max]
+        return peaked_within
 
     @property
     def after(self) -> int:
