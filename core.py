@@ -71,8 +71,12 @@ class Builder:
         self._name_by_year = self._raw.groupby(['name', 'year'], as_index=False).number.sum()
 
     def _build_peaks(self) -> None:
-        self._peaks = self._raw.groupby(['name', 'sex'], as_index=False).agg(dict(rank_='min')).merge(
-            self._raw, on=['name', 'sex', 'rank_'], how='left').sort_values('year')
+        peaks_base = self._name_by_year.assign(sex='all')
+        peaks_base['rank_'] = peaks_base.groupby('year').number.rank(method='min', ascending=False)
+        peaks_base = pd.concat((self._raw, peaks_base))
+        self._peaks = peaks_base.groupby(['name', 'sex'], as_index=False).agg(dict(rank_='min')).merge(
+            peaks_base, on=['name', 'sex', 'rank_'], how='left').sort_values('year')
+        self._peaks.rank_ = self._peaks.rank_.map(int)
 
     def _build_calcd_with_ratios(self) -> None:
         _separate = lambda x: self._raw[self._raw.sex == x].drop(columns='sex').rename(columns=dict(rank_='rank'))
@@ -386,9 +390,9 @@ class Displayer(Builder):
         ax.set_title(name)
         ax.figure.tight_layout()
 
-    def _get_peak(self, name: str) -> dict:
-        return self._peaks[self._peaks.name == name].drop_duplicates(subset=['sex'], keep='last').rename(columns=dict(
-            rank_='rank')).set_index('sex')[['year', 'rank', 'number']].to_dict('index')
+    def _get_peak(self, name: str) -> pd.DataFrame:
+        return self._peaks[self._peaks.name == name].groupby(['sex', 'year']).agg(dict(
+            rank_='min', number='max')).sort_values(['sex', 'year'])
 
     def filter_for_peaked_search(self, **kwargs) -> pd.DataFrame:
         peaked_within = self._peaks.copy()
