@@ -327,7 +327,7 @@ class Displayer(Builder):
         df['upper'] = (upper_percentile - df.number_living_pct).abs()
 
         df = (
-            df.loc[(df.lower == df.lower.min()) | (df.upper == df.upper.min())]
+            df[(df.lower == df.lower.min()) | (df.upper == df.upper.min())]
             .sort_values('year')
             .assign(bound=['lower', 'upper'])
             .assign(percentile=[lower_percentile, upper_percentile])
