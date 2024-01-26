@@ -162,15 +162,18 @@ class Displayer(Builder):
         df = df[df.name == name]
         if not len(df):
             return {}
-        selected_year = _restructure_earliest_or_latest(df[df.year == year].iloc[0]) if year else {}
 
         # build metadata
+        selected_year = {'selected_year': _restructure_earliest_or_latest(df[df.year == year].iloc[0])} if year else {}
         earliest, latest = df.iloc[[0, -1]].to_dict('records')
 
         # filter on years
         df = df[df.year.isin(self.years_to_select)]
         if not len(df):
             return {}
+
+        if display:
+            self._make_plot_for_name(df, name)
 
         # aggregate
         grouped = df.groupby('name', as_index=False).agg(DFAgg.NUMBER_SUM)
@@ -193,12 +196,8 @@ class Displayer(Builder):
             'peak': self._get_peak(name),
             'latest': _restructure_earliest_or_latest(latest),
             'earliest': _restructure_earliest_or_latest(earliest),
-            'selected_year': selected_year,
+            **selected_year,
         }
-
-        if display:
-            self._make_plot_for_name(df, name)
-
         return output
 
     def search(
@@ -383,17 +382,6 @@ class Displayer(Builder):
 
         return output
 
-    def _make_plot_for_name(self, df: pd.DataFrame, name: str) -> None:
-        historic = df[['year', 'number_f', 'number_m']].melt(['year'], ['number_f', 'number_m'], '', 'number')
-        historic[''] = historic[''].str.slice(-1)
-        ax = sns.lineplot(historic, x='year', y='number', hue='', palette=('red', 'blue'), hue_order=self._sexes)
-        ax.set_title(name)
-        ax.figure.tight_layout()
-
-    def _get_peak(self, name: str) -> pd.DataFrame:
-        return self._peaks[self._peaks.name == name].groupby(['sex', 'year']).agg(dict(
-            rank_='min', number='max')).sort_values(['sex', 'year'])
-
     def filter_for_peaked_search(self, **kwargs) -> pd.DataFrame:
         peaked_within = self._peaks.copy()
         if after := kwargs.get('after'):
@@ -409,6 +397,17 @@ class Displayer(Builder):
         if rank_max := kwargs.get('rank_max'):
             peaked_within = peaked_within[peaked_within.rank_ <= rank_max]
         return peaked_within
+
+    def _make_plot_for_name(self, df: pd.DataFrame, name: str) -> None:
+        historic = df[['year', 'number_f', 'number_m']].melt(['year'], ['number_f', 'number_m'], '', 'number')
+        historic[''] = historic[''].str.slice(-1)
+        ax = sns.lineplot(historic, x='year', y='number', hue='', palette=('red', 'blue'), hue_order=self._sexes)
+        ax.set_title(name)
+        ax.figure.tight_layout()
+
+    def _get_peak(self, name: str) -> pd.DataFrame:
+        return self._peaks[self._peaks.name == name].groupby(['sex', 'year']).agg(dict(
+            rank_='min', number='max')).sort_values(['sex', 'year'])
 
     @property
     def after(self) -> int:
