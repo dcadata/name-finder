@@ -67,13 +67,11 @@ class Builder:
             self._raw = self._concatenated.groupby(['name', 'sex', 'year', 'rank_'], as_index=False).number.sum()
         else:
             self._raw = self._concatenated.copy()
-
         self._name_by_year = self._raw.groupby(['name', 'year'], as_index=False).number.sum()
+        self._name_by_year['rank_'] = self._name_by_year.groupby('year').number.rank(method='min', ascending=False)
 
     def _build_peaks(self) -> None:
-        peaks_base = self._name_by_year.assign(sex='all')
-        peaks_base['rank_'] = peaks_base.groupby('year').number.rank(method='min', ascending=False)
-        peaks_base = pd.concat((self._raw, peaks_base))
+        peaks_base = pd.concat((self._raw, self._name_by_year.assign(sex='all')))
         self._peaks = peaks_base.groupby(['name', 'sex'], as_index=False).agg(dict(rank_='min')).merge(
             peaks_base, on=['name', 'sex', 'rank_'], how='left').sort_values('year')
         self._peaks.rank_ = self._peaks.rank_.map(int)
@@ -86,6 +84,7 @@ class Builder:
             self._calcd[f'number_{s}'] = self._calcd[f'number_{s}'].fillna(0).map(int)
             self._calcd[f'ratio_{s}'] = self._calcd[f'number_{s}'] / self._calcd.number
             self._calcd[f'rank_{s}'] = self._calcd[f'rank_{s}'].fillna(-1).map(int)
+        self._calcd.rank_ = self._calcd.rank_.map(int)
 
     def _build_raw_with_actuarial(self) -> None:
         # loses years before 1900
@@ -244,6 +243,7 @@ class Displayer(Builder):
         agg_fields = DFAgg.NUMBER_SUM.copy()
         if len(self.years_to_select) == 1:
             agg_fields.update(dict(rank_f='min', rank_m='min'))
+            agg_fields.update(dict(rank_='min', rank_f='min', rank_m='min'))
         df = df.groupby('name', as_index=False).agg(agg_fields)
         for s in self._sexes:
             df[f'ratio_{s}'] = df[f'number_{s}'] / df.number
