@@ -137,8 +137,6 @@ class Builder:
 class Displayer(Builder):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self._after = None
-        self._before = None
 
     def name(
             self,
@@ -148,12 +146,6 @@ class Displayer(Builder):
             year: int = None,
             display: bool = None,
     ) -> dict:
-        # set up
-        if year:
-            after = year
-            before = year
-        self._after = after
-        self._before = before
         df = self._calcd.copy()
 
         # filter on name
@@ -167,7 +159,7 @@ class Displayer(Builder):
         earliest, latest = df.iloc[[0, -1]].to_dict('records')
 
         # filter on years
-        df = df[df.year.isin(self.years_to_select)]
+        df = _filter_on_years(df, year, after, before)
         if not len(df):
             return {}
 
@@ -225,24 +217,19 @@ class Displayer(Builder):
             sort_sex: str = None,
             display: bool = False,
     ) -> pd.DataFrame | list[str, ...]:
-        # set up
-        if year:
-            after = year
-            before = year
-        self._after = after
-        self._before = before
         if rank:
             skip = rank - 1
             top = 1
         df = self._calcd.copy()
+        # exclude placeholder names
+        df = df[~df.name.isin(PLACEHOLDER_NAMES)].copy()
 
-        # filter on years and exclude placeholder names
-        df = df[df.year.isin(self.years_to_select) & ~df.name.isin(PLACEHOLDER_NAMES)].copy()
+        # filter on years
+        df = _filter_on_years(df, year, after, before).copy()
 
         # aggregate
         agg_fields = DFAgg.NUMBER_SUM.copy()
-        if len(self.years_to_select) == 1:
-            agg_fields.update(dict(rank_f='min', rank_m='min'))
+        if year:
             agg_fields.update(dict(rank_='min', rank_f='min', rank_m='min'))
         df = df.groupby('name', as_index=False).agg(agg_fields)
         for s in self._sexes:
@@ -409,25 +396,16 @@ class Displayer(Builder):
         return self._peaks[self._peaks.name == name].groupby(['sex', 'year']).agg(dict(
             rank_='min', number='max')).sort_values(['sex', 'year'])
 
-    @property
-    def after(self) -> int:
-        return self.years_to_select[0]
 
-    @property
-    def before(self) -> int:
-        return self.years_to_select[-1]
-
-    @property
-    def years_to_select(self) -> tuple[int, ...]:
-        if self._after and self._before:
-            years_range = (self._after, self._before + 1)
-        elif self._after:
-            years_range = (self._after, Year.MAX_YEAR + 1)
-        elif self._before:
-            years_range = (Year.MIN_YEAR, self._before + 1)
-        else:
-            years_range = (Year.MIN_YEAR, Year.MAX_YEAR + 1)
-        return tuple(range(*years_range))
+def _filter_on_years(df: pd.DataFrame, year: int = None, after: int = None, before: int = None):
+    if year:
+        df = df[df.year == year]
+        return df
+    if after:
+        df = df[df.year >= after]
+    if before:
+        df = df[df.year <= before]
+    return df
 
 
 def _make_display_ratio(ratio_f: float, ratio_m: float, ignore_ones: bool = False) -> str:
