@@ -185,7 +185,7 @@ class Displayer(Builder):
                 'f': grouped['ratio_f'],
                 'm': grouped['ratio_m'],
             },
-            'peak': self._get_peak(name),
+            'peak': self.get_peak(name),
             'latest': _restructure_earliest_or_latest(latest),
             'earliest': _restructure_earliest_or_latest(earliest),
             **selected_year,
@@ -386,16 +386,16 @@ class Displayer(Builder):
             peaked_within = peaked_within[peaked_within.rank_ <= rank_max]
         return peaked_within
 
+    def get_peak(self, name: str) -> pd.DataFrame:
+        return self._peaks[self._peaks.name == name].groupby(['sex', 'year']).agg(dict(
+            rank_='min', number='max')).sort_values(['sex', 'year'])
+
     def _make_plot_for_name(self, df: pd.DataFrame, name: str) -> None:
         historic = df[['year', 'number_f', 'number_m']].melt(['year'], ['number_f', 'number_m'], '', 'number')
         historic[''] = historic[''].str.slice(-1)
         ax = sns.lineplot(historic, x='year', y='number', hue='', palette=('red', 'blue'), hue_order=self._sexes)
         ax.set_title(name)
         ax.figure.tight_layout()
-
-    def _get_peak(self, name: str) -> pd.DataFrame:
-        return self._peaks[self._peaks.name == name].groupby(['sex', 'year']).agg(dict(
-            rank_='min', number='max')).sort_values(['sex', 'year'])
 
 
 def _filter_on_years(df: pd.DataFrame, year: int = None, after: int = None, before: int = None):
