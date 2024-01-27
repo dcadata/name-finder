@@ -175,6 +175,7 @@ class Displayer(Builder):
         grouped = grouped.iloc[0].to_dict()
         output = {
             'name': grouped['name'],
+            **dict(after=after, before=before, year=year),
             'numbers': {
                 'total': grouped['number'],
                 'f': grouped['number_f'],
