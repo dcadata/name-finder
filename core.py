@@ -398,7 +398,7 @@ class Displayer(Builder):
         ax.figure.tight_layout()
 
 
-def _filter_on_years(df: pd.DataFrame, year: int = None, after: int = None, before: int = None):
+def _filter_on_years(df: pd.DataFrame, year: int = None, after: int = None, before: int = None) -> pd.DataFrame:
     if year:
         df = df[df.year == year]
         return df
