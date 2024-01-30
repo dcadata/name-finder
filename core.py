@@ -195,14 +195,14 @@ class Displayer(Builder):
     def search(
             self,
             pattern: str = None,
-            start: tuple[str, ...] = None,
-            end: tuple[str, ...] = None,
-            contains: tuple[str, ...] = None,
-            contains_any: tuple[str, ...] = None,
-            not_start: tuple[str, ...] = None,
-            not_end: tuple[str, ...] = None,
-            not_contains: tuple[str, ...] = None,
-            order: tuple[str, ...] = None,
+            start: tuple = None,
+            end: tuple = None,
+            contains: tuple = None,
+            contains_any: tuple = None,
+            not_start: tuple = None,
+            not_end: tuple = None,
+            not_contains: tuple = None,
+            order: tuple = None,
             length_min: int = None,
             length_max: int = None,
             number_min: int = None,
@@ -217,7 +217,7 @@ class Displayer(Builder):
             skip: int = None,
             sort_sex: str = None,
             display: bool = False,
-    ) -> pd.DataFrame | list[str, ...]:
+    ) -> pd.DataFrame | list:
         if rank:
             skip = rank - 1
             top = 1
