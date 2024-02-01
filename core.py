@@ -212,15 +212,10 @@ class Displayer(Builder):
             before: int = None,
             year: int = None,
             peaked: pd.DataFrame = None,
-            rank: int = None,
             top: int = 20,
-            skip: int = None,
             sort_sex: str = None,
             display: bool = False,
     ) -> pd.DataFrame | list:
-        if rank:
-            skip = rank - 1
-            top = 1
         df = self._calcd.copy()
         # exclude placeholder names
         df = df[~df.name.isin(PLACEHOLDER_NAMES)].copy()
@@ -290,9 +285,6 @@ class Displayer(Builder):
 
         if peaked is not None:
             df = df[df.name.isin(peaked.name)].copy()
-
-        if skip:
-            df = df.iloc[skip:].copy()
 
         if top:
             df = df.head(top).copy()
