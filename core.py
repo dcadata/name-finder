@@ -43,6 +43,7 @@ class Builder:
         self._build_calcd_with_ratios()
         self._build_raw_with_actuarial()
         self._load_predict_age_reference()
+        self._load_applications_data()
 
     def ingest_alternate_calcd(self, calcd: pd.DataFrame) -> None:
         self._calcd = calcd.copy()
@@ -59,6 +60,9 @@ class Builder:
     def _load_predict_age_reference(self) -> None:
         self._age_reference = pd.read_csv(Filepath.AGE_PREDICTION_REFERENCE, usecols=[
             'name', 'year', 'number_living_pct'], dtype=dict(name=str, year=int, number_living_pct=float))
+
+    def _load_applications_data(self) -> None:
+        self._applications_data = pd.read_csv(Filepath.APPLICATIONS_DATA, dtype=int)
 
     def _build_raw_and_name_by_year_from_concatenated(self) -> None:
         self._concatenated.sex = self._concatenated.sex.str.lower()
