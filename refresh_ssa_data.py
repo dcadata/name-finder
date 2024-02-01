@@ -15,6 +15,7 @@ class SsaDataRefresher:
         self._open_session()
         self.refreshed = self._refresh_name_data()
         if self.refreshed:
+            self._refresh_applications_data()
             self._refresh_actuarial_data()
         self._close_session()
 
@@ -43,6 +44,19 @@ class SsaDataRefresher:
             with zipfile.ZipFile(filepath) as z:
                 z.extractall(filepath[:-4])
         return True
+
+    @staticmethod
+    def _refresh_applications_data() -> None:
+        # compare to website
+        table = pd.read_html('https://www.ssa.gov/oact/babynames/numberUSbirths.html')[0]
+        if Year.MAX_YEAR >= table.iloc[-1, 0]:
+            return
+
+        sleep(3)
+        # if year has been added, save
+        table = table.rename(columns=dict((col, ''.join(col.split())) for col in table.columns)).rename(columns=dict(
+            Yearofbirth='year', Male='number_m', Female='number_f', Total='number'))
+        table.to_csv(Filepath.APPLICATIONS_DATA, index=False)
 
     def _refresh_actuarial_data(self) -> None:
         url = 'https://www.ssa.gov/oact/HistEst/CohLifeTables/{0}/CohLifeTables_{1}_Alt2_TR{0}.txt'

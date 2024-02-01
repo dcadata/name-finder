@@ -14,6 +14,7 @@ class Filepath:
     NATIONAL_DATA_DIR = 'data/names/'
     TERRITORIES_DATA_DIR = 'data/namesbyterritory/'
     ACTUARIAL = 'data/actuarial/{sex}.csv'
+    APPLICATIONS_DATA = 'data/applications/applications.csv'
     AGE_PREDICTION_REFERENCE = 'data/generated/age_prediction_reference.csv'
     GENDER_PREDICTION_REFERENCE = 'data/generated/gender_prediction_reference.csv'
     TOTAL_NUMBER_LIVING_REFERENCE = 'data/generated/raw_with_actuarial.total_number_living.csv'
