@@ -26,7 +26,7 @@ class SsaDataRefresher:
 
     def _refresh_name_data(self) -> bool:
         # compare to website
-        table = pd.read_html(self._session.get('https://www.ssa.gov/oact/babynames/limits.html').text)[0]
+        table = pd.read_html('https://www.ssa.gov/oact/babynames/limits.html')[0]
         if Year.MAX_YEAR >= int(table.iloc[0, 0]):
             return False
 
