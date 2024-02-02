@@ -2,9 +2,11 @@
 
 ## Data Sources
 
-This project uses United States Social Security Administration (SSA) data available via ["Beyond the Top 1000 Names" at SSA.gov](https://www.ssa.gov/oact/babynames/limits.html). National data was combined with territory-specific data.
+United States Social Security Administration data available via SSA.gov:
 
-Actuarial tables [also via SSA](https://www.ssa.gov/oact/HistEst/CohLifeTablesHome.html).
+- [Beyond the Top 1000 Names](https://www.ssa.gov/oact/babynames/limits.html): national, state-level, and territory-level data
+- [Applications](https://www.ssa.gov/oact/babynames/numberUSbirths.html): number of Social Security card applicants by year
+- [Actuarial Tables](https://www.ssa.gov/oact/HistEst/CohLifeTablesHome.html)
 
 ## Caveats
 
