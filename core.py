@@ -149,7 +149,7 @@ class Displayer(Builder):
             after: int = None,
             before: int = None,
             year: int = None,
-            display: bool = None,
+            display: bool | str = None,
     ) -> dict:
         df = self._calcd.copy()
 
@@ -169,7 +169,7 @@ class Displayer(Builder):
             return {}
 
         if display:
-            self._make_plot_for_name(df, name)
+            self._make_plot_for_name(df, name, display)
 
         # aggregate
         grouped = df.groupby('name', as_index=False).agg(DFAgg.NUMBER_SUM)
@@ -387,10 +387,14 @@ class Displayer(Builder):
         return self._peaks[self._peaks.name == name].groupby(['sex', 'year']).agg(dict(
             rank_='min', number='max')).sort_values(['sex', 'year'])
 
-    def _make_plot_for_name(self, df: pd.DataFrame, name: str) -> None:
-        historic = df[['year', 'number_f', 'number_m']].melt(['year'], ['number_f', 'number_m'], '', 'number')
+    def _make_plot_for_name(self, df: pd.DataFrame, name: str, display: bool | str) -> None:
+        value_field_name = 'number' if type(display) == bool else display
+        year_field = 'year'
+        display_fields = list(map(lambda x: f'{value_field_name}_{x}', self._sexes))
+        historic = df[[year_field, *display_fields]].melt([year_field], display_fields, '', value_field_name)
         historic[''] = historic[''].str.slice(-1)
-        ax = sns.lineplot(historic, x='year', y='number', hue='', palette=('red', 'blue'), hue_order=self._sexes)
+        ax = sns.lineplot(historic, x='year', y=value_field_name, hue='', palette=(
+            'red', 'blue'), hue_order=self._sexes)
         ax.set_title(name)
         ax.figure.tight_layout()
 
