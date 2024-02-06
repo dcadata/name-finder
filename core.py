@@ -38,12 +38,12 @@ class Builder:
 
     def build_base(self) -> None:
         self._load_data()
+        self._load_applications_data()
         self._build_raw_and_name_by_year_from_concatenated()
         self._build_peaks()
-        self._build_calcd_with_ratios()
+        self._build_calcd_with_ratios_and_number_pct()
         self._build_raw_with_actuarial()
         self._load_predict_age_reference()
-        self._load_applications_data()
 
     def ingest_alternate_calcd(self, calcd: pd.DataFrame) -> None:
         self._calcd = calcd.copy()
@@ -81,7 +81,7 @@ class Builder:
             peaks_base, on=['name', 'sex', 'rank_'], how='left').sort_values('year')
         self._peaks.rank_ = self._peaks.rank_.map(int)
 
-    def _build_calcd_with_ratios(self) -> None:
+    def _build_calcd_with_ratios_and_number_pct(self) -> None:
         _separate = lambda x: self._raw[self._raw.sex == x].drop(columns='sex').rename(columns=dict(rank_='rank'))
         self._calcd = _separate('f').merge(_separate('m'), on=['name', 'year'], suffixes=(
             '_f', '_m'), how='outer').merge(self._name_by_year, on=['name', 'year']).sort_values('year')
@@ -90,6 +90,12 @@ class Builder:
             self._calcd[f'ratio_{s}'] = self._calcd[f'number_{s}'] / self._calcd.number
             self._calcd[f'rank_{s}'] = self._calcd[f'rank_{s}'].fillna(-1).map(int)
         self._calcd.rank_ = self._calcd.rank_.map(int)
+
+        self._calcd = self._calcd.merge(self._applications_data, on='year', suffixes=('', '_total'))
+        for s in self._sexes:
+            self._calcd[f'number_pct_{s}'] = self._calcd[f'number_{s}'] / self._calcd[f'number_{s}_total']
+        self._calcd['number_pct'] = self._calcd.number / self._calcd.number_total
+        self._calcd = self._calcd.drop(columns=['number_f_total', 'number_m_total', 'number_total'])
 
     def _build_raw_with_actuarial(self) -> None:
         # loses years before 1900
