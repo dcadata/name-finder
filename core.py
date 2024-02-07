@@ -14,7 +14,7 @@ class Filepath:
     NATIONAL_DATA_DIR = 'data/names/'
     TERRITORIES_DATA_DIR = 'data/namesbyterritory/'
     ACTUARIAL = 'data/actuarial/{sex}.csv'
-    APPLICATIONS_DATA = 'data/applications/applications.csv'
+    APPLICANTS_DATA = 'data/applicants/data.csv'
     AGE_PREDICTION_REFERENCE = 'data/generated/age_prediction_reference.csv'
     GENDER_PREDICTION_REFERENCE = 'data/generated/gender_prediction_reference.csv'
     TOTAL_NUMBER_LIVING_REFERENCE = 'data/generated/raw_with_actuarial.total_number_living.csv'
@@ -38,7 +38,7 @@ class Builder:
 
     def build_base(self) -> None:
         self._load_data()
-        self._load_applications_data()
+        self._load_applicants_data()
         self._build_raw_and_name_by_year_from_concatenated()
         self._build_peaks()
         self._build_calcd_with_ratios_and_number_pct()
@@ -61,8 +61,8 @@ class Builder:
         self._age_reference = pd.read_csv(Filepath.AGE_PREDICTION_REFERENCE, usecols=[
             'name', 'year', 'number_living_pct'], dtype=dict(name=str, year=int, number_living_pct=float))
 
-    def _load_applications_data(self) -> None:
-        self._applications_data = pd.read_csv(Filepath.APPLICATIONS_DATA, dtype=int)
+    def _load_applicants_data(self) -> None:
+        self._applicants_data = pd.read_csv(Filepath.APPLICANTS_DATA, dtype=int)
 
     def _build_raw_and_name_by_year_from_concatenated(self) -> None:
         self._concatenated.sex = self._concatenated.sex.str.lower()
@@ -91,7 +91,7 @@ class Builder:
             self._calcd[f'rank_{s}'] = self._calcd[f'rank_{s}'].fillna(-1).map(int)
         self._calcd.rank_ = self._calcd.rank_.map(int)
 
-        self._calcd = self._calcd.merge(self._applications_data, on='year', suffixes=('', '_total'))
+        self._calcd = self._calcd.merge(self._applicants_data, on='year', suffixes=('', '_total'))
         for s in self._sexes:
             self._calcd[f'number_pct_{s}'] = self._calcd[f'number_{s}'] / self._calcd[f'number_{s}_total']
         self._calcd['number_pct'] = self._calcd.number / self._calcd.number_total
