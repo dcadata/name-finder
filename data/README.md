@@ -5,7 +5,7 @@
 United States Social Security Administration data available via SSA.gov:
 
 - [Beyond the Top 1000 Names](https://www.ssa.gov/oact/babynames/limits.html): national, state-level, and territory-level data
-- [Applications](https://www.ssa.gov/oact/babynames/numberUSbirths.html): number of Social Security card applicants by year
+- [Number of Social Security card applicants by year](https://www.ssa.gov/oact/babynames/numberUSbirths.html)
 - [Actuarial Tables](https://www.ssa.gov/oact/HistEst/CohLifeTablesHome.html)
 
 ## Caveats
