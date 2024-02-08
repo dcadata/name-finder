@@ -381,7 +381,7 @@ class Displayer(Builder):
             peaked_within = peaked_within[peaked_within.year <= before]
         if year := kwargs.get('year'):
             peaked_within = peaked_within[peaked_within.year == year]
-        if sex := kwargs.get('sex'):
+        if sex := kwargs.get('sex', 'all'):
             peaked_within = peaked_within[peaked_within.sex == sex]
         if rank_min := kwargs.get('rank_min'):
             peaked_within = peaked_within[peaked_within.rank_ >= rank_min]
