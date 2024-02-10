@@ -4,7 +4,7 @@ from time import sleep
 import pandas as pd
 import requests
 
-from core import Year, Filepath, build_all_generated_data
+from core import Year, Filepath
 
 
 class SsaDataRefresher:
@@ -77,8 +77,6 @@ class SsaDataRefresher:
 def main() -> None:
     refresher = SsaDataRefresher()
     refresher.refresh()
-    if refresher.refreshed:
-        build_all_generated_data()
 
 
 if __name__ == '__main__':
