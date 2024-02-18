@@ -58,8 +58,8 @@ class Builder:
         self._concatenated = pd.concat(data)
 
     def _load_predict_age_reference(self) -> None:
-        self._age_reference = pd.read_csv(Filepath.AGE_PREDICTION_REFERENCE, usecols=[
-            'name', 'year', 'number_living_pct'], dtype=dict(name=str, year=int, number_living_pct=float))
+        dtype = dict(name=str, sex=str, year=int, number_living_pct=float)
+        self._age_reference = pd.read_csv(Filepath.AGE_PREDICTION_REFERENCE, usecols=list(dtype.keys()), dtype=dtype)
 
     def _load_applicants_data(self) -> None:
         self._applicants_data = pd.read_csv(Filepath.APPLICANTS_DATA, dtype=int)
@@ -305,12 +305,13 @@ class Displayer(Builder):
                 index=False)]
         return df
 
-    def predict_age(self, name: str, mid_percentile: float = .68) -> pd.DataFrame:
+    def predict_age(self, name: str, sex: str, mid_percentile: float = .68) -> pd.DataFrame:
         name = _standardize_name(name)
         lower_percentile = .5 - mid_percentile / 2
         upper_percentile = 1 - lower_percentile
 
-        df = self._age_reference[self._age_reference.name == name].copy()
+        df = self._age_reference.copy()
+        df = df[(df.name == name) & (df.sex == sex)].drop(columns='sex')
 
         df.number_living_pct = df.number_living_pct.cumsum()
         df['lower'] = (lower_percentile - df.number_living_pct).abs()
@@ -491,22 +492,19 @@ def build_predict_gender_reference(
 
 
 def build_total_number_living_from_actuarial(raw_with_actuarial: pd.DataFrame) -> None:
-    total_number_living = raw_with_actuarial.groupby('name', as_index=False).number_living.sum()
+    total_number_living = raw_with_actuarial.groupby(['name', 'sex'], as_index=False).number_living.sum()
     total_number_living.to_csv(Filepath.TOTAL_NUMBER_LIVING_REFERENCE, index=False)
 
 
 def _read_total_number_living() -> pd.DataFrame:
-    return pd.read_csv(Filepath.TOTAL_NUMBER_LIVING_REFERENCE, usecols=['name', 'number_living'], dtype=dict(
-        name=str, number_living=float))
+    dtype = dict(name=str, sex=str, number_living=float)
+    return pd.read_csv(Filepath.TOTAL_NUMBER_LIVING_REFERENCE, usecols=list(dtype.keys()), dtype=dtype)
 
 
 def build_predict_age_reference(raw_with_actuarial: pd.DataFrame, min_age: int = 0, n_min: int = 0) -> None:
-    ref = raw_with_actuarial[['name', 'year', 'age', 'number_living']].copy()
-    ref = (
-        ref[ref.age >= min_age].drop(columns='age')
-        .groupby(['name', 'year'], as_index=False).number_living.sum()
-        .merge(_read_total_number_living(), on='name', suffixes=('', '_name'))
-    )
+    ref = raw_with_actuarial.loc[raw_with_actuarial.age >= min_age, ['name', 'sex', 'year', 'number_living']].copy()
+    ref = ref.groupby(['name', 'sex', 'year'], as_index=False).number_living.sum().merge(
+        _read_total_number_living(), on=['name', 'sex'], suffixes=('', '_name'))
     ref = ref[ref.number_living_name >= n_min].copy()
     ref['number_living_pct'] = ref.number_living / ref.number_living_name
     ref = ref.drop(columns=['number_living', 'number_living_name']).sort_values('year')
