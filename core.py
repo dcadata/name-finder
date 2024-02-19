@@ -63,6 +63,12 @@ class Builder:
 
     def _load_applicants_data(self) -> None:
         self._applicants_data = pd.read_csv(Filepath.APPLICANTS_DATA, dtype=int)
+        self._applicants_data_melted = self._applicants_data.melt(['year'], [
+            'number_m', 'number_f', 'number'], 'sex', 'number_')
+        self._applicants_data_melted = self._applicants_data_melted.rename(columns=dict(number_='number'))
+        self._applicants_data_melted.loc[self._applicants_data_melted.sex == 'number_f', 'sex'] = 'f'
+        self._applicants_data_melted.loc[self._applicants_data_melted.sex == 'number_m', 'sex'] = 'm'
+        self._applicants_data_melted.loc[self._applicants_data_melted.sex == 'number', 'sex'] = 'all'
 
     def _build_raw_and_name_by_year_from_concatenated(self) -> None:
         self._concatenated.sex = self._concatenated.sex.str.lower()
