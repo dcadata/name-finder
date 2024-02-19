@@ -6,7 +6,6 @@ import pandas as pd
 import seaborn as sns
 
 PLACEHOLDER_NAMES = ('Unknown', 'Baby', 'Infant', 'Unnamed', 'Unborn', 'Notnamed')
-NEUTRAL_RATIO_RANGE = (.2, .8)
 
 
 class Filepath:
@@ -23,6 +22,13 @@ class Filepath:
 class Year:
     MIN_YEAR = 1880
     MAX_YEAR = int(re.search('^yob([0-9]{4}).txt$', os.listdir(Filepath.NATIONAL_DATA_DIR)[-1]).group(1))
+
+
+class GenderRatios:
+    F = (0, .1)
+    M = (.9, 1)
+    NEUTRAL = (.3, .7)
+    NEUTRAL_BROAD = (.2, .8)
 
 
 class DFAgg:
@@ -266,7 +272,7 @@ class Displayer(Builder):
 
         # filter on ratio
         if type(gender) == str:
-            gender = dict(f=(0, .1), x=NEUTRAL_RATIO_RANGE, m=(.9, 1)).get(gender)
+            gender = dict(f=GenderRatios.F, x=GenderRatios.NEUTRAL, m=GenderRatios.M).get(gender)
         if gender:
             df = df[(df.ratio_m >= gender[0]) & (df.ratio_m <= gender[1])]
 
