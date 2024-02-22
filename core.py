@@ -69,12 +69,6 @@ class Builder:
 
     def _load_applicants_data(self) -> None:
         self._applicants_data = pd.read_csv(Filepath.APPLICANTS_DATA, dtype=int)
-        self._applicants_data_melted = self._applicants_data.melt(['year'], [
-            'number_m', 'number_f', 'number'], 'sex', 'number_')
-        self._applicants_data_melted = self._applicants_data_melted.rename(columns=dict(number_='number'))
-        self._applicants_data_melted.loc[self._applicants_data_melted.sex == 'number_f', 'sex'] = 'f'
-        self._applicants_data_melted.loc[self._applicants_data_melted.sex == 'number_m', 'sex'] = 'm'
-        self._applicants_data_melted.loc[self._applicants_data_melted.sex == 'number', 'sex'] = 'all'
 
     def _build_raw_and_name_by_year_from_concatenated(self) -> None:
         self._concatenated.sex = self._concatenated.sex.str.lower()
@@ -530,3 +524,12 @@ def build_all_generated_data() -> None:
     build_predict_gender_reference(displayer)
     build_total_number_living_from_actuarial(displayer.raw_with_actuarial)
     build_predict_age_reference(displayer.raw_with_actuarial)
+
+
+def melt_applicants_data(apps: pd.DataFrame) -> pd.DataFrame:
+    apps_melted = apps.melt(['year'], ['number_m', 'number_f', 'number'], 'sex', 'number_')
+    apps_melted = apps_melted.rename(columns=dict(number_='number'))
+    apps_melted.loc[apps_melted.sex == 'number_f', 'sex'] = 'f'
+    apps_melted.loc[apps_melted.sex == 'number_m', 'sex'] = 'm'
+    apps_melted.loc[apps_melted.sex == 'number', 'sex'] = 'all'
+    return apps_melted
