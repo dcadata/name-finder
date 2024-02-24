@@ -507,8 +507,8 @@ def _read_total_number_living() -> pd.DataFrame:
     return pd.read_csv(Filepath.TOTAL_NUMBER_LIVING_REFERENCE, usecols=list(dtype.keys()), dtype=dtype)
 
 
-def build_predict_age_reference(raw_with_actuarial: pd.DataFrame, min_age: int = 0, n_min: int = 0) -> None:
-    ref = raw_with_actuarial.loc[raw_with_actuarial.age >= min_age, ['name', 'sex', 'year', 'number_living']].copy()
+def build_predict_age_reference(raw_with_actuarial: pd.DataFrame, age_min: int = 0, n_min: int = 0) -> None:
+    ref = raw_with_actuarial.loc[raw_with_actuarial.age >= age_min, ['name', 'sex', 'year', 'number_living']].copy()
     ref = ref.groupby(['name', 'sex', 'year'], as_index=False).number_living.sum().merge(
         _read_total_number_living(), on=['name', 'sex'], suffixes=('', '_name'))
     ref = ref[ref.number_living_name >= n_min].copy()
