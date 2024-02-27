@@ -186,7 +186,7 @@ class Displayer(Builder):
         # aggregate
         grouped = df.groupby('name', as_index=False).agg(DFAgg.NUMBER_SUM)
         for s in self._sexes:
-            grouped[f'ratio_{s}'] = (grouped[f'number_{s}'] / grouped.number).round(2)
+            grouped[f'ratio_{s}'] = grouped[f'number_{s}'] / grouped.number
 
         # build output
         grouped = grouped.iloc[0].to_dict()
@@ -297,8 +297,6 @@ class Displayer(Builder):
 
         sort_field = f'number_{sort_sex}' if sort_sex else 'number'
         df = df.sort_values(sort_field, ascending=False).drop(columns='name_lower')
-        for s in self._sexes:
-            df[f'ratio_{s}'] = df[f'ratio_{s}'].round(2)
 
         if peaked is not None:
             df = df[df.name.isin(peaked.name)].copy()
