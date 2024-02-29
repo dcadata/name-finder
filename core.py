@@ -5,7 +5,7 @@ import string
 import pandas as pd
 import seaborn as sns
 
-PLACEHOLDER_NAMES = ('Unknown', 'Baby', 'Infant', 'Unnamed', 'Unborn', 'Notnamed')
+PLACEHOLDER_NAMES = ('Unknown', 'Baby', 'Infant', 'Unnamed', 'Unborn', 'Notnamed', 'Newborn')
 
 
 class Filepath:
