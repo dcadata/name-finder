@@ -466,7 +466,7 @@ def build_predict_gender_reference(
         displayer: Displayer = None,
         after: int = None,
         before: int = None,
-        conf_min: float = .8,
+        ratio_min: float = .8,
         n_min: int = 0,
 ) -> None:
     df = displayer.calculated.copy()
@@ -482,10 +482,10 @@ def build_predict_gender_reference(
     df.loc[df.number_f < df.number_m, 'gender_prediction'] = 'm'
     df.loc[df.number_f == df.number_m, 'gender_prediction'] = 'x'
 
-    if conf_min:
+    if ratio_min:
         ratio_f = df.number_f / df.number
         ratio_m = df.number_m / df.number
-        df.loc[(ratio_f < conf_min) & (ratio_m < conf_min), 'gender_prediction'] = 'x'
+        df.loc[(ratio_f < ratio_min) & (ratio_m < ratio_min), 'gender_prediction'] = 'x'
 
     if n_min:
         df.loc[df.number < n_min, 'gender_prediction'] = 'rare'
