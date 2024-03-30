@@ -370,7 +370,7 @@ class Displayer(Builder):
 
         if number:
             numbers = df.groupby('sex').number.sum()
-            prediction = 'f' if numbers.f > numbers.m else 'm'
+            prediction = 'f' if numbers.get('f', 0) > numbers.get('m', 0) else 'm'
             output.update(dict(
                 prediction=prediction,
                 confidence=round(numbers[prediction] / number, 2),
