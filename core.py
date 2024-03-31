@@ -22,6 +22,7 @@ class Filepath:
 class Year:
     MIN_YEAR = 1880
     MAX_YEAR = int(re.search('^yob([0-9]{4}).txt$', os.listdir(Filepath.NATIONAL_DATA_DIR)[-1]).group(1))
+    DATA_QUALITY_BEST_AFTER = 1937
 
 
 class GenderRatios:
