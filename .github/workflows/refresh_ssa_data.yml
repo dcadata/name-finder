@@ -3,7 +3,7 @@ name: Refresh SSA Data
 on:
   workflow_dispatch:
   schedule:
-    - cron: '5 6 * 2-6 3,6'
+    - cron: '5 6 * 2-6 0,4'
 
 jobs:
   scheduled:
