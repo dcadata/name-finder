@@ -51,9 +51,11 @@ class Builder:
         self._build_calcd_with_ratios_and_number_pct()
         self._build_raw_with_actuarial()
         self._load_predict_age_reference()
+        return
 
     def ingest_alternate_calcd(self, calcd: pd.DataFrame) -> None:
         self._calcd = calcd.copy()
+        return
 
     def _load_data(self) -> None:
         data = []
@@ -63,13 +65,16 @@ class Builder:
                     continue
                 data.append(self._load_one_file(filename, is_territory))
         self._concatenated = pd.concat(data)
+        return
 
     def _load_predict_age_reference(self) -> None:
         dtype = dict(name=str, sex=str, year=int, number_living_pct=float)
         self._age_reference = pd.read_csv(Filepath.AGE_PREDICTION_REFERENCE, usecols=list(dtype.keys()), dtype=dtype)
+        return
 
     def _load_applicants_data(self) -> None:
         self._applicants_data = pd.read_csv(Filepath.APPLICANTS_DATA, dtype=int)
+        return
 
     def _build_raw_and_name_by_year_from_concatenated(self) -> None:
         self._concatenated.sex = self._concatenated.sex.str.lower()
@@ -81,12 +86,15 @@ class Builder:
             self._raw = self._concatenated.copy()
         self._name_by_year = self._raw.groupby(['name', 'year'], as_index=False).number.sum()
         self._name_by_year['rank_'] = self._name_by_year.groupby('year').number.rank(method='min', ascending=False)
+        return
 
     def _build_peaks(self) -> None:
         peaks_base = pd.concat((self._raw, self._name_by_year.assign(sex='all')))
+        peaks_base = peaks_base[peaks_base.year >= Year.DATA_QUALITY_BEST_AFTER]
         self._peaks = peaks_base.groupby(['name', 'sex'], as_index=False).agg(dict(rank_='min')).merge(
             peaks_base, on=['name', 'sex', 'rank_'], how='left').sort_values('year')
         self._peaks.rank_ = self._peaks.rank_.map(int)
+        return
 
     def _build_calcd_with_ratios_and_number_pct(self) -> None:
         _separate = lambda x: self._raw[self._raw.sex == x].drop(columns='sex').rename(columns=dict(rank_='rank'))
@@ -103,12 +111,14 @@ class Builder:
             self._calcd[f'number_pct_{s}'] = self._calcd[f'number_{s}'] / self._calcd[f'number_{s}_total']
         self._calcd['number_pct'] = self._calcd.number / self._calcd.number_total
         self._calcd = self._calcd.drop(columns=['number_f_total', 'number_m_total', 'number_total'])
+        return
 
     def _build_raw_with_actuarial(self) -> None:
         # loses years before 1900
         self.raw_with_actuarial = self._raw.merge(self._load_actuarial_data(), on=['sex', 'year'])
-        self.raw_with_actuarial['number_living'] = (
-                self.raw_with_actuarial.number * self.raw_with_actuarial.survival_prob)
+        self.raw_with_actuarial[
+            'number_living'] = self.raw_with_actuarial.number * self.raw_with_actuarial.survival_prob
+        return
 
     def _load_one_file(self, filename: str, is_territory: bool = False) -> pd.DataFrame:
         df = self._load_one_file_territory(filename) if is_territory else self._load_one_file_national(filename)
@@ -409,6 +419,7 @@ class Displayer(Builder):
             'red', 'blue'), hue_order=self._sexes)
         ax.set_title(name)
         ax.figure.tight_layout()
+        return
 
 
 def _filter_on_years(df: pd.DataFrame, year: int = None, after: int = None, before: int = None) -> pd.DataFrame:
@@ -494,11 +505,13 @@ def build_predict_gender_reference(
     df.gender_prediction = df.gender_prediction.fillna('unk')
 
     df[['name', 'gender_prediction']].to_csv(Filepath.GENDER_PREDICTION_REFERENCE, index=False)
+    return
 
 
 def build_total_number_living_from_actuarial(raw_with_actuarial: pd.DataFrame) -> None:
     total_number_living = raw_with_actuarial.groupby(['name', 'sex'], as_index=False).number_living.sum()
     total_number_living.to_csv(Filepath.TOTAL_NUMBER_LIVING_REFERENCE, index=False)
+    return
 
 
 def _read_total_number_living() -> pd.DataFrame:
@@ -514,6 +527,7 @@ def build_predict_age_reference(raw_with_actuarial: pd.DataFrame, age_min: int =
     ref['number_living_pct'] = ref.number_living / ref.number_living_name
     ref = ref.drop(columns=['number_living', 'number_living_name']).sort_values('year')
     ref.to_csv(Filepath.AGE_PREDICTION_REFERENCE, index=False)
+    return
 
 
 def build_all_generated_data() -> None:
@@ -523,6 +537,7 @@ def build_all_generated_data() -> None:
     build_predict_gender_reference(displayer)
     build_total_number_living_from_actuarial(displayer.raw_with_actuarial)
     build_predict_age_reference(displayer.raw_with_actuarial)
+    return
 
 
 def melt_applicants_data(apps: pd.DataFrame) -> pd.DataFrame:
