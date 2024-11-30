@@ -25,11 +25,10 @@ class Year:
     DATA_QUALITY_BEST_AFTER = 1937
 
 
-class GenderRatios:
+class Gender:
     F = (0, .1)
     M = (.9, 1)
-    NEUTRAL = (.3, .7)
-    NEUTRAL_BROAD = (.2, .8)
+    X = (.3, .7)
 
 
 class DFAgg:
@@ -277,7 +276,7 @@ class Displayer(Builder):
 
         # filter on ratio
         if type(gender) == str:
-            gender = dict(f=GenderRatios.F, x=GenderRatios.NEUTRAL, m=GenderRatios.M).get(gender)
+            gender = dict(f=Gender.F, x=Gender.X, m=Gender.M).get(gender)
         if gender:
             df = df[(df.ratio_m >= gender[0]) & (df.ratio_m <= gender[1])]
 
