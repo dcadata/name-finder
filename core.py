@@ -234,7 +234,7 @@ class Displayer(Builder):
             length_max: int = None,
             number_min: int = None,
             number_max: int = None,
-            gender: tuple[float, float] | str = None,
+            gender: tuple[float, float] = None,
             after: int = None,
             before: int = None,
             year: int = None,
@@ -275,8 +275,6 @@ class Displayer(Builder):
                 df = df[df.name.map(len) <= length_max]
 
         # filter on ratio
-        if type(gender) == str:
-            gender = dict(f=Gender.F, x=Gender.X, m=Gender.M).get(gender)
         if gender:
             df = df[(df.ratio_m >= gender[0]) & (df.ratio_m <= gender[1])]
 
