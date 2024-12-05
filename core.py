@@ -37,13 +37,11 @@ class DFAgg:
 
 class Builder:
     def __init__(self, *args, **kwargs) -> None:
-        self._include_territories = kwargs.get('include_territories')
         self._sexes = ('f', 'm')
         self._calcd = None
-        self._include_territories = False  # todo: re-rank accounting for territories
 
     def build_base(self) -> None:
-        self._load_data()
+        self._load_name_data()
         self._load_applicants_data()
         self._build_raw_and_name_by_year_from_concatenated()
         self._build_peaks()
@@ -52,14 +50,11 @@ class Builder:
         self._load_predict_age_reference()
         return
 
-    def _load_data(self) -> None:
-        data = []
-        for data_directory, is_territory in self._data_directories.items():
-            for filename in os.listdir(data_directory):
-                if not filename.lower().endswith('.txt'):
-                    continue
-                data.append(self._load_one_file(filename, is_territory))
-        self._concatenated = pd.concat(data)
+    def _load_name_data(self) -> None:
+        self._raw = pd.concat([
+            _load_name_data_for_one_year(filename) for filename in os.listdir(Filepath.NATIONAL_DATA_DIR)
+            if filename.lower().endswith('.txt')
+        ])
         return
 
     def _load_predict_age_reference(self) -> None:
@@ -72,13 +67,8 @@ class Builder:
         return
 
     def _build_raw_and_name_by_year_from_concatenated(self) -> None:
-        self._concatenated.sex = self._concatenated.sex.str.lower()
-        self._concatenated.rank_ = self._concatenated.rank_.map(int)
-        if self._include_territories:
-            # combine territories w/ national
-            self._raw = self._concatenated.groupby(['name', 'sex', 'year', 'rank_'], as_index=False).number.sum()
-        else:
-            self._raw = self._concatenated.copy()
+        self._raw.sex = self._raw.sex.str.lower()
+        self._raw.rank_ = self._raw.rank_.map(int)
         self._name_by_year = self._raw.groupby(['name', 'year'], as_index=False).number.sum()
         self._name_by_year['rank_'] = self._name_by_year.groupby('year').number.rank(method='min', ascending=False)
         return
@@ -115,27 +105,6 @@ class Builder:
             'number_living'] = self.raw_with_actuarial.number * self.raw_with_actuarial.survival_prob
         return
 
-    def _load_one_file(self, filename: str, is_territory: bool = False) -> pd.DataFrame:
-        df = self._load_one_file_territory(filename) if is_territory else self._load_one_file_national(filename)
-        df['rank_'] = df.groupby('sex').number.rank(method='min', ascending=False)
-        return df
-
-    @staticmethod
-    def _load_one_file_national(filename: str) -> pd.DataFrame:
-        year = re.search('yob([0-9]+)\.txt', filename).group(1)
-        dtypes = {'name': str, 'sex': str, 'number': int}
-        df = pd.read_csv(Filepath.NATIONAL_DATA_DIR + filename, names=list(dtypes.keys()), dtype=dtypes).assign(
-            year=year)
-        df.year = df.year.map(int)
-        return df
-
-    @staticmethod
-    def _load_one_file_territory(filename: str) -> pd.DataFrame:
-        dtypes = {'territory': str, 'sex': str, 'year': int, 'name': str, 'number': int}
-        df = pd.read_csv(Filepath.TERRITORIES_DATA_DIR + filename, names=list(dtypes.keys()), dtype=dtypes).drop(
-            columns='territory')
-        return df
-
     def _load_actuarial_data(self) -> pd.DataFrame:
         actuarial = pd.concat(pd.read_csv(Filepath.ACTUARIAL.format(sex=s), usecols=[
             'year', 'age', 'survivors'], dtype=int).assign(sex=s) for s in self._sexes)
@@ -144,13 +113,6 @@ class Builder:
         actuarial['survival_prob'] = actuarial.survivors / 100_000
         actuarial = actuarial.drop(columns=['year', 'survivors']).rename(columns={'birth_year': 'year'})
         return actuarial
-
-    @property
-    def _data_directories(self) -> dict:
-        data_directories = {Filepath.NATIONAL_DATA_DIR: False}
-        if self._include_territories:
-            data_directories[Filepath.TERRITORIES_DATA_DIR] = True
-        return data_directories
 
     @property
     def calculated(self) -> pd.DataFrame:
@@ -413,6 +375,16 @@ class Displayer(Builder):
         ax.set_title(name)
         ax.figure.tight_layout()
         return
+
+
+def _load_name_data_for_one_year(filename: str) -> pd.DataFrame:
+    year = re.search('yob([0-9]+)\.txt', filename).group(1)
+    dtypes = dict(name=str, sex=str, number=int)
+    df = pd.read_csv(Filepath.NATIONAL_DATA_DIR + filename, names=list(dtypes.keys()), dtype=dtypes).assign(
+        year=year)
+    df.year = df.year.map(int)
+    df['rank_'] = df.groupby('sex').number.rank(method='min', ascending=False)
+    return df
 
 
 def _filter_on_years(df: pd.DataFrame, year: int = None, after: int = None, before: int = None) -> pd.DataFrame:
