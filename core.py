@@ -43,7 +43,7 @@ class Builder:
     def build_base(self) -> None:
         self._load_name_data()
         self._load_applicants_data()
-        self._build_raw_and_name_by_year_from_concatenated()
+        self._build_name_by_year()
         self._build_peaks()
         self._build_calcd_with_ratios_and_number_pct()
         self._build_raw_with_actuarial()
@@ -55,6 +55,8 @@ class Builder:
             _load_name_data_for_one_year(filename) for filename in os.listdir(Filepath.NATIONAL_DATA_DIR)
             if filename.lower().endswith('.txt')
         ])
+        self._raw.sex = self._raw.sex.str.lower()
+        self._raw.rank_ = self._raw.rank_.map(int)
         return
 
     def _load_predict_age_reference(self) -> None:
@@ -66,9 +68,7 @@ class Builder:
         self._applicants_data = pd.read_csv(Filepath.APPLICANTS_DATA, dtype=int)
         return
 
-    def _build_raw_and_name_by_year_from_concatenated(self) -> None:
-        self._raw.sex = self._raw.sex.str.lower()
-        self._raw.rank_ = self._raw.rank_.map(int)
+    def _build_name_by_year(self) -> None:
         self._name_by_year = self._raw.groupby(['name', 'year'], as_index=False).number.sum()
         self._name_by_year['rank_'] = self._name_by_year.groupby('year').number.rank(method='min', ascending=False)
         return
