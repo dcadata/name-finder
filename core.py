@@ -36,7 +36,7 @@ class DFAgg:
 
 
 class Builder:
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self) -> None:
         self._sexes = ('f', 'm')
         self._calcd = None
 
@@ -120,9 +120,6 @@ class Builder:
 
 
 class Displayer(Builder):
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-
     def name(
             self,
             name: str,
