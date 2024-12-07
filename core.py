@@ -25,12 +25,6 @@ class Year:
     DATA_QUALITY_BEST_AFTER = 1937
 
 
-class Gender:
-    F = (0, .1)
-    M = (.9, 1)
-    X = (.3, .7)
-
-
 class DFAgg:
     NUMBER_SUM = dict(number='sum', number_f='sum', number_m='sum')
 
