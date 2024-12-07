@@ -1,11 +1,10 @@
 import os
 import re
 import string
+from enum import Enum
 
 import pandas as pd
 import seaborn as sns
-
-PLACEHOLDER_NAMES = ('Unknown', 'Baby', 'Infant', 'Unnamed', 'Unborn', 'Notnamed', 'Newborn')
 
 
 class Filepath:
@@ -23,6 +22,16 @@ class Year:
     MIN_YEAR = 1880
     MAX_YEAR = int(re.search('^yob([0-9]{4}).txt$', os.listdir(Filepath.NATIONAL_DATA_DIR)[-1]).group(1))
     DATA_QUALITY_BEST_AFTER = 1937
+
+
+class UnknownName(str, Enum):
+    Unknown: str = 'Unknown'
+    Infant: str = 'Infant'
+    Baby: str = 'Baby'
+    Unnamed: str = 'Unnamed'
+    Unborn: str = 'Unborn'
+    Notnamed: str = 'Notnamed'
+    Newborn: str = 'Newborn'
 
 
 class DFAgg:
@@ -194,7 +203,7 @@ class Displayer(Builder):
     ) -> pd.DataFrame | list:
         df = self._calcd.copy()
         # exclude placeholder names
-        df = df[~df.name.isin(PLACEHOLDER_NAMES)].copy()
+        df = df[~df.name.isin(tuple(UnknownName))].copy()
 
         # filter on years
         df = _filter_on_years(df, year, after, before).copy()
