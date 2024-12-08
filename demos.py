@@ -93,6 +93,11 @@ class _SsaSexInd(str, Enum):
     Male: str = 'm'
 
 
+class _SsaUnisexInd:
+    All: str = 'all'
+    Total: str = 'total'
+
+
 class _SsaSexIndSuffix(str, Enum):
     Female: str = '_f'
     Male: str = '_m'
@@ -105,5 +110,6 @@ class _SsaSexIndPalette(str, Enum):
 
 class SsaSex:
     Ind = _SsaSexInd
+    Unisex = _SsaUnisexInd
     Suffix = _SsaSexIndSuffix
     Palette = _SsaSexIndPalette
