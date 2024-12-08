@@ -366,8 +366,7 @@ class Displayer(Builder):
         display_fields = list(map(lambda x: f'{value_field_name}_{x}', SsaSex.Ind))
         historic = df[[year_field, *display_fields]].melt([year_field], display_fields, '', value_field_name)
         historic[''] = historic[''].str.slice(-1)
-        ax = sns.lineplot(historic, x='year', y=value_field_name, hue='', hue_order=SsaSex.Ind, palette=tuple(
-            SsaSex.Palette))
+        ax = sns.lineplot(historic, x='year', y=value_field_name, hue='', **SsaSex.HueOrderAndPalette)
         ax.set_title(name)
         ax.figure.tight_layout()
         return

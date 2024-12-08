@@ -112,4 +112,4 @@ class SsaSex:
     Ind = _SsaSexInd
     Unisex = _SsaUnisexInd
     Suffix = _SsaSexSuffix
-    Palette = _SsaSexPalette
+    HueOrderAndPalette = dict(hue_order=Ind, palette=tuple(_SsaSexPalette))
