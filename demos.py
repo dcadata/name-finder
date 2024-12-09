@@ -74,6 +74,10 @@ class Generation:
     PostWar: _GenerationBase = _GenerationPostWar()
     WWII: _GenerationBase = _GenerationWWII()
 
+    @classmethod
+    def combine(cls, *args: _GenerationBase) -> dict[str, int]:
+        return dict(after=args[0].after, before=args[-1].before)
+
 
 class _GenderBound:
     Feminine: tuple[float, float] = (0, .1)
