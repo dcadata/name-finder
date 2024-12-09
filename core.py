@@ -21,9 +21,13 @@ class Filepath:
 
 
 class Year:
-    MIN_YEAR = 1880
-    MAX_YEAR = int(re.search('^yob([0-9]{4}).txt$', os.listdir(Filepath.NATIONAL_DATA_DIR)[-1]).group(1))
-    DATA_QUALITY_BEST_AFTER = 1937
+    MIN_YEAR: int = 1880
+    MAX_YEAR: int = int(re.search('^yob([0-9]{4}).txt$', os.listdir(Filepath.NATIONAL_DATA_DIR)[-1]).group(1))
+    DATA_QUALITY_BEST_AFTER: int = 1937
+
+    @classmethod
+    def get_default_years_as_dict(self) -> dict[str, int]:
+        return dict(after=Year.DATA_QUALITY_BEST_AFTER, before=Year.MAX_YEAR)
 
 
 class UnknownName(str, Enum):
