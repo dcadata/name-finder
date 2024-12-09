@@ -1,8 +1,11 @@
-from abc import abstractmethod
 from enum import Enum
 
 
 class _GenerationBase:
+    def __init__(self, after: int, before: int) -> None:
+        self.after = after
+        self.before = before
+
     @property
     def years_as_dict(self) -> dict[str, int]:
         return dict(after=self.after, before=self.before)
@@ -19,64 +22,19 @@ class _GenerationBase:
     def years_as_tuple(self) -> tuple[int, int]:
         return self.after, self.before
 
-    @property
-    @abstractmethod
-    def after(self) -> int:
-        pass
-
-    @property
-    @abstractmethod
-    def before(self) -> int:
-        pass
-
-
-class _GenerationGenZ(_GenerationBase):
-    after: int = 1997
-    before: int = 2012
-
-
-class _GenerationMillennial(_GenerationBase):
-    after: int = 1981
-    before: int = 1996
-
-
-class _GenerationGenX(_GenerationBase):
-    after: int = 1965
-    before: int = 1980
-
-
-class _GenerationBoomerII(_GenerationBase):
-    after: int = 1955
-    before: int = 1964
-
-
-class _GenerationBoomerI(_GenerationBase):
-    after: int = 1946
-    before: int = 1954
-
-
-class _GenerationPostWar(_GenerationBase):
-    after: int = 1928
-    before: int = 1945
-
-
-class _GenerationWWII(_GenerationBase):
-    after: int = 1922
-    before: int = 1927
-
 
 class Generation:
-    GenZ: _GenerationBase = _GenerationGenZ()
-    Millennial: _GenerationBase = _GenerationMillennial()
-    GenX: _GenerationBase = _GenerationGenX()
-    BoomerII: _GenerationBase = _GenerationBoomerII()
-    BoomerI: _GenerationBase = _GenerationBoomerI()
-    PostWar: _GenerationBase = _GenerationPostWar()
-    WWII: _GenerationBase = _GenerationWWII()
+    GenZ: _GenerationBase = _GenerationBase(1997, 2012)
+    Millennial: _GenerationBase = _GenerationBase(1981, 1996)
+    GenX: _GenerationBase = _GenerationBase(1965, 1980)
+    BoomerII: _GenerationBase = _GenerationBase(1955, 1964)
+    BoomerI: _GenerationBase = _GenerationBase(1946, 1954)
+    PostWar: _GenerationBase = _GenerationBase(1928, 1945)
+    WWII: _GenerationBase = _GenerationBase(1922, 1927)
 
     @classmethod
-    def combine(cls, *args: _GenerationBase) -> dict[str, int]:
-        return dict(after=args[0].after, before=args[-1].before)
+    def combine(cls, *args: _GenerationBase) -> _GenerationBase:
+        return _GenerationBase(args[0].after, args[-1].before)
 
 
 class _GenderBound:
