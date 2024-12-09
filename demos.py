@@ -3,15 +3,21 @@ from enum import Enum
 
 
 class _GenerationBase:
-    def as_dict(self) -> dict[str, int]:
+    @property
+    def years_as_dict(self) -> dict[str, int]:
         return dict(after=self.after, before=self.before)
 
-    def as_tuple(self) -> tuple[int, int]:
-        return self.after, self.before
+    @property
+    def after_as_dict(self) -> dict[str, int]:
+        return dict(after=self.after)
 
     @property
-    def name(self) -> str:
-        return self.__class__.__name__
+    def before_as_dict(self) -> dict[str, int]:
+        return dict(before=self.before)
+
+    @property
+    def years_as_tuple(self) -> tuple[int, int]:
+        return self.after, self.before
 
     @property
     @abstractmethod
@@ -103,13 +109,8 @@ class _SsaSexSuffix(str, Enum):
     Male: str = '_m'
 
 
-class _SsaSexPalette(str, Enum):
-    Female: str = 'red'
-    Male: str = 'blue'
-
-
 class SsaSex:
     Ind = _SsaSexInd
     Unisex = _SsaUnisexInd
     Suffix = _SsaSexSuffix
-    HueOrderAndPalette = dict(hue_order=Ind, palette=tuple(_SsaSexPalette))
+    HueOrderAndPalette = dict(hue_order=Ind, palette=('red', 'blue'))
