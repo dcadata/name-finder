@@ -46,7 +46,13 @@ class DFAgg:
 
 class Builder:
     def __init__(self) -> None:
-        self._calcd = None
+        self._raw: pd.DataFrame
+        self._age_reference: pd.DataFrame
+        self._applicants_data: pd.DataFrame
+        self._name_by_year: pd.DataFrame
+        self._peaks: pd.DataFrame
+        self._calcd: pd.DataFrame
+        self.raw_with_actuarial: pd.DataFrame
 
     def build_base(self) -> None:
         self._load_name_data()
