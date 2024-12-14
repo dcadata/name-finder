@@ -26,7 +26,7 @@ class Year:
     DATA_QUALITY_BEST_AFTER: int = 1937
 
     @classmethod
-    def get_default_years_as_dict(self) -> dict[str, int]:
+    def get_default_years_as_dict(cls) -> dict[str, int]:
         return dict(after=Year.DATA_QUALITY_BEST_AFTER, before=Year.MAX_YEAR)
 
 
@@ -379,8 +379,7 @@ class Displayer(Builder):
 def _load_name_data_for_one_year(filename: str) -> pd.DataFrame:
     year = re.search('yob([0-9]+)\.txt', filename).group(1)
     dtypes = dict(name=str, sex=str, number=int)
-    df = pd.read_csv(Filepath.NATIONAL_DATA_DIR + filename, names=list(dtypes.keys()), dtype=dtypes).assign(
-        year=year)
+    df = pd.read_csv(Filepath.NATIONAL_DATA_DIR + filename, names=list(dtypes.keys()), dtype=dtypes).assign(year=year)
     df.year = df.year.map(int)
     df['rank_'] = df.groupby('sex').number.rank(method='min', ascending=False)
     return df
