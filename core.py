@@ -350,21 +350,22 @@ class Displayer(Builder):
 
         return output
 
-    def filter_for_peaked_search(self, **kwargs) -> pd.DataFrame:
-        peaked_within = self._peaks.copy()
+    def filter_peaks_or_raw(self, **kwargs) -> pd.DataFrame:
+        use_raw: bool = kwargs.get('use_raw')
+        df = (self._raw if use_raw else self._peaks).copy()
         if after := kwargs.get('after'):
-            peaked_within = peaked_within[peaked_within.year >= after]
+            df = df[df.year >= after]
         if before := kwargs.get('before'):
-            peaked_within = peaked_within[peaked_within.year <= before]
+            df = df[df.year <= before]
         if year := kwargs.get('year'):
-            peaked_within = peaked_within[peaked_within.year == year]
-        if sex := kwargs.get('sex', SsaSex.Unisex.All):
-            peaked_within = peaked_within[peaked_within.sex == sex]
+            df = df[df.year == year]
+        if sex := kwargs.get('sex', None if use_raw else SsaSex.Unisex.All):
+            df = df[df.sex == sex]
         if rank_min := kwargs.get('rank_min'):
-            peaked_within = peaked_within[peaked_within.rank_ >= rank_min]
+            df = df[df.rank_ >= rank_min]
         if rank_max := kwargs.get('rank_max'):
-            peaked_within = peaked_within[peaked_within.rank_ <= rank_max]
-        return peaked_within
+            df = df[df.rank_ <= rank_max]
+        return df
 
     def get_peak(self, name: str) -> pd.DataFrame:
         return self._peaks[self._peaks.name == name].groupby(['sex', 'year']).agg(dict(
