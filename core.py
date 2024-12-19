@@ -20,9 +20,13 @@ class Filepath:
     TOTAL_NUMBER_LIVING_REFERENCE = 'data/generated/raw_with_actuarial.total_number_living.csv'
 
 
+class Pattern:
+    YEAR: str = '^yob([0-9]{4}).txt$'
+
+
 class Year:
     MIN_YEAR: int = 1880
-    MAX_YEAR: int = int(re.search('^yob([0-9]{4}).txt$', os.listdir(Filepath.NATIONAL_DATA_DIR)[-1]).group(1))
+    MAX_YEAR: int = int(re.search(Pattern.YEAR, os.listdir(Filepath.NATIONAL_DATA_DIR)[-1]).group(1))
     DATA_QUALITY_BEST_AFTER: int = 1937
 
     @classmethod
@@ -384,7 +388,7 @@ class Displayer(Builder):
 
 
 def _load_name_data_for_one_year(filename: str) -> pd.DataFrame:
-    year = re.search('yob([0-9]+)\.txt', filename).group(1)
+    year = re.search(Pattern.YEAR, filename).group(1)
     dtypes = dict(name=str, sex=str, number=int)
     df = pd.read_csv(Filepath.NATIONAL_DATA_DIR + filename, names=list(dtypes.keys()), dtype=dtypes).assign(year=year)
     df.year = df.year.map(int)
