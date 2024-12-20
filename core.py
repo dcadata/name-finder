@@ -34,7 +34,7 @@ class Year:
         return dict(after=Year.DATA_QUALITY_BEST_AFTER, before=Year.MAX_YEAR)
 
 
-class UnknownName(str, Enum):
+class UnknownName(Enum):
     Unknown: str = 'Unknown'
     Infant: str = 'Infant'
     Baby: str = 'Baby'
@@ -42,6 +42,10 @@ class UnknownName(str, Enum):
     Unborn: str = 'Unborn'
     Notnamed: str = 'Notnamed'
     Newborn: str = 'Newborn'
+
+    @classmethod
+    def get(cls) -> tuple:
+        return tuple(i.value for i in cls)
 
 
 class DFAgg:
@@ -212,7 +216,7 @@ class Displayer(Builder):
     ) -> pd.DataFrame | list:
         df = self._calcd.copy()
         # exclude placeholder names
-        df = df[~df.name.isin(tuple(UnknownName))].copy()
+        df = df[~df.name.isin(UnknownName.get())].copy()
 
         # filter on years
         df = _filter_on_years(df, year, after, before).copy()
