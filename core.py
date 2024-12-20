@@ -96,7 +96,7 @@ class Builder:
         return
 
     def _build_peaks(self) -> None:
-        peaks_base = pd.concat((self._raw, self._name_by_year.assign(sex=SsaSex.Unisex.All)))
+        peaks_base = pd.concat((self._raw, self._name_by_year.assign(sex=SsaSex.All)))
         peaks_base = peaks_base[peaks_base.year >= Year.DATA_QUALITY_BEST_AFTER]
         self._peaks = peaks_base.groupby(['name', 'sex'], as_index=False).agg(dict(rank_='min')).merge(
             peaks_base, on=['name', 'sex', 'rank_'], how='left').sort_values('year')
@@ -107,17 +107,18 @@ class Builder:
         separate_by_sex = lambda x: self._raw[self._raw.sex == x].drop(columns='sex').rename(columns=dict(rank_='rank'))
         merge_on = ['name', 'year']
         self._calcd = (
-            separate_by_sex(SsaSex.Ind.Female).merge(separate_by_sex(SsaSex.Ind.Male), on=merge_on, suffixes=tuple(
-                SsaSex.Suffix), how='outer').merge(self._name_by_year, on=merge_on).sort_values('year')
+            separate_by_sex(SsaSex.Female)
+            .merge(separate_by_sex(SsaSex.Male), on=merge_on, suffixes=SsaSex.Suffix, how='outer')
+            .merge(self._name_by_year, on=merge_on).sort_values('year')
         )
-        for s in SsaSex.Ind:
+        for s in SsaSex.Both:
             self._calcd[f'number_{s}'] = self._calcd[f'number_{s}'].fillna(0).map(int)
             self._calcd[f'ratio_{s}'] = self._calcd[f'number_{s}'] / self._calcd.number
             self._calcd[f'rank_{s}'] = self._calcd[f'rank_{s}'].fillna(-1).map(int)
         self._calcd.rank_ = self._calcd.rank_.map(int)
 
         self._calcd = self._calcd.merge(self._applicants_data, on='year', suffixes=('', '_total'))
-        for s in SsaSex.Ind:
+        for s in SsaSex.Both:
             self._calcd[f'number_pct_{s}'] = self._calcd[f'number_{s}'] / self._calcd[f'number_{s}_total']
         self._calcd['number_pct'] = self._calcd.number / self._calcd.number_total
         self._calcd = self._calcd.drop(columns=['number_f_total', 'number_m_total', 'number_total'])
@@ -166,7 +167,7 @@ class Displayer(Builder):
 
         # aggregate
         grouped = df.groupby('name', as_index=False).agg(DFAgg.NUMBER_SUM)
-        for s in SsaSex.Ind:
+        for s in SsaSex.Both:
             grouped[f'ratio_{s}'] = grouped[f'number_{s}'] / grouped.number
 
         # build output
@@ -175,13 +176,13 @@ class Displayer(Builder):
             'name': grouped['name'],
             **dict(after=after, before=before, year=year),
             'numbers': {
-                SsaSex.Unisex.Total: grouped['number'],
-                SsaSex.Ind.Female: grouped['number_f'],
-                SsaSex.Ind.Male: grouped['number_m'],
+                SsaSex.Total: grouped['number'],
+                SsaSex.Female: grouped['number_f'],
+                SsaSex.Male: grouped['number_m'],
             },
             'ratios': {
-                SsaSex.Ind.Female: grouped['ratio_f'],
-                SsaSex.Ind.Male: grouped['ratio_m'],
+                SsaSex.Female: grouped['ratio_f'],
+                SsaSex.Male: grouped['ratio_m'],
             },
             'peak': self.get_peak(name),
             'latest': _restructure_earliest_or_latest(latest),
@@ -226,7 +227,7 @@ class Displayer(Builder):
         if year:
             agg_fields.update(dict(rank_='min', rank_f='min', rank_m='min'))
         df = df.groupby('name', as_index=False).agg(agg_fields)
-        for s in SsaSex.Ind:
+        for s in SsaSex.Both:
             df[f'ratio_{s}'] = df[f'number_{s}'] / df.number
 
         # add lowercase name for filtering
@@ -349,8 +350,7 @@ class Displayer(Builder):
 
         if number:
             numbers = df.groupby('sex').number.sum()
-            prediction = SsaSex.Ind.Female if numbers.get(SsaSex.Ind.Female, 0) > numbers.get(
-                SsaSex.Ind.Male, 0) else SsaSex.Ind.Male
+            prediction = SsaSex.Female if numbers.get(SsaSex.Female, 0) > numbers.get(SsaSex.Male, 0) else SsaSex.Male
             output.update(dict(
                 prediction=prediction,
                 confidence=round(numbers[prediction] / number, 2),
@@ -367,7 +367,7 @@ class Displayer(Builder):
             df = df[df.year <= before]
         if year := kwargs.get('year'):
             df = df[df.year == year]
-        if sex := kwargs.get('sex', None if use_raw else SsaSex.Unisex.All):
+        if sex := kwargs.get('sex', None if use_raw else SsaSex.All):
             df = df[df.sex == sex]
         if rank_min := kwargs.get('rank_min'):
             df = df[df.rank_ >= rank_min]
@@ -382,7 +382,7 @@ class Displayer(Builder):
     def _make_plot_for_name(self, df: pd.DataFrame, name: str, display: bool | str) -> None:
         value_field_name = 'number' if type(display) == bool else display
         year_field = 'year'
-        display_fields = list(map(lambda x: f'{value_field_name}_{x}', SsaSex.Ind))
+        display_fields = list(map(lambda x: f'{value_field_name}_{x}', SsaSex.Both))
         historic = df[[year_field, *display_fields]].melt([year_field], display_fields, '', value_field_name)
         historic[''] = historic[''].str.slice(-1)
         ax = sns.lineplot(historic, x='year', y=value_field_name, hue='', **SsaSex.HueOrderAndPalette)
@@ -404,7 +404,7 @@ def _load_name_data_for_one_year(filename: str) -> pd.DataFrame:
 
 def _load_actuarial_data() -> pd.DataFrame:
     actuarial = pd.concat(pd.read_csv(Filepath.ACTUARIAL.format(sex=s), usecols=[
-        'year', 'age', 'survivors'], dtype=int).assign(sex=s) for s in SsaSex.Ind)
+        'year', 'age', 'survivors'], dtype=int).assign(sex=s) for s in SsaSex.Both)
     actuarial = actuarial[actuarial.year == Year.MAX_YEAR].copy()
     actuarial['birth_year'] = actuarial.year - actuarial.age
     actuarial['survival_prob'] = actuarial.survivors / 100_000
@@ -533,7 +533,7 @@ def build_all_generated_data() -> None:
 def melt_applicants_data(apps: pd.DataFrame) -> pd.DataFrame:
     apps_melted = apps.melt(['year'], ['number_m', 'number_f', 'number'], 'sex', 'number_')
     apps_melted = apps_melted.rename(columns=dict(number_='number'))
-    apps_melted.loc[apps_melted.sex == 'number_f', 'sex'] = SsaSex.Ind.Female
-    apps_melted.loc[apps_melted.sex == 'number_m', 'sex'] = SsaSex.Ind.Male
-    apps_melted.loc[apps_melted.sex == 'number', 'sex'] = SsaSex.Unisex.All
+    apps_melted.loc[apps_melted.sex == 'number_f', 'sex'] = SsaSex.Female
+    apps_melted.loc[apps_melted.sex == 'number_m', 'sex'] = SsaSex.Male
+    apps_melted.loc[apps_melted.sex == 'number', 'sex'] = SsaSex.All
     return apps_melted

@@ -1,6 +1,3 @@
-from enum import Enum
-
-
 class _GenerationBase:
     def __init__(self, after: int, before: int) -> None:
         self.after = after
@@ -45,7 +42,7 @@ class _GenderBound:
     NeutralBroadest: tuple[float, float] = (.1, 1 - .1)
 
 
-class _GenderInd(str, Enum):
+class _GenderInd:
     Feminine: str = 'f'
     Masculine: str = 'm'
     Neutral: str = 'x'
@@ -56,23 +53,11 @@ class Gender:
     Ind = _GenderInd
 
 
-class _SsaSexInd(str, Enum):
+class SsaSex:
     Female: str = 'f'
     Male: str = 'm'
-
-
-class _SsaUnisexInd:
     All: str = 'all'
     Total: str = 'total'
-
-
-class _SsaSexSuffix(str, Enum):
-    Female: str = '_f'
-    Male: str = '_m'
-
-
-class SsaSex:
-    Ind = _SsaSexInd
-    Unisex = _SsaUnisexInd
-    Suffix = _SsaSexSuffix
-    HueOrderAndPalette = dict(hue_order=Ind, palette=('red', 'blue'))
+    Both: tuple[str, str] = Female, Male
+    Suffix: tuple[str, str] = tuple(f'_{i}' for i in Both)
+    HueOrderAndPalette: dict[str, tuple] = dict(hue_order=Both, palette=('red', 'blue'))
