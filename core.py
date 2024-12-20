@@ -10,14 +10,14 @@ from demos import SsaSex
 
 
 class Filepath:
-    DATA_DIR = 'data/'
-    NATIONAL_DATA_DIR = 'data/names/'
-    TERRITORIES_DATA_DIR = 'data/namesbyterritory/'
-    ACTUARIAL = 'data/actuarial/{sex}.csv'
-    APPLICANTS_DATA = 'data/applicants/data.csv'
-    AGE_PREDICTION_REFERENCE = 'data/generated/age_prediction_reference.csv'
-    GENDER_PREDICTION_REFERENCE = 'data/generated/gender_prediction_reference.csv'
-    TOTAL_NUMBER_LIVING_REFERENCE = 'data/generated/raw_with_actuarial.total_number_living.csv'
+    DATA_DIR: str = 'data/'
+    NATIONAL_DATA_DIR: str = 'data/names/'
+    TERRITORIES_DATA_DIR: str = 'data/namesbyterritory/'
+    ACTUARIAL: str = 'data/actuarial/{sex}.csv'
+    APPLICANTS_DATA: str = 'data/applicants/data.csv'
+    AGE_PREDICTION_REFERENCE: str = 'data/generated/age_prediction_reference.csv'
+    GENDER_PREDICTION_REFERENCE: str = 'data/generated/gender_prediction_reference.csv'
+    TOTAL_NUMBER_LIVING_REFERENCE: str = 'data/generated/raw_with_actuarial.total_number_living.csv'
 
 
 class Pattern:
