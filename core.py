@@ -113,7 +113,6 @@ class Builder:
         )
         for s in SsaSex.Both:
             self._calcd[f'number_{s}'] = self._calcd[f'number_{s}'].fillna(0).map(int)
-            self._calcd[f'ratio_{s}'] = self._calcd[f'number_{s}'] / self._calcd.number
             self._calcd[f'rank_{s}'] = self._calcd[f'rank_{s}'].fillna(-1).map(int)
         self._calcd.rank_ = self._calcd.rank_.map(int)
 
