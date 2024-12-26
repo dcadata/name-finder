@@ -8,14 +8,6 @@ class _GenerationBase:
         return dict(after=self.after, before=self.before)
 
     @property
-    def after_as_dict(self) -> dict[str, int]:
-        return dict(after=self.after)
-
-    @property
-    def before_as_dict(self) -> dict[str, int]:
-        return dict(before=self.before)
-
-    @property
     def years_as_tuple(self) -> tuple[int, int]:
         return self.after, self.before
 
