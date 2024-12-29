@@ -167,7 +167,7 @@ class Displayer(Builder):
         # aggregate
         grouped = df.groupby('name', as_index=False).agg(DFAgg.NUMBER_SUM)
         for s in SsaSex.Both:
-            grouped[f'ratio_{s}'] = grouped[f'number_{s}'] / grouped.number
+            grouped[f'ratio_{s}'] = (grouped[f'number_{s}'] / grouped.number).round(3)
 
         # build output
         grouped = grouped.iloc[0].to_dict()
