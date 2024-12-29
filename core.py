@@ -183,7 +183,7 @@ class Displayer(Builder):
                 SsaSex.Female: grouped['ratio_f'],
                 SsaSex.Male: grouped['ratio_m'],
             },
-            'peak': self.get_peak(name),
+            'peak': self.get_peaks(name),
             'latest': _restructure_earliest_or_latest(latest),
             'earliest': _restructure_earliest_or_latest(earliest),
             **selected_year,
@@ -374,9 +374,9 @@ class Displayer(Builder):
             df = df[df.rank_ <= rank_max]
         return df
 
-    def get_peak(self, name: str) -> pd.DataFrame:
-        return self._peaks[self._peaks.name == name].groupby(['sex', 'year']).agg(dict(
-            rank_='min', number='max')).sort_values(['sex', 'year'])
+    def get_peaks(self, name: str) -> pd.DataFrame:
+        return self._peaks[self._peaks.name == name].groupby(['sex', 'year'], as_index=False).agg(dict(
+            rank_='min', number='max')).sort_values(['sex', 'year']).to_dict('records')
 
     def _make_plot_for_name(self, df: pd.DataFrame, name: str, display: bool | str) -> None:
         value_field_name = 'number' if type(display) == bool else display
