@@ -387,8 +387,6 @@ class Displayer(Builder):
         ax = sns.lineplot(historic, x='year', y=value_field_name, hue='', **SsaSex.HueOrderAndPalette)
         ax.set_title(name)
         ax.figure.tight_layout()
-        ax.figure.savefig('extras_outputs/scratch/scratch.png')
-        ax.figure.clf()
         return
 
 
