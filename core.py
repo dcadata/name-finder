@@ -525,12 +525,3 @@ def build_all_generated_data() -> None:
     build_total_number_living_from_actuarial(displayer.raw_with_actuarial)
     build_predict_age_reference(displayer.raw_with_actuarial)
     return
-
-
-def melt_applicants_data(apps: pd.DataFrame) -> pd.DataFrame:
-    apps_melted = apps.melt(['year'], ['number_m', 'number_f', 'number'], 'sex', 'number_')
-    apps_melted = apps_melted.rename(columns=dict(number_='number'))
-    apps_melted.loc[apps_melted.sex == 'number_f', 'sex'] = SsaSex.Female
-    apps_melted.loc[apps_melted.sex == 'number_m', 'sex'] = SsaSex.Male
-    apps_melted.loc[apps_melted.sex == 'number', 'sex'] = SsaSex.All
-    return apps_melted
