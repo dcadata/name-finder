@@ -25,7 +25,7 @@ def offset_plot_year_by_sex(df: pd.DataFrame, year_field: str) -> pd.DataFrame:
     return df
 
 
-def convert_year_to_decade_or_half_decade(series: pd.Series, half: bool = False) -> pd.DataFrame:
+def convert_year_to_decade_or_half_decade(series: pd.Series, half: bool = False) -> pd.Series:
     year_str_acc = series.map(str).str
     decade = year_str_acc.slice(0, 3)
     if half:
