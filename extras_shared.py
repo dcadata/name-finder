@@ -36,11 +36,6 @@ def convert_year_to_decade_or_half_decade(series: pd.Series, half: bool = False)
     return series.map(int)
 
 
-def reaggregate_number(df: pd.DataFrame) -> pd.DataFrame:
-    df = df.groupby(['name', 'sex', 'year'], as_index=False).number.sum()
-    return df
-
-
 def rerank_by_decade_or_half_decade(df: pd.DataFrame) -> pd.DataFrame:
     df = df.groupby(['name', 'year', 'sex'], as_index=False).number.sum()
     df['rank_'] = df.groupby(['year', 'sex']).number.rank(method='min', ascending=False)
