@@ -1,0 +1,144 @@
+import pandas as pd
+
+from core import Year, UnknownName, Displayer
+
+
+def build_gender_ratio_after_year(raw: pd.DataFrame, after: int) -> pd.DataFrame:
+    years = list(range(after, Year.MAX_YEAR + 1, 10))
+
+    ratios = pd.concat(raw.loc[raw.year >= year, ['name', 'sex', 'number']].assign(after=year) for year in years)
+    totals_by_name = ratios.groupby(['name', 'after'], as_index=False).number.sum()
+
+    ratios = ratios[ratios.sex == 'f'].drop(columns='sex').groupby(['name', 'after'], as_index=False).sum().merge(
+        totals_by_name, on=['name', 'after'], suffixes=('', '_total'), how='right')
+    ratios.number = ratios.number.fillna(0)
+
+    ratios['gender'] = ''
+    ratios['ratio'] = ratios.number / ratios.number_total
+
+    ratios.loc[ratios.ratio > .7, 'gender'] = 'Neut-Fem'
+    ratios.loc[ratios.ratio > .9, 'gender'] = 'Fem'
+    ratios.loc[ratios.ratio < .3, 'gender'] = 'Neut-Masc'
+    ratios.loc[ratios.ratio < .1, 'gender'] = 'Masc'
+    ratios.loc[(ratios.ratio >= .3) & (ratios.ratio <= .7), 'gender'] = 'Neut'
+
+    ratios = ratios.drop(columns=['number', 'number_total'])
+    ratios.ratio = (ratios.ratio * 100).map(int)
+
+    df = ratios[ratios.after == years[0]].drop(columns='after')
+    for year in years[1:]:
+        df = df.merge(ratios[ratios.after == year].drop(columns='after'), on='name', how='outer', suffixes=(
+            '', f'_after_{year}'))
+    df = df.rename(columns=dict(ratio=f'ratio_after_{years[0]}', gender=f'gender_after_{years[0]}'))
+    return df
+
+
+def build_age_percentile_reference(age_reference: pd.DataFrame, mid_percentile: float, after: int) -> pd.DataFrame:
+    lower_percentile = .5 - mid_percentile / 2
+    upper_percentile = 1 - lower_percentile
+
+    df = age_reference[age_reference.year >= after].copy()
+    id_cols = ['name', 'sex']
+
+    df.number_living_pct = df.groupby(id_cols).number_living_pct.cumsum()
+    df['lower'] = (lower_percentile - df.number_living_pct).abs()
+    df['upper'] = (upper_percentile - df.number_living_pct).abs()
+
+    lower_and_upper_mins = df.groupby(id_cols, as_index=False)[['lower', 'upper']].min()
+    agg_cols = [*id_cols, 'lower']
+    lowers = df.merge(lower_and_upper_mins[agg_cols], on=agg_cols)
+    agg_cols = [*id_cols, 'upper']
+    uppers = df.merge(lower_and_upper_mins[agg_cols], on=agg_cols)
+    df = pd.concat((lowers, uppers)).rename(columns=dict(year='middle_lo'))
+    df['middle_hi'] = df.middle_lo.copy()
+    df = df.groupby(['name', 'sex'], as_index=False).agg(dict(middle_lo='min', middle_hi='max'))
+
+    df = df[df.sex == 'f'].drop(columns='sex').merge(
+        df[df.sex == 'm'].drop(columns='sex'), on='name', how='outer', suffixes=('_f', '_m'))
+    return df
+
+
+def combine_to_create_final(displayer: Displayer, number_min: int = 1000, after: int = 1960) -> pd.DataFrame:
+    # noinspection PyProtectedMember
+    raw: pd.DataFrame = displayer._raw
+    # noinspection PyProtectedMember
+    peaks: pd.DataFrame = displayer._peaks
+    # noinspection PyProtectedMember
+    age_reference: pd.DataFrame = displayer._age_reference
+
+    raw_wo_unk = raw[~raw.name.isin(UnknownName.get())].copy()
+    peaks_wo_unk = peaks[~peaks.name.isin(UnknownName.get())].copy()
+    age_ref_wo_unk = age_reference[~age_reference.name.isin(UnknownName.get())].copy()
+
+    total_number = raw_wo_unk[raw_wo_unk.year >= Year.DATA_QUALITY_BEST_AFTER].groupby(
+        'name', as_index=False).number.sum().rename(columns=dict(number='total_number_after'))
+
+    latest_peaks = peaks_wo_unk.drop_duplicates(['name', 'sex'], keep='last').rename(columns=dict(
+        year='peak_year', rank_='peak_rank'))
+    peak_cols = ['name', 'peak_year', 'peak_rank']
+    latest_peaks = latest_peaks.loc[latest_peaks.sex == 'f', peak_cols].merge(
+        latest_peaks.loc[latest_peaks.sex == 'm', peak_cols], on='name', how='outer', suffixes=('_f', '_m'))
+
+    age_percentile_ref1 = build_age_percentile_reference(age_ref_wo_unk, .5, after)
+    age_percentile_ref2 = build_age_percentile_reference(age_ref_wo_unk, .8, after)
+    age_percentile_ref = age_percentile_ref1.merge(age_percentile_ref2, on='name', how='outer', suffixes=('50', '80'))
+
+    ratios = build_gender_ratio_after_year(raw_wo_unk, after)
+
+    df = total_number.merge(latest_peaks, on='name', how='outer').merge(
+        age_percentile_ref, on='name', how='outer').merge(ratios, on='name', how='outer')
+    df = df[df.total_number_after >= number_min].sort_values('total_number_after', ascending=False)
+    return df
+
+
+def filter_final(final: pd.DataFrame, **kwargs) -> pd.DataFrame:
+    df: pd.DataFrame = final.copy()
+
+    # by usages
+    number_low: int = kwargs.get('numLo')
+    number_high: int = kwargs.get('numHi')
+
+    if number_low:
+        df = df[df.total_number_after >= number_low]
+    if number_high:
+        df = df[df.total_number_after <= number_high]
+
+    # by peak year and middle percentile
+    sex: str = kwargs.get('sex')
+    year: int = kwargs.get('year')
+    year_band: int = kwargs.get('yearBand', 5)
+    use_peak: bool = kwargs.get('usePeak')
+    use_mid: bool | int = kwargs.get('useMid')
+    if use_mid != 80:
+        use_mid = 50
+
+    if year and sex and use_peak:
+        df = df[(df[f'peak_year_{sex}'] >= (year - year_band)) & (df[f'peak_year_{sex}'] <= (year + year_band))]
+    elif year and sex and use_mid:
+        df = df[(df[f'middle_lo_{sex}{use_mid}'] <= year) & (df[f'middle_hi_{sex}{use_mid}'] >= year)]
+    elif year and not sex and use_peak:
+        df = df[
+            (df['peak_year_f'] >= (year - year_band)) & (df['peak_year_f'] <= (year + year_band)) &
+            (df['peak_year_m'] >= (year - year_band)) & (df['peak_year_m'] <= (year + year_band))
+            ]
+    elif year and not sex and use_mid:
+        df = df[
+            (df[f'middle_lo_f{use_mid}'] <= year) & (df[f'middle_hi_f{use_mid}'] >= year) &
+            (df[f'middle_lo_m{use_mid}'] <= year) & (df[f'middle_hi_m{use_mid}'] >= year)
+            ]
+
+    # by gender ratio
+    gender_band: tuple[int, int] = kwargs.get('genderBand')
+    if gender_band:
+        for col in filter(lambda x: x.startswith('ratio_after_'), df.columns):
+            df = df[(df[col] >= gender_band[0]) & (df[col] <= gender_band[1])]
+
+    # by gender category
+    gender_category: tuple[str] = kwargs.get('genderCat')
+    if gender_category:
+        for col in filter(lambda x: x.startswith('gender_after_'), df.columns):
+            df = df[df[col].isin(gender_category)]
+
+    # finalize
+    df = df.sort_values('total_number_after', ascending=False)
+    return df
