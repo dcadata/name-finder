@@ -91,6 +91,18 @@ def combine_to_create_final(displayer: Displayer, number_min: int = 1000, after:
     return df
 
 
+def load_final(recreate: bool = False) -> pd.DataFrame:
+    output_filepath: str = 'extras_tn/output.csv'
+    if recreate:
+        displayer = Displayer()
+        displayer.build_base()
+        df = combine_to_create_final(displayer)
+        df.to_csv(output_filepath, index=False)
+    else:
+        df = pd.read_csv(output_filepath)
+    return df
+
+
 def filter_final(final: pd.DataFrame, **kwargs) -> pd.DataFrame:
     df: pd.DataFrame = final.copy()
 
