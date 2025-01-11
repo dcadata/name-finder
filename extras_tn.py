@@ -16,9 +16,9 @@ def build_gender_ratio_after_year(raw: pd.DataFrame, after: int) -> pd.DataFrame
     ratios['gender'] = ''
     ratios['ratio'] = ratios.number / ratios.number_total
 
-    ratios.loc[ratios.ratio > .7, 'gender'] = 'Neut-Fem'
+    ratios.loc[ratios.ratio > .7, 'gender'] = 'NeutFem'
     ratios.loc[ratios.ratio > .9, 'gender'] = 'Fem'
-    ratios.loc[ratios.ratio < .3, 'gender'] = 'Neut-Masc'
+    ratios.loc[ratios.ratio < .3, 'gender'] = 'NeutMasc'
     ratios.loc[ratios.ratio < .1, 'gender'] = 'Masc'
     ratios.loc[(ratios.ratio >= .3) & (ratios.ratio <= .7), 'gender'] = 'Neut'
 
