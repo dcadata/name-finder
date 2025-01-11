@@ -115,20 +115,23 @@ def filter_final(final: pd.DataFrame, **kwargs) -> pd.DataFrame:
     number_low: int = kwargs.get('numLo')
     number_high: int = kwargs.get('numHi')
 
-    if year and sex and use_peak:
-        df = df[(df[f'peak_year_{sex}'] >= (year - year_band)) & (df[f'peak_year_{sex}'] <= (year + year_band))]
-    elif year and sex and age_ballpark:
-        df = df[(df[f'middle_lo_{sex}{age_ballpark}'] <= year) & (df[f'middle_hi_{sex}{age_ballpark}'] >= year)]
-    elif year and not sex and use_peak:
-        df = df[
-            (df['peak_year_f'] >= (year - year_band)) & (df['peak_year_f'] <= (year + year_band)) &
-            (df['peak_year_m'] >= (year - year_band)) & (df['peak_year_m'] <= (year + year_band))
-            ]
-    elif year and not sex and age_ballpark:
-        df = df[
-            (df[f'middle_lo_f{age_ballpark}'] <= year) & (df[f'middle_hi_f{age_ballpark}'] >= year) &
-            (df[f'middle_lo_m{age_ballpark}'] <= year) & (df[f'middle_hi_m{age_ballpark}'] >= year)
-            ]
+    if year:
+        if use_peak:
+            if sex:
+                df = df[(df[f'peak_year_{sex}'] >= (year - year_band)) & (df[f'peak_year_{sex}'] <= (year + year_band))]
+            else:
+                df = df[
+                    (df['peak_year_f'] >= (year - year_band)) & (df['peak_year_f'] <= (year + year_band)) &
+                    (df['peak_year_m'] >= (year - year_band)) & (df['peak_year_m'] <= (year + year_band))
+                    ]
+        if age_ballpark:
+            if sex:
+                df = df[(df[f'middle_lo_{sex}{age_ballpark}'] <= year) & (df[f'middle_hi_{sex}{age_ballpark}'] >= year)]
+            else:
+                df = df[
+                    (df[f'middle_lo_f{age_ballpark}'] <= year) & (df[f'middle_hi_f{age_ballpark}'] >= year) &
+                    (df[f'middle_lo_m{age_ballpark}'] <= year) & (df[f'middle_hi_m{age_ballpark}'] >= year)
+                    ]
 
     if gender_category:
         for col in filter(lambda x: x.startswith('gender_after_'), df.columns):
