@@ -14,22 +14,20 @@ def build_gender_ratio_after_year(raw: pd.DataFrame, after: int) -> pd.DataFrame
     ratios.number = ratios.number.fillna(0)
 
     ratios['gender'] = ''
-    ratios['ratio'] = ratios.number / ratios.number_total
+    ratio = ratios.number / ratios.number_total
 
-    ratios.loc[ratios.ratio > .7, 'gender'] = 'NeutFem'
-    ratios.loc[ratios.ratio > .9, 'gender'] = 'Fem'
-    ratios.loc[ratios.ratio < .3, 'gender'] = 'NeutMasc'
-    ratios.loc[ratios.ratio < .1, 'gender'] = 'Masc'
-    ratios.loc[(ratios.ratio >= .3) & (ratios.ratio <= .7), 'gender'] = 'Neut'
+    ratios.loc[ratio > .7, 'gender'] = 'NeutFem'
+    ratios.loc[ratio > .9, 'gender'] = 'Fem'
+    ratios.loc[ratio < .3, 'gender'] = 'NeutMasc'
+    ratios.loc[ratio < .1, 'gender'] = 'Masc'
+    ratios.loc[(ratio >= .3) & (ratio <= .7), 'gender'] = 'Neut'
 
-    ratios = ratios.drop(columns=['number', 'number_total'])
-    ratios.ratio = (ratios.ratio * 100).map(int)
+    def _make_sorted_string(x) -> str:
+        x = list(set(x))
+        x.sort()
+        return ','.join(x)
 
-    df = ratios[ratios.after == years[0]].drop(columns='after')
-    for year in years[1:]:
-        df = df.merge(ratios[ratios.after == year].drop(columns='after'), on='name', how='outer', suffixes=(
-            '', f'_after_{year}'))
-    df = df.rename(columns=dict(ratio=f'ratio_after_{years[0]}', gender=f'gender_after_{years[0]}'))
+    df = ratios.groupby('name', as_index=False).agg(dict(gender=_make_sorted_string))
     return df
 
 
@@ -134,8 +132,8 @@ def filter_final(final: pd.DataFrame, **kwargs) -> pd.DataFrame:
                     ]
 
     if gender_category:
-        for col in filter(lambda x: x.startswith('gender_after_'), df.columns):
-            df = df[df[col].isin(gender_category)]
+        remaining_cat_from_input = df.gender.str.split(',').map(set) - set(gender_category)
+        df = df[remaining_cat_from_input.map(len) == 0]  # you want names that had a null set
 
     if number_low:
         df = df[df.total_number_after >= number_low]
