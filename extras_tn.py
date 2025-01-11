@@ -106,51 +106,38 @@ def load_final(recreate: bool = False) -> pd.DataFrame:
 def filter_final(final: pd.DataFrame, **kwargs) -> pd.DataFrame:
     df: pd.DataFrame = final.copy()
 
-    # by usages
+    year: int = kwargs.get('year')
+    year_band: int = kwargs.get('yearBand', 5)
+    use_peak: bool = kwargs.get('usePeak')
+    age_ballpark: int = kwargs.get('ageBallpark')
+    sex: str = kwargs.get('sex')
+    gender_category: tuple[str] = kwargs.get('genderCat')
     number_low: int = kwargs.get('numLo')
     number_high: int = kwargs.get('numHi')
+
+    if year and sex and use_peak:
+        df = df[(df[f'peak_year_{sex}'] >= (year - year_band)) & (df[f'peak_year_{sex}'] <= (year + year_band))]
+    elif year and sex and age_ballpark:
+        df = df[(df[f'middle_lo_{sex}{age_ballpark}'] <= year) & (df[f'middle_hi_{sex}{age_ballpark}'] >= year)]
+    elif year and not sex and use_peak:
+        df = df[
+            (df['peak_year_f'] >= (year - year_band)) & (df['peak_year_f'] <= (year + year_band)) &
+            (df['peak_year_m'] >= (year - year_band)) & (df['peak_year_m'] <= (year + year_band))
+            ]
+    elif year and not sex and age_ballpark:
+        df = df[
+            (df[f'middle_lo_f{age_ballpark}'] <= year) & (df[f'middle_hi_f{age_ballpark}'] >= year) &
+            (df[f'middle_lo_m{age_ballpark}'] <= year) & (df[f'middle_hi_m{age_ballpark}'] >= year)
+            ]
+
+    if gender_category:
+        for col in filter(lambda x: x.startswith('gender_after_'), df.columns):
+            df = df[df[col].isin(gender_category)]
 
     if number_low:
         df = df[df.total_number_after >= number_low]
     if number_high:
         df = df[df.total_number_after <= number_high]
 
-    # by peak year and middle percentile
-    sex: str = kwargs.get('sex')
-    year: int = kwargs.get('year')
-    year_band: int = kwargs.get('yearBand', 5)
-    use_peak: bool = kwargs.get('usePeak')
-    use_mid: bool | int = kwargs.get('useMid')
-    if use_mid != 80:
-        use_mid = 50
-
-    if year and sex and use_peak:
-        df = df[(df[f'peak_year_{sex}'] >= (year - year_band)) & (df[f'peak_year_{sex}'] <= (year + year_band))]
-    elif year and sex and use_mid:
-        df = df[(df[f'middle_lo_{sex}{use_mid}'] <= year) & (df[f'middle_hi_{sex}{use_mid}'] >= year)]
-    elif year and not sex and use_peak:
-        df = df[
-            (df['peak_year_f'] >= (year - year_band)) & (df['peak_year_f'] <= (year + year_band)) &
-            (df['peak_year_m'] >= (year - year_band)) & (df['peak_year_m'] <= (year + year_band))
-            ]
-    elif year and not sex and use_mid:
-        df = df[
-            (df[f'middle_lo_f{use_mid}'] <= year) & (df[f'middle_hi_f{use_mid}'] >= year) &
-            (df[f'middle_lo_m{use_mid}'] <= year) & (df[f'middle_hi_m{use_mid}'] >= year)
-            ]
-
-    # by gender ratio
-    gender_band: tuple[int, int] = kwargs.get('genderBand')
-    if gender_band:
-        for col in filter(lambda x: x.startswith('ratio_after_'), df.columns):
-            df = df[(df[col] >= gender_band[0]) & (df[col] <= gender_band[1])]
-
-    # by gender category
-    gender_category: tuple[str] = kwargs.get('genderCat')
-    if gender_category:
-        for col in filter(lambda x: x.startswith('gender_after_'), df.columns):
-            df = df[df[col].isin(gender_category)]
-
-    # finalize
     df = df.sort_values('total_number_after', ascending=False)
     return df
