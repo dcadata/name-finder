@@ -25,7 +25,7 @@ def build_gender_ratio_after_year(raw: pd.DataFrame, after: int) -> pd.DataFrame
     def _make_sorted_string(x) -> str:
         x = list(set(x))
         x.sort()
-        return ','.join(x)
+        return ', '.join(x)
 
     df = ratios.groupby('name', as_index=False).agg(dict(gender=_make_sorted_string))
     return df
@@ -132,7 +132,7 @@ def filter_final(final: pd.DataFrame, **kwargs) -> pd.DataFrame:
                     ]
 
     if gender_category:
-        remaining_cat_from_input = df.gender.str.split(',').map(set) - set(gender_category)
+        remaining_cat_from_input = df.gender.str.split(', ').map(set) - set(gender_category)
         df = df[remaining_cat_from_input.map(len) == 0]  # you want names that had a null set
 
     if number_low:
