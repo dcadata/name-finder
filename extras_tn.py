@@ -112,6 +112,7 @@ def filter_final(final: pd.DataFrame, **kwargs) -> pd.DataFrame:
     gender_category: tuple[str] = kwargs.get('genderCat')
     number_low: int = kwargs.get('numLo')
     number_high: int = kwargs.get('numHi')
+    exclude_top: int = kwargs.get('exclTop')
 
     if year:
         if use_peak:
@@ -139,6 +140,9 @@ def filter_final(final: pd.DataFrame, **kwargs) -> pd.DataFrame:
         df = df[df.total_number_after >= number_low]
     if number_high:
         df = df[df.total_number_after <= number_high]
+
+    if exclude_top:
+        df = df.iloc[exclude_top:]
 
     df = df.sort_values('total_number_after', ascending=False)
     return df
