@@ -69,7 +69,7 @@ def combine_to_create_final(displayer: Displayer, number_min: int = 1000, after:
     age_ref_wo_unk = age_reference[~age_reference.name.isin(UnknownName.get())].copy()
 
     total_number = raw_wo_unk[raw_wo_unk.year >= Year.DATA_QUALITY_BEST_AFTER].groupby(
-        'name', as_index=False).number.sum().rename(columns=dict(number='total_number_after'))
+        'name', as_index=False).number.sum().rename(columns=dict(number='total_usages'))
 
     latest_peaks = peaks_wo_unk.drop_duplicates(['name', 'sex'], keep='last').rename(columns=dict(
         year='peak_year', rank_='peak_rank'))
@@ -85,7 +85,7 @@ def combine_to_create_final(displayer: Displayer, number_min: int = 1000, after:
 
     df = total_number.merge(latest_peaks, on='name', how='outer').merge(
         age_percentile_ref, on='name', how='outer').merge(ratios, on='name', how='outer')
-    df = df[df.total_number_after >= number_min].sort_values('total_number_after', ascending=False)
+    df = df[df.total_usages >= number_min].copy()
     return df
 
 
@@ -136,9 +136,9 @@ def filter_final(final: pd.DataFrame, **kwargs) -> pd.DataFrame:
         df = df[remaining_cat_from_input.map(len) == 0]  # you want names that had a null set
 
     if number_low:
-        df = df[df.total_number_after >= number_low]
+        df = df[df.total_usages >= number_low]
     if number_high:
-        df = df[df.total_number_after <= number_high]
+        df = df[df.total_usages <= number_high]
 
-    df = df.sort_values('total_number_after', ascending=False)
+    df = df.sort_values('total_usages', ascending=False)
     return df
