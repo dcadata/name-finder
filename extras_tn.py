@@ -106,7 +106,7 @@ def filter_final(final: pd.DataFrame, **kwargs) -> pd.DataFrame:
 
     year: int = kwargs.get('year')
     year_band: int = kwargs.get('yearBand', 5)
-    use_peak: bool = kwargs.get('usePeak')
+    use_peak: bool = kwargs.get('usePeak', True)
     age_ballpark: int = kwargs.get('ageBallpark')
     sex: str = kwargs.get('sex')
     gender_category: tuple[str] = kwargs.get('genderCat')
