@@ -2,6 +2,7 @@ import pandas as pd
 
 from core import Year, UnknownName, Displayer
 
+_OUTPUT_FILEPATH: str = 'data_app/names_by_peak.csv'
 _GENDER_CATEGORY_AFTER: int = 1960
 
 
@@ -92,14 +93,13 @@ def combine_to_create_final(displayer: Displayer, number_min: int = 1000) -> pd.
 
 
 def load_final(recreate: bool = False) -> pd.DataFrame:
-    output_filepath: str = 'extras_tn/output.csv'
     if recreate:
         displayer = Displayer()
         displayer.build_base()
         df = combine_to_create_final(displayer)
-        df.to_csv(output_filepath, index=False)
+        df.to_csv(_OUTPUT_FILEPATH, index=False)
     else:
-        df = pd.read_csv(output_filepath)
+        df = pd.read_csv(_OUTPUT_FILEPATH)
     return df
 
 
