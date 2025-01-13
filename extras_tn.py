@@ -127,13 +127,16 @@ def filter_final(final: pd.DataFrame, **kwargs) -> pd.DataFrame:
         if use_peak:
             if sex:
                 df = df[(df[f'peak_year_{sex}'] >= (year - year_band)) & (df[f'peak_year_{sex}'] <= (year + year_band))]
-                final_cols.update({f'peak_year_{sex}': 'Peak Year'})
+                final_cols.update({f'peak_year_{sex}': 'Peak Year', f'peak_rank_{sex}': 'Peak Rank'})
             else:
                 df = df[
                     (df['peak_year_f'] >= (year - year_band)) & (df['peak_year_f'] <= (year + year_band)) &
                     (df['peak_year_m'] >= (year - year_band)) & (df['peak_year_m'] <= (year + year_band))
                     ]
-                final_cols.update({'peak_year_f': 'F Peak Year', 'peak_year_m': 'M Peak Year'})
+                final_cols.update({
+                    'peak_year_f': 'F Peak Year', 'peak_rank_f': 'F Peak Rank',
+                    'peak_year_m': 'M Peak Year', 'peak_rank_m': 'M Peak Rank',
+                })
         if age_ballpark:
             if sex:
                 df = df[(df[f'middle_lo_{sex}{age_ballpark}'] <= year) & (df[f'middle_hi_{sex}{age_ballpark}'] >= year)]
