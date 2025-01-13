@@ -122,7 +122,7 @@ def filter_final(final: pd.DataFrame, **kwargs) -> pd.DataFrame:
     ):
         df[integer_col] = df[integer_col].fillna(0).map(int)
 
-    final_cols = {'name': 'Name', 'total_usages': f'Total Usages {Year.DATA_QUALITY_BEST_AFTER}-{Year.MAX_YEAR}'}
+    final_cols = {'name': 'Name', 'total_usages': f'Total {Year.DATA_QUALITY_BEST_AFTER}-{Year.MAX_YEAR}'}
     if year:
         if use_peak:
             if sex:
