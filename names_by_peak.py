@@ -74,8 +74,7 @@ def combine_to_create_final(displayer: Displayer, number_min: int = 1000) -> pd.
     total_number = raw_wo_unk[raw_wo_unk.year >= Year.DATA_QUALITY_BEST_AFTER].groupby(
         'name', as_index=False).number.sum().rename(columns=dict(number='total_usages'))
 
-    latest_peaks = peaks_wo_unk.drop_duplicates(['name', 'sex'], keep='last').rename(columns=dict(
-        year='peak_year', rank_='peak_rank'))
+    latest_peaks = peaks_wo_unk.rename(columns=dict(year='peak_year', rank_='peak_rank'))
     peak_cols = ['name', 'peak_year', 'peak_rank']
     latest_peaks = latest_peaks.loc[latest_peaks.sex == 'f', peak_cols].merge(
         latest_peaks.loc[latest_peaks.sex == 'm', peak_cols], on='name', how='outer', suffixes=('_f', '_m'))
@@ -178,6 +177,13 @@ def filter_final(final: pd.DataFrame, **kwargs) -> pd.DataFrame:
     if number_high:
         df = df[df.total_usages <= number_high]
 
+    df = df.copy()
+    # keep only the peak closest to year
+    df['year_peak_gap'] = (
+        (year - df[f'peak_year_{sex}']).abs() if sex else
+        ((year - df.peak_year_f).abs() + (year - df.peak_year_m).abs()) / 2
+    )
+    df = df.sort_values('year_peak_gap').drop_duplicates(subset=['name'], keep='first')
     df = df.sort_values('total_usages', ascending=False)
 
     df.total_usages = df.total_usages.map(lambda x: f'{x:,}')
