@@ -120,23 +120,37 @@ def filter_final(final: pd.DataFrame, **kwargs) -> pd.DataFrame:
     ):
         df[integer_col] = df[integer_col].fillna(0).map(int)
 
+    final_cols = {'name': 'Name', 'total_usages': f'Total Usages {Year.DATA_QUALITY_BEST_AFTER}-{Year.MAX_YEAR}'}
     if year:
         if use_peak:
             if sex:
                 df = df[(df[f'peak_year_{sex}'] >= (year - year_band)) & (df[f'peak_year_{sex}'] <= (year + year_band))]
+                final_cols.update({f'peak_year_{sex}': 'Peak Year'})
             else:
                 df = df[
                     (df['peak_year_f'] >= (year - year_band)) & (df['peak_year_f'] <= (year + year_band)) &
                     (df['peak_year_m'] >= (year - year_band)) & (df['peak_year_m'] <= (year + year_band))
                     ]
+                final_cols.update({'peak_year_f': 'F Peak Year', 'peak_year_m': 'M Peak Year'})
         if age_ballpark:
             if sex:
                 df = df[(df[f'middle_lo_{sex}{age_ballpark}'] <= year) & (df[f'middle_hi_{sex}{age_ballpark}'] >= year)]
+                final_cols.update({
+                    f'middle_lo_{sex}{age_ballpark}': 'Age Ballpark Lower',
+                    f'middle_hi_{sex}{age_ballpark}': 'Age Ballpark Upper',
+                })
             else:
                 df = df[
                     (df[f'middle_lo_f{age_ballpark}'] <= year) & (df[f'middle_hi_f{age_ballpark}'] >= year) &
                     (df[f'middle_lo_m{age_ballpark}'] <= year) & (df[f'middle_hi_m{age_ballpark}'] >= year)
                     ]
+                final_cols.update({
+                    f'middle_lo_f{age_ballpark}': 'F Age Ballpark Lower',
+                    f'middle_hi_f{age_ballpark}': 'F Age Ballpark Upper',
+                    f'middle_lo_m{age_ballpark}': 'M Age Ballpark Lower',
+                    f'middle_hi_m{age_ballpark}': 'M Age Ballpark Upper',
+                })
+    final_cols.update({'gender': 'Gender Category'})
 
     if gender_category:
         remaining_cat_from_input = df.gender.str.split(', ').map(set) - set(gender_category)
@@ -148,4 +162,7 @@ def filter_final(final: pd.DataFrame, **kwargs) -> pd.DataFrame:
         df = df[df.total_usages <= number_high]
 
     df = df.sort_values('total_usages', ascending=False)
+
+    df.total_usages = df.total_usages.map(lambda x: f'{x:,}')
+    df = df[final_cols.keys()].rename(columns=final_cols)
     return df
