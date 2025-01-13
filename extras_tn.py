@@ -2,9 +2,11 @@ import pandas as pd
 
 from core import Year, UnknownName, Displayer
 
+_GENDER_CATEGORY_AFTER: int = 1960
 
-def build_gender_ratio_after_year(raw: pd.DataFrame, after: int) -> pd.DataFrame:
-    years = list(range(after, Year.MAX_YEAR + 1, 10))
+
+def build_gender_ratio_after_year(raw: pd.DataFrame) -> pd.DataFrame:
+    years = list(range(_GENDER_CATEGORY_AFTER, Year.MAX_YEAR + 1, 10))
 
     ratios = pd.concat(raw.loc[raw.year >= year, ['name', 'sex', 'number']].assign(after=year) for year in years)
     totals_by_name = ratios.groupby(['name', 'after'], as_index=False).number.sum()
@@ -31,11 +33,11 @@ def build_gender_ratio_after_year(raw: pd.DataFrame, after: int) -> pd.DataFrame
     return df
 
 
-def build_age_percentile_reference(age_reference: pd.DataFrame, mid_percentile: float, after: int) -> pd.DataFrame:
+def build_age_percentile_reference(age_reference: pd.DataFrame, mid_percentile: float) -> pd.DataFrame:
     lower_percentile = .5 - mid_percentile / 2
     upper_percentile = 1 - lower_percentile
 
-    df = age_reference[age_reference.year >= after].copy()
+    df = age_reference[age_reference.year >= Year.DATA_QUALITY_BEST_AFTER].copy()
     id_cols = ['name', 'sex']
 
     df.number_living_pct = df.groupby(id_cols).number_living_pct.cumsum()
@@ -56,7 +58,7 @@ def build_age_percentile_reference(age_reference: pd.DataFrame, mid_percentile: 
     return df
 
 
-def combine_to_create_final(displayer: Displayer, number_min: int = 1000, after: int = 1960) -> pd.DataFrame:
+def combine_to_create_final(displayer: Displayer, number_min: int = 1000) -> pd.DataFrame:
     # noinspection PyProtectedMember
     raw: pd.DataFrame = displayer._raw
     # noinspection PyProtectedMember
@@ -77,11 +79,11 @@ def combine_to_create_final(displayer: Displayer, number_min: int = 1000, after:
     latest_peaks = latest_peaks.loc[latest_peaks.sex == 'f', peak_cols].merge(
         latest_peaks.loc[latest_peaks.sex == 'm', peak_cols], on='name', how='outer', suffixes=('_f', '_m'))
 
-    age_percentile_ref1 = build_age_percentile_reference(age_ref_wo_unk, .5, after)
-    age_percentile_ref2 = build_age_percentile_reference(age_ref_wo_unk, .8, after)
+    age_percentile_ref1 = build_age_percentile_reference(age_ref_wo_unk, .5)
+    age_percentile_ref2 = build_age_percentile_reference(age_ref_wo_unk, .8)
     age_percentile_ref = age_percentile_ref1.merge(age_percentile_ref2, on='name', how='outer', suffixes=('50', '80'))
 
-    ratios = build_gender_ratio_after_year(raw_wo_unk, after)
+    ratios = build_gender_ratio_after_year(raw_wo_unk)
 
     df = total_number.merge(latest_peaks, on='name', how='outer').merge(
         age_percentile_ref, on='name', how='outer').merge(ratios, on='name', how='outer')
