@@ -111,6 +111,7 @@ def filter_final(final: pd.DataFrame, **kwargs) -> pd.DataFrame:
     use_peak: bool = kwargs.get('usePeak', True)
     age_ballpark: int = kwargs.get('ageBallpark')
     sex: str = kwargs.get('sex')
+    never_top: int = kwargs.get('neverTop')
     gender_category: tuple[str] = kwargs.get('genderCat')
     number_low: int = kwargs.get('numLo')
     number_high: int = kwargs.get('numHi')
@@ -155,6 +156,16 @@ def filter_final(final: pd.DataFrame, **kwargs) -> pd.DataFrame:
                 f'middle_lo_m{age_ballpark}': 'M Age Ballpark Lower',
                 f'middle_hi_m{age_ballpark}': 'M Age Ballpark Upper',
             })
+
+    if sex and never_top:
+        df = df[df[f'peak_rank_{sex}'] > never_top]
+        final_cols.update({f'peak_year_{sex}': 'Peak Year', f'peak_rank_{sex}': 'Peak Rank'})
+    elif never_top:
+        df = df[(df['peak_rank_f'] > never_top) & (df['peak_rank_m'] > never_top)]
+        final_cols.update({
+            'peak_year_f': 'F Peak Year', 'peak_rank_f': 'F Peak Rank',
+            'peak_year_m': 'M Peak Year', 'peak_rank_m': 'M Peak Rank',
+        })
 
     final_cols.update({'gender': 'Gender Category'})
 
