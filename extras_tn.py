@@ -113,6 +113,13 @@ def filter_final(final: pd.DataFrame, **kwargs) -> pd.DataFrame:
     number_low: int = kwargs.get('numLo')
     number_high: int = kwargs.get('numHi')
 
+    for integer_col in (
+            'peak_year_f', 'peak_rank_f', 'peak_year_m', 'peak_rank_m',
+            'middle_lo_f50', 'middle_hi_f50', 'middle_lo_m50', 'middle_hi_m50',
+            'middle_lo_f80', 'middle_hi_f80', 'middle_lo_m80', 'middle_hi_m80',
+    ):
+        df[integer_col] = df[integer_col].fillna(0).map(int)
+
     if year:
         if use_peak:
             if sex:
