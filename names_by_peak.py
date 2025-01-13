@@ -130,8 +130,8 @@ def filter_final(final: pd.DataFrame, **kwargs) -> pd.DataFrame:
             final_cols.update({f'peak_year_{sex}': 'Peak Year', f'peak_rank_{sex}': 'Peak Rank'})
         else:
             df = df[
-                (df['peak_year_f'] >= (year - year_band)) & (df['peak_year_f'] <= (year + year_band)) &
-                (df['peak_year_m'] >= (year - year_band)) & (df['peak_year_m'] <= (year + year_band))
+                (df.peak_year_f >= (year - year_band)) & (df.peak_year_f <= (year + year_band)) &
+                (df.peak_year_m >= (year - year_band)) & (df.peak_year_m <= (year + year_band))
                 ]
             final_cols.update({
                 'peak_year_f': 'F Peak Year', 'peak_rank_f': 'F Peak Rank',
@@ -160,7 +160,7 @@ def filter_final(final: pd.DataFrame, **kwargs) -> pd.DataFrame:
         df = df[df[f'peak_rank_{sex}'] > never_top]
         final_cols.update({f'peak_year_{sex}': 'Peak Year', f'peak_rank_{sex}': 'Peak Rank'})
     elif never_top:
-        df = df[(df['peak_rank_f'] > never_top) & (df['peak_rank_m'] > never_top)]
+        df = df[(df.peak_rank_f > never_top) & (df.peak_rank_m > never_top)]
         final_cols.update({
             'peak_year_f': 'F Peak Year', 'peak_rank_f': 'F Peak Rank',
             'peak_year_m': 'M Peak Year', 'peak_rank_m': 'M Peak Rank',
