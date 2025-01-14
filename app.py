@@ -31,8 +31,8 @@ def peak_api():
         usePeak=payload.get('usePeak'),
         ageBallpark=int(ageBallpark) if ageBallpark else None,
         sex=payload.get('sex'),
-        genderCat=[(i if payload.get(f'genderCat{i}') else None) for i in (
-            'Masc', 'NeutMasc', 'Neut', 'NeutFem', 'Fem')],
+        genderCat=tuple(filter(None, [(i if payload.get(f'genderCat{i}') else None) for i in (
+            'Masc', 'NeutMasc', 'Neut', 'NeutFem', 'Fem')])),
         neverTop=int(neverTop) if neverTop else None,
         numLo=int(numLo) if numLo else None,
         numHi=int(numHi) if numHi else None,
