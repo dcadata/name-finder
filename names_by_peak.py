@@ -2,7 +2,7 @@ import pandas as pd
 
 from core import Year, UnknownName, Displayer
 
-_OUTPUT_FILEPATH: str = 'data_app/names_by_peak.csv'
+_OUTPUT_FILEPATH: str = 'data_extras/names_by_peak/data.csv'
 _GENDER_CATEGORY_AFTER: int = 1960
 
 
