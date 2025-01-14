@@ -18,6 +18,8 @@ def peak():
 @app.route('/peak-api', methods=['POST'])
 def peak_api():
     payload = request.json
+    year = payload.get('year')
+    yearBand = payload.get('yearBand')
     ageBallpark = payload.get('ageBallpark')
     neverTop = payload.get('neverTop')
     numLo = payload.get('numLo')
@@ -26,8 +28,8 @@ def peak_api():
 
     result = filter_final(
         AppDataset.names_by_peak,
-        year=int(payload.get('year')),
-        yearBand=int(payload.get('yearBand')),
+        year=int(year) if year else None,
+        yearBand=int(yearBand) if yearBand else None,
         usePeak=payload.get('usePeak'),
         ageBallpark=int(ageBallpark) if ageBallpark else None,
         sex=payload.get('sex'),
