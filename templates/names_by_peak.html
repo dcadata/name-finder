@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Names by Peak</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <h1>Names by Peak</h1>
+    <h4>Search names that peaked around the time you were born, based on US SSA data.</h4>
+    <form id="filterForm">
+
+        <label for="year">Enter Birth Year</label>
+        <div class="input-note">Enter your birth year and desired range around it.</div>
+        <div class="side-by-side-num-inputs">
+            <input type="number" id="year" name="year" min="1940" max="2023" maxlength="4" value="1990">
+            <label for="yearBand">+/-</label>
+            <input type="number" id="yearBand" name="yearBand" min="0" max="10" maxlength="2" value="5">
+        </div>
+
+        <label for="usePeak">Filter by Peak Year</label>
+        <div class="input-note">Search names that peaked within range of your birth year.</div>
+        <select id="usePeak" name="usePeak">
+            <option value="On">On</option>
+            <option value="">Off</option>
+        </select>
+
+        <label for="ageBallpark">Filter by Age Ballpark</label>
+        <div class="input-note">Search names that loosely fit your age.</div>
+        <select id="ageBallpark" name="ageBallpark">
+            <option value="">Off</option>
+            <option value="50">Your age within middle 50%</option>
+            <option value="80">Your age within middle 80%</option>
+        </select>
+
+        <label for="sex">Select SSA Sex for Peak/Age Ballpark</label>
+        <div class="input-note">Recommended unless searching for unisex names.</div>
+        <select id="sex" name="sex">
+            <option value="">All</option>
+            <option value="f">F</option>
+            <option value="m">M</option>
+        </select>
+
+        <label>Filter by Gender Category</label>
+        <div class="input-note">Search names with (non-)gendered usage over time, 1960 to present.</div>
+        <div class="checkbox-group">
+            <label for="genderCatMasc">Masculine</label>
+            <input type="checkbox" id="genderCatMasc" name="genderCatMasc">
+
+            <label for="genderCatNeutMasc">Neutral Leaning Masculine</label>
+            <input type="checkbox" id="genderCatNeutMasc" name="genderCatNeutMasc">
+
+            <label for="genderCatNeut">Neutral</label>
+            <input type="checkbox" id="genderCatNeut" name="genderCatNeut">
+
+            <label for="genderCatNeutFem">Neutral Leaning Feminine</label>
+            <input type="checkbox" id="genderCatNeutFem" name="genderCatNeutFem">
+
+            <label for="genderCatFem">Feminine</label>
+            <input type="checkbox" id="genderCatFem" name="genderCatFem">
+        </div>
+
+        <label for="neverTop">Filter by Peak Rank</label>
+        <div class="input-note">Search names that never ranked in the top names, 1937 to present.</div>
+        <select id="neverTop" name="neverTop">
+            <option value="">Off</option>
+            <option value="10">Never Ranked in Top 10</option>
+            <option value="20">Never Ranked in Top 20</option>
+            <option value="50">Never Ranked in Top 50</option>
+            <option value="100">Never Ranked in Top 100</option>
+        </select>
+
+        <label>Filter by Total Usages</label>
+        <div class="input-note">Filter by min and/or max total usages, 1937 to present.</div>
+        <div class="side-by-side-num-inputs">
+            <input type="number" id="numLo" name="numLo" maxlength="10" placeholder="Min">
+            <span>-</span>
+            <input type="number" id="numHi" name="numHi" maxlength="10" placeholder="Max">
+        </div>
+
+        <label for="numResults">Results to Display</label>
+        <select id="numResults" name="numResults">
+            <option value="20">20</option>
+            <option value="30">30</option>
+            <option value="50">50</option>
+        </select>
+
+        <button type="button" id="submitBtn">Search</button>
+    </form>
+    <br>
+
+    <div class="result">
+        <table id="resultsTable" border="1">
+            <thead>
+                <tr id="resultsTableHeader"></tr>
+            </thead>
+            <tbody id="resultsTableBody"></tbody>
+        </table>
+    </div>
+
+    <script src="{{ url_for('static', filename='names_by_peak.js') }}"></script>
+</body>
+</html>
