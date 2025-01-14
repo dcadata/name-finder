@@ -106,8 +106,8 @@ def filter_final(final: pd.DataFrame, **kwargs) -> pd.DataFrame:
     df: pd.DataFrame = final.copy()
 
     year: int = kwargs.get('year')
-    year_band: int = kwargs.get('yearBand', 5)
-    use_peak: bool = kwargs.get('usePeak', True)
+    year_band: int = kwargs.get('yearBand')
+    use_peak: bool = kwargs.get('usePeak')
     age_ballpark: int = kwargs.get('ageBallpark')
     sex: str = kwargs.get('sex')
     never_top: int = kwargs.get('neverTop')
