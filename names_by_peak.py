@@ -7,8 +7,8 @@ _GENDER_CATEGORY_AFTER: int = 1960
 
 
 def build_gender_ratio_after_year(raw: pd.DataFrame) -> pd.DataFrame:
-    years = list(range(_GENDER_CATEGORY_AFTER, Year.MAX_YEAR + 1, 10))
-    ratios = pd.concat(raw.loc[raw.year >= year, ['name', 'sex', 'number']].assign(after=year) for year in years)
+    ratios = pd.concat(raw.loc[raw.year >= year, ['name', 'sex', 'number']].assign(after=year) for year in range(
+        _GENDER_CATEGORY_AFTER, Year.MAX_YEAR + 1, 10))
 
     totals_by_name = ratios.groupby(['name', 'after'], as_index=False).number.sum()
 
