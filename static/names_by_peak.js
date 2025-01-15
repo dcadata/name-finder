@@ -16,7 +16,7 @@ document.getElementById("submitBtn").addEventListener("click", () => {
         numResults: document.getElementById("numResults").value,
     };
 
-    fetch("/peak-api", {
+    fetch("/peak", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
