@@ -10,6 +10,7 @@
 <body>
     <h1>Names by Peak</h1>
     <h4>Search names that peaked around the time you were born, based on US SSA data.</h4>
+
     <form id="filterForm">
         <label for="year">Choose Birth Year and Buffer</label>
         <div class="side-by-side-num-inputs">
@@ -75,7 +76,10 @@
             <span>-</span>
             <input type="number" id="numHi" name="numHi" maxlength="10" placeholder="Max">
         </div>
+    </form>
+    <br>
 
+    <form id="submitBtnForm">
         <label for="numResults">Results to Display</label>
         <select id="numResults" name="numResults">
             <option value="20">20</option>
