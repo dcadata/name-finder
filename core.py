@@ -463,11 +463,10 @@ def _standardize_name(name: str) -> str:
 
 
 def build_predict_gender_reference(
-        displayer: Displayer = None,
+        displayer: Displayer,
         after: int = None,
         before: int = None,
         ratio_min: float = .8,
-        n_min: int = 0,
 ) -> None:
     df = displayer.calculated.copy()
 
@@ -487,9 +486,7 @@ def build_predict_gender_reference(
         ratio_m = df.number_m / df.number
         df.loc[(ratio_f < ratio_min) & (ratio_m < ratio_min), 'gender_prediction'] = 'x'
 
-    if n_min:
-        df.loc[df.number < n_min, 'gender_prediction'] = 'rare'
-
+    df.loc[df.number < 25, 'gender_prediction'] = 'rare'
     df.gender_prediction = df.gender_prediction.fillna('unk')
 
     df[['name', 'gender_prediction']].to_csv(Filepath.GENDER_PREDICTION_REFERENCE, index=False)
