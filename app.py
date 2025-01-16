@@ -26,10 +26,17 @@ def peak_post():
     numHi = payload.get('numHi')
     numResults = payload.get('numResults')
 
+    result = [{'No results found.': ''}]
+
+    if not year:
+        return result
+    if year and not yearBand:
+        yearBand = 0
+
     result = filter_final(
         AppDataset.names_by_peak,
-        year=int(year) if year else None,
-        yearBand=int(yearBand) if yearBand else None,
+        year=int(year),
+        yearBand=int(yearBand),
         usePeak=payload.get('usePeak'),
         ageBallpark=int(ageBallpark) if ageBallpark else None,
         sex=payload.get('sex'),
@@ -41,8 +48,6 @@ def peak_post():
     )
     if len(result):
         result = result.iloc[:int(numResults)].to_dict('records')
-    else:
-        result = [{'No results found.': ''}]
     return jsonify(result)
 
 
