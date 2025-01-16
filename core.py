@@ -463,11 +463,10 @@ def _standardize_name(name: str) -> str:
 
 
 def build_predict_gender_reference(
-        displayer: Displayer = None,
+        displayer: Displayer,
         after: int = None,
         before: int = None,
         ratio_min: float = .8,
-        n_min: int = 0,
 ) -> None:
     df = displayer.calculated.copy()
 
@@ -487,9 +486,7 @@ def build_predict_gender_reference(
         ratio_m = df.number_m / df.number
         df.loc[(ratio_f < ratio_min) & (ratio_m < ratio_min), 'gender_prediction'] = 'x'
 
-    if n_min:
-        df.loc[df.number < n_min, 'gender_prediction'] = 'rare'
-
+    df.loc[df.number < 25, 'gender_prediction'] = 'rare'
     df.gender_prediction = df.gender_prediction.fillna('unk')
 
     df[['name', 'gender_prediction']].to_csv(Filepath.GENDER_PREDICTION_REFERENCE, index=False)
@@ -507,11 +504,11 @@ def _read_total_number_living() -> pd.DataFrame:
     return pd.read_csv(Filepath.TOTAL_NUMBER_LIVING_REFERENCE, usecols=list(dtype.keys()), dtype=dtype)
 
 
-def build_predict_age_reference(raw_with_actuarial: pd.DataFrame, age_min: int = 0, n_min: int = 0) -> None:
-    ref = raw_with_actuarial.loc[raw_with_actuarial.age >= age_min, ['name', 'sex', 'year', 'number_living']].copy()
+def build_predict_age_reference(raw_with_actuarial: pd.DataFrame) -> None:
+    ref = raw_with_actuarial[['name', 'sex', 'year', 'number_living']].copy()
     ref = ref.groupby(['name', 'sex', 'year'], as_index=False).number_living.sum().merge(
         _read_total_number_living(), on=['name', 'sex'], suffixes=('', '_name'))
-    ref = ref[ref.number_living_name >= n_min].copy()
+    ref = ref[ref.number_living_name >= 20].copy()
     ref['number_living_pct'] = ref.number_living / ref.number_living_name
     ref = ref.drop(columns=['number_living', 'number_living_name']).sort_values('year')
     ref.to_csv(Filepath.AGE_PREDICTION_REFERENCE, index=False)
