@@ -10,13 +10,11 @@ class AppDataset:
     names_by_peak = load_final()
 
 
-@app.route('/peak', methods=['GET'])
-def peak_get():
-    return render_template('names_by_peak.html')
+@app.route('/peak', methods=['GET', 'POST'])
+def peak():
+    if request.method == 'GET':
+        return render_template('names_by_peak.html')
 
-
-@app.route('/peak', methods=['POST'])
-def peak_post():
     payload = request.json
     year = payload.get('year')
     yearBand = payload.get('yearBand')
