@@ -319,7 +319,7 @@ class Displayer(Builder):
             after: int = None,
             before: int = None,
             year: int = None,
-            living: bool = False,
+            living: bool = True,
     ) -> dict:
         # set up
         name = _standardize_name(name)
