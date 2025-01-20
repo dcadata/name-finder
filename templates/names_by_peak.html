@@ -11,7 +11,7 @@
     <h1>Names by Peak</h1>
     <h4>Search names that peaked around the time you were born. Based on US SSA data, 1937 to present.</h4>
 
-    <form id="filterForm">
+    <form class="two-col-grid" id="filterForm">
         <label for="year">Choose Birth Year and Buffer</label>
         <div class="side-by-side-num-inputs">
             <input type="number" id="year" name="year" min="1940" max="2023" maxlength="4" value="1990">
@@ -79,7 +79,7 @@
     </form>
     <br>
 
-    <form id="submitBtnForm">
+    <form class="two-col-grid" id="submitBtnForm">
         <label for="numResults">Results to Display</label>
         <select id="numResults" name="numResults">
             <option value="20">20</option>
@@ -87,11 +87,11 @@
             <option value="50">50</option>
         </select>
 
-        <button type="button" id="submitBtn">Search</button>
+        <button class="submit" type="button" id="submitBtn">Search</button>
     </form>
     <br>
 
-    <div class="result">
+    <div class="results">
         <table id="resultsTable" border="1">
             <thead>
                 <tr id="resultsTableHeader"></tr>
