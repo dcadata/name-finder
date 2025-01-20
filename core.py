@@ -467,7 +467,7 @@ def build_predict_gender_reference(
         after: int = None,
         before: int = None,
         ratio_min: float = .8,
-) -> None:
+) -> pd.DataFrame:
     df = displayer.calculated.copy()
 
     if after:
@@ -489,8 +489,9 @@ def build_predict_gender_reference(
     df.loc[df.number < 25, 'gender_prediction'] = 'rare'
     df.gender_prediction = df.gender_prediction.fillna('unk')
 
-    df[['name', 'gender_prediction']].to_csv(Filepath.GENDER_PREDICTION_REFERENCE, index=False)
-    return
+    df = df[['name', 'gender_prediction']]
+    df.to_csv(Filepath.GENDER_PREDICTION_REFERENCE, index=False)
+    return df
 
 
 def build_total_number_living_from_actuarial(raw_with_actuarial: pd.DataFrame) -> None:
