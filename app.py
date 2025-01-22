@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, render_template
 
 from names_by_peak import load_final, filter_final
+from predict_gender import process_batch
 
 app = Flask(__name__)
 app.json.sort_keys = False
@@ -46,6 +47,12 @@ def peak():
     )
     if len(result):
         result = result.iloc[:int(numResults)].to_dict('records')
+    return jsonify(result)
+
+
+@app.route('/predict-gender', methods=['POST'])
+def predict_gender():
+    result = process_batch(request.json)
     return jsonify(result)
 
 
