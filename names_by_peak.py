@@ -115,6 +115,9 @@ def filter_final(final: pd.DataFrame, **kwargs) -> pd.DataFrame:
     number_low: int = kwargs.get('numLo')
     number_high: int = kwargs.get('numHi')
 
+    after = year - year_band
+    before = year + year_band
+
     for integer_col in (
             'peak_year_f', 'peak_rank_f', 'peak_year_m', 'peak_rank_m',
             'middle_lo_f50', 'middle_hi_f50', 'middle_lo_m50', 'middle_hi_m50',
@@ -126,12 +129,12 @@ def filter_final(final: pd.DataFrame, **kwargs) -> pd.DataFrame:
 
     if use_peak:
         if sex:
-            df = df[(df[f'peak_year_{sex}'] >= (year - year_band)) & (df[f'peak_year_{sex}'] <= (year + year_band))]
+            df = df[(df[f'peak_year_{sex}'] >= after) & (df[f'peak_year_{sex}'] <= before)]
             final_cols.update({f'peak_year_{sex}': 'Peak Year', f'peak_rank_{sex}': 'Peak Rank'})
         else:
             df = df[
-                (df.peak_year_f >= (year - year_band)) & (df.peak_year_f <= (year + year_band)) &
-                (df.peak_year_m >= (year - year_band)) & (df.peak_year_m <= (year + year_band))
+                (df.peak_year_f >= after) & (df.peak_year_f <= before) &
+                (df.peak_year_m >= after) & (df.peak_year_m <= before)
                 ]
             final_cols.update({
                 'peak_year_f': 'F Peak Year', 'peak_rank_f': 'F Peak Rank',
