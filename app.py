@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, render_template
 
+from core import Displayer
 from names_by_peak import load_final, filter_final
 from predict_gender import process_batch
 
@@ -52,9 +53,11 @@ def peak():
 
 @app.route('/predict-gender', methods=['POST'])
 def predict_gender():
-    result = process_batch(request.json)
+    result = process_batch(request.json, displayer=displayer)
     return jsonify(result)
 
 
 if __name__ == '__main__':
+    displayer = Displayer()
+    displayer.build_base()
     app.run(debug=True)

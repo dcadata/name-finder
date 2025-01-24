@@ -1,17 +1,6 @@
 import pandas as pd
 
-from core import Year, Filepath, DFAgg, Displayer, _standardize_name
-
-
-class FilepathCalcd(Filepath):
-    CALCD: str = Filepath.DATA_DIR + 'generated/calcd.csv'
-
-
-def _refresh_calcd() -> None:
-    displayer = Displayer()
-    displayer.build_base()
-    displayer.calculated.to_csv(FilepathCalcd.CALCD, index=False)
-    return
+from core import Year, DFAgg, Displayer, _standardize_name
 
 
 def _build_predict_gender_reference(
@@ -19,8 +8,9 @@ def _build_predict_gender_reference(
         before: int = None,
         ratio_min: float = .8,
         number_min: int = 25,
+        displayer: Displayer = None,
 ) -> pd.DataFrame:
-    df = pd.read_csv(FilepathCalcd.CALCD)
+    df = displayer.calculated.copy()
     number_min = max(number_min, 25)  # shouldn't be less than 25
 
     if after:
