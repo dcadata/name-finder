@@ -1,3 +1,5 @@
+import datetime
+
 from flask import Flask, request, jsonify, render_template
 
 from core import Displayer
@@ -54,6 +56,35 @@ def peak():
 @app.route('/predict-gender', methods=['POST'])
 def predict_gender():
     result = process_batch(request.json, displayer=displayer)
+    return jsonify(result)
+
+
+@app.route('/predict-age', methods=['GET'])
+def predict_age():
+    result = dict(params=dict())
+    params = request.args
+
+    if name := params.get('name'):
+        result['params'].update(dict(name=name))
+    else:
+        result['error'] = '`name` not passed'
+
+    if sex := params.get('sex'):
+        sex = sex.lower()
+        if sex in 'fm':
+            result['params'].update(dict(sex=sex))
+        else:
+            result['error'] = '`sex` must be `f` or `m`'
+    else:
+        result['error'] = '`sex` not passed'
+
+    if mid_percentile := params.get('mid_percentile'):
+        result['params'].update(dict(mid_percentile=float(mid_percentile)))
+
+    result_as_df = displayer.predict_age(**result['params'])
+    result_as_df.percentile = result_as_df.percentile.round(3)
+    result_as_df['age'] = datetime.date.today().year - result_as_df.year
+    result.update(result_as_df.iloc[:2].to_dict('index'))
     return jsonify(result)
 
 
