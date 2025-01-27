@@ -14,6 +14,11 @@ class AppDataset:
     names_by_peak = load_final()
 
 
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+
 @app.route('/peak', methods=['GET', 'POST'])
 def peak():
     if request.method == 'GET':

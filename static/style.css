@@ -128,3 +128,36 @@ tr:nth-child(odd) {
 tr:nth-child(even) {
     background-color: #2f2f3f;
 }
+
+div.tools {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    text-align: center;
+}
+
+div.tools a {
+    text-decoration: none;
+}
+
+div.tools-item {
+    background: #223;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+div.tools-item:hover {
+    background: #2f2f3f;
+    cursor: pointer;
+}
+
+div.tools-item p.title {
+    font-size: 26px;
+    font-weight: 1000;
+    color: #eef;
+}
+
+div.tools-item p.description {
+    font-size: 20px;
+    color: #bcd;
+}
