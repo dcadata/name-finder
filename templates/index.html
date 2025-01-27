@@ -39,5 +39,114 @@
         </div>
     </a>
 </div>
+<br>
+
+<div class="text" id="predict-age-single">
+    <h2>Predict Age for Single Name</h2>
+
+    <p class="section-title">Usage:</p>
+    <ul>
+        <li>Send a GET request to the <code>/predict-age</code> endpoint</li>
+        <li>Field <code>mid_percentile</code> refers to the middle X% of individuals with the name</li>
+    </ul>
+
+    <p class="section-title">GET request:</p>
+    <p class="code">
+        <code class="preserve-whitespace">
+{
+  "name": "Alexander",
+  "sex": "M",
+  "mid_percentile": 0.8
+}
+        </code>
+    </p>
+
+    <p class="section-title">Response:</p>
+    <p class="code">
+        <code class="preserve-whitespace">
+{
+  "params": {
+    "name": "Alexander",
+    "sex": "m",
+    "mid_percentile": 0.8
+  },
+  "lower": {
+    "percentile": 0.1,
+    "year": 1981,
+    "age": 44
+  },
+  "upper": {
+    "percentile": 0.9,
+    "year": 2016,
+    "age": 9
+  }
+}
+        </code>
+    </p>
+</div>
+<br>
+
+<div class="text" id="predict-gender">
+    <h2>Predict Gender</h2>
+
+    <p class="section-title">Usage:</p>
+    <ul>
+        <li>Send a POST request to the <code>/predict-gender</code> endpoint</li>
+        <li>Format data as JSON string</li>
+        <li>Use <code>Content-Type</code> as <code>application/json</code></li>
+    </ul>
+
+    <p class="section-title">POST request:</p>
+    <p class="code">
+        <code class="preserve-whitespace">
+{
+  "data": [
+    {"name": "Gregory"},
+    {"name": "Anne-Marie"},
+    {"name": "cAsEy"},
+    {"name": "Super-Uncommon-Name"}
+  ],
+  "after": 1950,
+  "before": 2000
+}
+        </code>
+    </p>
+
+    <p class="section-title">Response:</p>
+    <p class="code">
+        <code class="preserve-whitespace">
+[
+  {
+    "name": "Gregory",
+    "matched_name": "Gregory",
+    "gender_prediction": "m",
+    "f_pct": 0.0,
+    "m_pct": 100.0
+  },
+  {
+    "name": "Anne-Marie",
+    "matched_name": "Annemarie",
+    "gender_prediction": "f",
+    "f_pct": 100.0,
+    "m_pct": 0.0
+  },
+  {
+    "name": "cAsEy",
+    "matched_name": "Casey",
+    "gender_prediction": "x",
+    "f_pct": 41.0,
+    "m_pct": 59.0
+  },
+  {
+    "name": "Super-Uncommon-Name",
+    "matched_name": "Superuncommonname",
+    "gender_prediction": "unk",
+    "f_pct": NaN,
+    "m_pct": NaN
+  }
+]
+        </code>
+    </p>
+</div>
 </body>
 </html>

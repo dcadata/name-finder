@@ -161,3 +161,24 @@ div.tools-item p.description {
     font-size: 20px;
     color: #bcd;
 }
+
+div.text {
+    gap: 15px;
+    background: #223;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+div.text p.section-title {
+    font-size: 20px;
+    font-weight: 500;
+}
+
+p.code {
+    background-color: #2f2f3f;
+    padding: 0 0 0 20px;
+}
+
+code.preserve-whitespace {
+    white-space: pre-wrap;
+}
