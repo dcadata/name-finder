@@ -4,7 +4,7 @@ from flask import Flask, request, jsonify, render_template
 
 from core import Displayer
 from names_by_peak import load_final, filter_final
-from predict_gender import process_batch
+from predict_gender import predict_gender_batch
 
 app = Flask(__name__)
 app.json.sort_keys = False
@@ -60,7 +60,7 @@ def peak():
 
 @app.route('/predict-gender', methods=['POST'])
 def predict_gender():
-    result = process_batch(request.json, displayer=displayer)
+    result = predict_gender_batch(request.json, displayer=displayer)
     return jsonify(result)
 
 

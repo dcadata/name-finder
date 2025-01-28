@@ -36,7 +36,7 @@ def _build_predict_gender_reference(
     return df[['name', 'gender_prediction', 'f_pct', 'm_pct']]
 
 
-def process_batch(data: list[dict], **kwargs) -> list[dict]:
+def predict_gender_batch(data: list[dict], **kwargs) -> list[dict]:
     df = pd.DataFrame(data)
     if 'name' not in df.columns:
         return []
