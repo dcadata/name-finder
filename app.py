@@ -96,4 +96,4 @@ def predict_age():
 if __name__ == '__main__':
     displayer = Displayer()
     displayer.build_base()
-    app.run(debug=True)
+    app.run()
