@@ -33,9 +33,8 @@ def peak():
     numHi = payload.get('numHi')
     numResults = payload.get('numResults')
 
-    result = [{'No results found.': ''}]
-
     if not year:
+        result = [{'Error(s)': 'Enter year.'}]
         return result
     if year and not yearBand:
         yearBand = 0
