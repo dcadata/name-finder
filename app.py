@@ -1,5 +1,3 @@
-import datetime
-
 from flask import Flask, request, jsonify, render_template
 
 from core import Displayer
@@ -63,32 +61,34 @@ def predict_gender():
     return jsonify(result)
 
 
-@app.route('/predict-age', methods=['GET'])
+@app.route('/predict-age', methods=['POST'])
 def predict_age():
-    result = dict(params=dict())
-    params = request.args
+    payload = request.json
+    name = payload.get('name')
+    sex = payload.get('sex')
+    mid_percentile = payload.get('mid_percentile')
+    errors = []
 
-    if name := params.get('name'):
-        result['params'].update(dict(name=name))
+    if not name:
+        errors.append('`name` not passed')
+
+    if not sex:
+        errors.append('`sex` not passed')
     else:
-        result['error'] = '`name` not passed'
-
-    if sex := params.get('sex'):
         sex = sex.lower()
-        if sex in 'fm':
-            result['params'].update(dict(sex=sex))
-        else:
-            result['error'] = '`sex` must be `f` or `m`'
+        if sex not in 'fm':
+            errors.append('`sex` must be `f` or `m`')
+
+    if errors:
+        result = dict(errors=errors)
     else:
-        result['error'] = '`sex` not passed'
+        kwargs = dict(name=name, sex=sex)
+        if mid_percentile:
+            kwargs['mid_percentile'] = float(mid_percentile)
+        result = displayer.predict_age(**kwargs)
+        result.percentile = result.percentile.round(3)
+        result = dict(params=kwargs, data=result.to_dict('index'))
 
-    if mid_percentile := params.get('mid_percentile'):
-        result['params'].update(dict(mid_percentile=float(mid_percentile)))
-
-    result_as_df = displayer.predict_age(**result['params'])
-    result_as_df.percentile = result_as_df.percentile.round(3)
-    result_as_df['age'] = datetime.date.today().year - result_as_df.year
-    result.update(result_as_df.iloc[:2].to_dict('index'))
     return jsonify(result)
 
 
