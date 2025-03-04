@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify, render_template
 
 from core import Displayer
 from names_by_peak import load_final, filter_final
-from predict_gender import predict_gender_batch
+from predict_gender import predict_gender_batch, predict_age_batch
 
 app = Flask(__name__)
 app.json.sort_keys = False
@@ -88,6 +88,24 @@ def predict_age_api():
         result = displayer.predict_age(**kwargs)
         result.percentile = result.percentile.round(3)
         result = dict(params=kwargs, data=result.to_dict('index'))
+
+    return jsonify(result)
+
+
+@app.route('/predict-age-batch', methods=['POST'])
+def predict_age_batch_api():
+    payload = request.json
+    data = payload.get('data')
+    mid_percentile = payload.get('mid_percentile')
+
+    if data:
+        mid_percentile = float(mid_percentile) if mid_percentile else .68
+        result = dict(
+            params=dict(mid_percentile=mid_percentile),
+            data=predict_age_batch(displayer, mid_percentile, data),
+        )
+    else:
+        result = dict(errors=['`data` not passed'])
 
     return jsonify(result)
 
