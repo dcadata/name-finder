@@ -13,12 +13,12 @@ class AppDataset:
 
 
 @app.route('/')
-def index():
+def index_page():
     return render_template('index.html')
 
 
 @app.route('/peak', methods=['GET', 'POST'])
-def peak():
+def peak_page():
     if request.method == 'GET':
         return render_template('names_by_peak.html')
 
@@ -56,13 +56,13 @@ def peak():
 
 
 @app.route('/predict-gender', methods=['POST'])
-def predict_gender():
+def predict_gender_api():
     result = predict_gender_batch(request.json, displayer=displayer)
     return jsonify(result)
 
 
 @app.route('/predict-age', methods=['POST'])
-def predict_age():
+def predict_age_api():
     payload = request.json
     name = payload.get('name')
     sex = payload.get('sex')
