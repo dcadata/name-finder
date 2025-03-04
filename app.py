@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify, render_template
 
 from core import Displayer
 from names_by_peak import load_final, filter_final
-from predict_gender import predict_gender_batch, predict_age_batch
+from predict_gender_and_age import predict_gender_batch, predict_age_batch
 
 app = Flask(__name__)
 app.json.sort_keys = False
