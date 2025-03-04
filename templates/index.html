@@ -46,11 +46,14 @@
 
     <p class="section-title">Usage:</p>
     <ul>
-        <li>Send a GET request to the <code>/predict-age</code> endpoint</li>
+        <li>Send a POST request to the <code>/predict-age</code> endpoint</li>
+        <li>Format data as JSON string</li>
+        <li>Use <code>Content-Type</code> as <code>application/json</code></li>
         <li>Field <code>mid_percentile</code> refers to the middle X% of individuals with the name</li>
+        <li>Field <code>mid_percentile</code> defaults to .68, i.e. 68%</li>
     </ul>
 
-    <p class="section-title">GET request:</p>
+    <p class="section-title">POST request:</p>
     <p class="code">
         <code class="preserve-whitespace">
 {
@@ -70,15 +73,19 @@
     "sex": "m",
     "mid_percentile": 0.8
   },
-  "lower": {
-    "percentile": 0.1,
-    "year": 1981,
-    "age": 44
-  },
-  "upper": {
-    "percentile": 0.9,
-    "year": 2016,
-    "age": 9
+  "data": {
+    "lower": {
+      "percentile": 0.1,
+      "year": 1981
+    },
+    "upper": {
+      "percentile": 0.9,
+      "year": 2016
+    },
+    "band": {
+      "percentile": 0.8,
+      "year": 35
+    }
   }
 }
         </code>
