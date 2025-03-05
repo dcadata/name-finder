@@ -33,6 +33,12 @@
         </div>
     </a>
 
+    <a href="#predict-age-batch">
+        <div class="tools-item">
+            <p class="title">Predict Age Batch</p>
+        </div>
+    </a>
+
     <a href="#predict-gender">
         <div class="tools-item">
             <p class="title">Predict Gender Batch</p>
@@ -87,6 +93,80 @@
       "year": 35
     }
   }
+}
+        </code>
+    </p>
+</div>
+<br>
+
+<div class="text" id="predict-age-batch">
+    <h2>Predict Age Batch</h2>
+
+    <p class="section-title">Usage:</p>
+    <ul>
+        <li>Send a POST request to the <code>/predict-age-batch</code> endpoint</li>
+        <li>Format data as JSON string</li>
+        <li>Use <code>Content-Type</code> as <code>application/json</code></li>
+        <li>Field <code>mid_percentile</code> refers to the middle X% of individuals with the name</li>
+        <li>Field <code>mid_percentile</code> defaults to .68, i.e. 68%</li>
+    </ul>
+
+    <p class="section-title">POST request:</p>
+    <p class="code">
+        <code class="preserve-whitespace">
+{
+  "mid_percentile": 0.8,
+  "data": [
+    {
+      "name": "genevieve",
+      "sex": "f"
+    },
+    {
+      "name": "Carlos",
+      "sex": "M"
+    },
+    {
+      "name": "Kathryn",
+      "sex": "F"
+    }
+  ]
+}
+        </code>
+    </p>
+
+    <p class="section-title">Response:</p>
+    <p class="code">
+        <code class="preserve-whitespace">
+{
+  "params": {
+    "mid_percentile": 0.8
+  },
+  "data": [
+    {
+      "name": "genevieve",
+      "sex": "f",
+      "matched_name": "Genevieve",
+      "matched_sex": "f",
+      "year_lower": 1952,
+      "year_upper": 2023
+    },
+    {
+      "name": "Carlos",
+      "sex": "M",
+      "matched_name": "Carlos",
+      "matched_sex": "m",
+      "year_lower": 1963,
+      "year_upper": 2014
+    },
+    {
+      "name": "Kathryn",
+      "sex": "F",
+      "matched_name": "Kathryn",
+      "matched_sex": "f",
+      "year_lower": 1948,
+      "year_upper": 2005
+    }
+  ]
 }
         </code>
     </p>
