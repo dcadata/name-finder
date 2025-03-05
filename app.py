@@ -57,7 +57,11 @@ def peak_page():
 
 @app.route('/predict-gender', methods=['POST'])
 def predict_gender_api():
-    result = predict_gender_batch(request.json, displayer=displayer)
+    payload = request.json
+    result = dict(
+        params=dict(after=payload.get('after'), before=payload.get('before')),
+        data=predict_gender_batch(**payload, displayer=displayer),
+    )
     return jsonify(result)
 
 
