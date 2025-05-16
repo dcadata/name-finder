@@ -1,4 +1,5 @@
 import zipfile
+from io import StringIO
 from time import sleep
 
 import pandas as pd
@@ -21,6 +22,7 @@ class SsaDataDownloader:
 
     def _open_session(self) -> None:
         self._session: Session = Session()
+        self._session.headers.update({'User-Agent': f'name-finder/{self._max_year - 1} Update'})
         return
 
     def _close_session(self) -> None:
@@ -41,9 +43,10 @@ class SsaDataDownloader:
                 z.extractall(filepath[:-4])
         return
 
-    @staticmethod
-    def _download_applicants_data() -> None:
-        table = pd.read_html('https://www.ssa.gov/oact/babynames/numberUSbirths.html')[0]
+    def _download_applicants_data(self) -> None:
+        response = self._session.get('https://www.ssa.gov/oact/babynames/numberUSbirths.html')
+        html = StringIO(response.text)
+        table = pd.read_html(html)[0]
         table = table.rename(columns=dict((col, ''.join(col.split())) for col in table.columns)).rename(columns=dict(
             Yearofbirth='year', Male='number_m', Female='number_f', Total='number'))
         table.to_csv(Filepath.APPLICANTS_DATA, index=False)
