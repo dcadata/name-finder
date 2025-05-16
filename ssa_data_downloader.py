@@ -37,7 +37,9 @@ class SsaDataDownloader:
         ):
             filepath = Filepath.DATA_DIR + url.rsplit('/', 1)[1]
             with open(filepath, 'wb') as f:
-                f.write(self._session.get(url).content)
+                response = self._session.get(url)
+                for chunk in response.iter_content(chunk_size=128):
+                    f.write(chunk)
             sleep(3)
             with zipfile.ZipFile(filepath) as z:
                 z.extractall(filepath[:-4])
