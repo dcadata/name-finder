@@ -323,7 +323,7 @@ class Displayer(Builder):
     ) -> dict:
         # set up
         name = _standardize_name(name)
-        output = dict(name=name)
+        output: dict[str, str | bool | int | float] = dict(name=name)
         df = self.raw_with_actuarial.copy()
 
         if living:
