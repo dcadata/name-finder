@@ -35,13 +35,13 @@ class Year:
 
 
 class UnknownName(Enum):
-    Unknown: str = 'Unknown'
-    Infant: str = 'Infant'
-    Baby: str = 'Baby'
-    Unnamed: str = 'Unnamed'
-    Unborn: str = 'Unborn'
-    Notnamed: str = 'Notnamed'
-    Newborn: str = 'Newborn'
+    Unknown = 'Unknown'
+    Infant = 'Infant'
+    Baby = 'Baby'
+    Unnamed = 'Unnamed'
+    Unborn = 'Unborn'
+    Notnamed = 'Notnamed'
+    Newborn = 'Newborn'
 
     @classmethod
     def get(cls) -> tuple:
