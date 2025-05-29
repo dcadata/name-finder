@@ -1,10 +1,11 @@
 import zipfile
+from io import StringIO
 from time import sleep
 
 import pandas as pd
 from requests import Session
 
-from core import Filepath
+from core import Filepath, build_all_generated_data
 
 
 class SsaDataDownloader:
@@ -21,6 +22,7 @@ class SsaDataDownloader:
 
     def _open_session(self) -> None:
         self._session: Session = Session()
+        self._session.headers.update({'User-Agent': f'name-finder/{self._max_year - 1} Update'})
         return
 
     def _close_session(self) -> None:
@@ -35,15 +37,18 @@ class SsaDataDownloader:
         ):
             filepath = Filepath.DATA_DIR + url.rsplit('/', 1)[1]
             with open(filepath, 'wb') as f:
-                f.write(self._session.get(url).content)
+                response = self._session.get(url)
+                for chunk in response.iter_content(chunk_size=128):
+                    f.write(chunk)
             sleep(3)
             with zipfile.ZipFile(filepath) as z:
                 z.extractall(filepath[:-4])
         return
 
-    @staticmethod
-    def _download_applicants_data() -> None:
-        table = pd.read_html('https://www.ssa.gov/oact/babynames/numberUSbirths.html')[0]
+    def _download_applicants_data(self) -> None:
+        response = self._session.get('https://www.ssa.gov/oact/babynames/numberUSbirths.html')
+        html = StringIO(response.text)
+        table = pd.read_html(html)[0]
         table = table.rename(columns=dict((col, ''.join(col.split())) for col in table.columns)).rename(columns=dict(
             Yearofbirth='year', Male='number_m', Female='number_f', Total='number'))
         table.to_csv(Filepath.APPLICANTS_DATA, index=False)
@@ -69,6 +74,7 @@ class SsaDataDownloader:
 def main() -> None:
     downloader = SsaDataDownloader(2025)
     downloader.download()
+    build_all_generated_data()
     return
 
 
