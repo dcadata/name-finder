@@ -5,7 +5,7 @@ from time import sleep
 import pandas as pd
 from requests import Session
 
-from core import Filepath
+from core import Filepath, build_all_generated_data
 
 
 class SsaDataDownloader:
@@ -74,6 +74,7 @@ class SsaDataDownloader:
 def main() -> None:
     downloader = SsaDataDownloader(2025)
     downloader.download()
+    build_all_generated_data()
     return
 
 
